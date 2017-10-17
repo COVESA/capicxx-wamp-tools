@@ -7,17 +7,18 @@
 * If a copy of the MPL was not distributed with this file, You can obtain one at
 * http://mozilla.org/MPL/2.0/.
 */
+
 #include <CommonAPI/Wamp/WampConnection.hpp>
 #include <CommonAPI/Wamp/WampClientId.hpp>
 
-#include <example/generated/ExampleInterface.hpp>
-#include <example/generated/ExampleInterfaceWampStubAdapter.hpp>
-#include <example/generated/ExampleInterfaceWampStructsSupport.hpp>
+#include "testcase/example77/ExampleInterface.hpp"
+#include "testcase/example77/ExampleInterfaceWampStubAdapter.hpp"
+#include "testcase/example77/ExampleInterfaceWampStructsSupport.hpp"
 
 #include <functional>
 
-
-namespace example {
+namespace testcases {
+namespace example77 {
 
 std::shared_ptr<CommonAPI::Wamp::WampStubAdapter> createExampleInterfaceWampStubAdapter(
                    const CommonAPI::Wamp::WampAddress &_address,
@@ -42,7 +43,7 @@ void ExampleInterfaceWampStubAdapterInternal::deactivateManagedInstances() {
 
 }
 
-/*TG
+/* TODO: Is this needed?
 const char* ExampleInterfaceDBusStubAdapterInternal::getMethodsDBusIntrospectionXmlData() const {
     static const std::string introspectionData =
         "<method name=\"getInterfaceVersion\">\n"
@@ -249,4 +250,5 @@ void ExampleInterfaceWampStubAdapterInternal::wrap_add2nestedStruct(autobahn::wa
 //////////////////////////////////////////////////////////////////////////////////////////
 
 
-} // namespace example
+} // namespace example77
+} // namespace testcases
