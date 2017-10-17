@@ -76,4 +76,3 @@ private:
 
 #endif // TESTCASES_EXAMPLE77_Example_Interface_WAMP_PROXY_HPP_
 
-

@@ -109,6 +109,7 @@ class FInterfaceWampDeploymentGenerator extends FTypeCollectionWampDeploymentGen
         «_interface.generateVersionNamespaceEnd»
 
         #endif // «_interface.defineName»_WAMP_DEPLOYMENT_HPP_
+        
     '''
 
     def private generateDeploymentSource(FInterface _interface,

@@ -350,6 +350,7 @@ class FInterfaceWampProxyGenerator {
 
               «fInterface.model.generateNamespaceEndDeclaration»
               «fInterface.generateVersionNamespaceEnd»
+
      '''
 
     def private wampClassVariableName(FModelElement fModelElement) {

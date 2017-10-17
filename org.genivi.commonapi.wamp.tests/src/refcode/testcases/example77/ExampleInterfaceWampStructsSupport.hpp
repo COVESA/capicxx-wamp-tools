@@ -31,3 +31,4 @@ extern ExampleInterface::SumDiff transformSumDiff(const SumDiff_internal &sumDif
 } // namespace testcases
 
 #endif // TESTCASES_EXAMPLE77_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
+
