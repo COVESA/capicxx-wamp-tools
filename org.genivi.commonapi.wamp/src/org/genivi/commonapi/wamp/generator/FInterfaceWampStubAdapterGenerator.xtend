@@ -66,9 +66,9 @@ class FInterfaceWampStubAdapterGenerator {
 		#include <CommonAPI/Wamp/WampStubAdapter.hpp>
 		//#include <CommonAPI/Wamp/WampDeployment.hpp>
 
-		#include <autobahn/autobahn.hpp>
-
 		#undef COMMONAPI_INTERNAL_COMPILATION
+
+		#include <autobahn/autobahn.hpp>
 
 		«_interface.generateVersionNamespaceBegin»
 		«_interface.model.generateNamespaceBeginDeclaration»

@@ -22,9 +22,9 @@
 #include <CommonAPI/Wamp/WampStubAdapter.hpp>
 //#include <CommonAPI/Wamp/WampDeployment.hpp>
 
-#include <autobahn/autobahn.hpp>
-
 #undef COMMONAPI_INTERNAL_COMPILATION
+
+#include <autobahn/autobahn.hpp>
 
 namespace testcases {
 namespace example77 {
