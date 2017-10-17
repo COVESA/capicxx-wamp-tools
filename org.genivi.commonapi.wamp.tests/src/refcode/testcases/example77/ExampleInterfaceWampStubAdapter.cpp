@@ -11,9 +11,9 @@
 #include <CommonAPI/Wamp/WampConnection.hpp>
 #include <CommonAPI/Wamp/WampClientId.hpp>
 
-#include "testcase/example77/ExampleInterface.hpp"
-#include "testcase/example77/ExampleInterfaceWampStubAdapter.hpp"
-#include "testcase/example77/ExampleInterfaceWampStructsSupport.hpp"
+#include "testcases/example77/ExampleInterface.hpp"
+#include "testcases/example77/ExampleInterfaceWampStubAdapter.hpp"
+#include "testcases/example77/ExampleInterfaceWampStructsSupport.hpp"
 
 #include <functional>
 
