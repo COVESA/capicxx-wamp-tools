@@ -44,26 +44,54 @@ void ExampleInterfaceWampStubAdapterInternal::deactivateManagedInstances() {
 }
 
 CommonAPI::Wamp::WampGetAttributeStubDispatcher<
-		::example::ExampleInterfaceStub,
-		CommonAPI::Version
-		> ExampleInterfaceWampStubAdapterInternal::getExampleInterfaceInterfaceVersionStubDispatcher(&ExampleInterfaceStub::getInterfaceVersion, "uu");
-
-
+	::testcases::example77::ExampleInterfaceStub,
+	CommonAPI::Version
+> ExampleInterfaceWampStubAdapterInternal::getExampleInterfaceInterfaceVersionStubDispatcher(&ExampleInterfaceStub::getInterfaceVersion, "uu");
 
 
 CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
-	::example::ExampleInterfaceStub,
+	::testcases::example77::ExampleInterfaceStub,
 	std::tuple<>,
 	std::tuple<>,
 	std::tuple<>,
 	std::tuple<>
-	
-	> ExampleInterfaceWampStubAdapterInternal::playStubDispatcher(
+> ExampleInterfaceWampStubAdapterInternal::playStubDispatcher(
 	&ExampleInterfaceStub::play, "",
 					std::make_tuple(),
 					std::make_tuple());
 
+CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
+	::testcases::example77::ExampleInterfaceStub,
+	std::tuple<>,
+	std::tuple<>,
+	std::tuple<>,
+	std::tuple<>
+> ExampleInterfaceWampStubAdapterInternal::add2StubDispatcher(
+	&ExampleInterfaceStub::add2, "",
+					std::make_tuple(),
+					std::make_tuple());
 
+CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
+	::testcases::example77::ExampleInterfaceStub,
+	std::tuple<>,
+	std::tuple<>,
+	std::tuple<>,
+	std::tuple<>
+> ExampleInterfaceWampStubAdapterInternal::add2structStubDispatcher(
+	&ExampleInterfaceStub::add2struct, "",
+					std::make_tuple(),
+					std::make_tuple());
+
+CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
+	::testcases::example77::ExampleInterfaceStub,
+	std::tuple<>,
+	std::tuple<>,
+	std::tuple<>,
+	std::tuple<>
+> ExampleInterfaceWampStubAdapterInternal::add2nestedStructStubDispatcher(
+	&ExampleInterfaceStub::add2nestedStruct, "",
+					std::make_tuple(),
+					std::make_tuple());
 
 
 
@@ -83,10 +111,13 @@ ExampleInterfaceWampStubAdapterInternal::ExampleInterfaceWampStubAdapterInternal
 	  ExampleInterfaceWampStubAdapterHelper(_address, _connection, std::dynamic_pointer_cast<ExampleInterfaceStub>(_stub), false),
 	  stubDispatcherTable_({
 			{ { "play", "" }, &example::ExampleInterfaceWampStubAdapterInternal::playStubDispatcher }
+			{ { "add2", "" }, &example::ExampleInterfaceWampStubAdapterInternal::add2StubDispatcher }
+			{ { "add2struct", "" }, &example::ExampleInterfaceWampStubAdapterInternal::add2structStubDispatcher }
+			{ { "add2nestedStruct", "" }, &example::ExampleInterfaceWampStubAdapterInternal::add2nestedStructStubDispatcher }
 			}),
 		stubAttributeTable_() {
 	std::cout << "ExampleInterfaceWampStubAdapterInternal constructor called" << std::endl;
-	stubDispatcherTable_.insert({ { "getInterfaceVersion", "" }, &example::ExampleInterfaceWampStubAdapterInternal::getExampleInterfaceInterfaceVersionStubDispatcher });
+	stubDispatcherTable_.insert({ { "getInterfaceVersion", "" }, &/*namespace::*/ExampleInterfaceWampStubAdapterInternal::getExampleInterfaceInterfaceVersionStubDispatcher });
 }
 
 
@@ -114,7 +145,6 @@ void ExampleInterfaceWampStubAdapterInternal::provideRemoteMethods() {
 	});
 	provide_future_play.get();
 
-//	boost::future<void> provide_future_add2 = connection->session_->provide("add2",
 	boost::future<void> provide_future_add2 = connection->session_->provide(getWampAddress().getRealm() + ".add2",
 			std::bind(&ExampleInterfaceWampStubAdapterInternal::wrap_add2, this, std::placeholders::_1))
 		.then([&](boost::future<autobahn::wamp_registration> registration) {
@@ -161,80 +191,44 @@ void ExampleInterfaceWampStubAdapterInternal::provideRemoteMethods() {
 void ExampleInterfaceWampStubAdapterInternal::wrap_play(autobahn::wamp_invocation invocation) {
 	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_play called" << std::endl;
 	auto clientNumber = invocation->argument<uint32_t>(0);
-	std::cerr << "Procedure " << getWampAddress().getRealm() << ".play invoked (clientNumber=" << clientNumber << ")" << std::endl;
+	std::cerr << "Procedure " << getWampAddress().getRealm() << ".play invoked (clientNumber=" << clientNumber << ") " << std::endl;
 	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
 	stub_->play(clientId, [&]() {});
 }
-
-/*
-struct LocalSummands
-{
-	uint64_t left;
-	uint64_t right;
-
-	MSGPACK_DEFINE(left, right)
-};
-
-struct LocalSumDiff
-{
-	uint64_t sum;
-	uint64_t diff;
-
-	MSGPACK_DEFINE(sum, diff)
-};
-*/
-
 void ExampleInterfaceWampStubAdapterInternal::wrap_add2(autobahn::wamp_invocation invocation) {
 	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_add2 called" << std::endl;
-
 	auto clientNumber = invocation->argument<uint32_t>(0);
 	auto left = invocation->argument<int64_t>(1);
 	auto right = invocation->argument<int64_t>(2);
-
-	std::cerr << "Procedure " << getWampAddress().getRealm() << ".add2 invoked (clientNumber=" << clientNumber << "): left=" << left << ", right=" << right << std::endl;
-
+	std::cerr << "Procedure " << getWampAddress().getRealm() << ".add2 invoked (clientNumber=" << clientNumber << ") " << "left=" << left << ", right=" << right << std::endl;
 	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
 	int64_t sum;
 	int64_t diff;
-	stub_->add2(clientId, left, right, [&](int64_t _sum, int64_t _diff) {sum=_sum; diff=_diff;});
-
+	stub_->add2(clientId, left, right, [&](int64_t _sum, int64_t _diff) {sum=_sum; diff=_diff; });
 	invocation->result(std::make_tuple(sum, diff));
 }
-
 void ExampleInterfaceWampStubAdapterInternal::wrap_add2struct(autobahn::wamp_invocation invocation) {
 	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_add2struct called" << std::endl;
-
 	auto clientNumber = invocation->argument<uint32_t>(0);
-	Summands s;
-	s.values_ = invocation->argument<std::tuple<uint64_t, uint64_t>>(1);
-
-	std::cerr << "Procedure " << getWampAddress().getRealm() << ".add2struct invoked (clientNumber=" << clientNumber << "): s=(left=" << s.getLeft() << ", right=" << s.getRight() << ")" << std::endl;
-
+	Summands_internal s_internal = invocation->argument<Summands_internal>(1);
+	Summands s = transformSummands(s_internal);
+	std::cerr << "Procedure " << getWampAddress().getRealm() << ".add2struct invoked (clientNumber=" << clientNumber << ") " << std::endl;
 	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
 	SumDiff result;
-	stub_->add2struct(clientId, s, [&](SumDiff _result) {result=_result;});
-
+	stub_->add2struct(clientId, s, [&](SumDiff _result) {result=_result; });
 	invocation->result(std::make_tuple(result.values_));
 }
-
 void ExampleInterfaceWampStubAdapterInternal::wrap_add2nestedStruct(autobahn::wamp_invocation invocation) {
 	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_add2nestedStruct called" << std::endl;
-
 	auto clientNumber = invocation->argument<uint32_t>(0);
 	Params_internal p_internal = invocation->argument<Params_internal>(1);
 	Params p = transformParams(p_internal);
-
-	std::cerr << "Procedure " << getWampAddress().getRealm() << ".add2nestedStruct invoked (clientNumber=" << clientNumber << "): p=((left=" << p.getSs().getLeft() << ", right=" << p.getSs().getRight() << "), x=" << p.getX() << ")" << std::endl;
-
+	std::cerr << "Procedure " << getWampAddress().getRealm() << ".add2nestedStruct invoked (clientNumber=" << clientNumber << ") " << std::endl;
 	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
 	SumDiff result;
-	stub_->add2nestedStruct(clientId, p, [&](SumDiff _result) {result=_result;});
-
+	stub_->add2nestedStruct(clientId, p, [&](SumDiff _result) {result=_result; });
 	invocation->result(std::make_tuple(result.values_));
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////
-
 
 } // namespace example77
 } // namespace testcases

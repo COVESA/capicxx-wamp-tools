@@ -1,28 +1,28 @@
 package org.genivi.commonapi.wamp.generator
 
 import java.util.HashMap
+import java.util.List
 import javax.inject.Inject
 import org.eclipse.core.resources.IResource
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.franca.core.franca.FAttribute
-import org.franca.core.franca.FBroadcast
+import org.franca.core.franca.FArgument
 import org.franca.core.franca.FInterface
 import org.franca.core.franca.FMethod
-import org.franca.core.franca.FModelElement
+import org.franca.core.franca.FTypeRef
+import org.franca.deploymodel.dsl.fDeploy.FDProvider
 import org.genivi.commonapi.core.generator.FTypeGenerator
 import org.genivi.commonapi.core.generator.FrancaGeneratorExtensions
 import org.genivi.commonapi.wamp.deployment.PropertyAccessor
-import org.genivi.commonapi.wamp.preferences.PreferenceConstantsWamp
 import org.genivi.commonapi.wamp.preferences.FPreferencesWamp
-import java.util.List
-import org.franca.deploymodel.dsl.fDeploy.FDProvider
-import org.franca.deploymodel.core.FDeployedProvider
-import java.util.LinkedList
+import org.genivi.commonapi.wamp.preferences.PreferenceConstantsWamp
+
+import static extension org.franca.core.framework.FrancaHelpers.*
 
 class FInterfaceWampStubAdapterGenerator {
 	@Inject private extension FrancaGeneratorExtensions
 	@Inject private extension FrancaWampGeneratorExtensions
-	@Inject private extension FrancaWampDeploymentAccessorHelper
+	//@Inject private extension FrancaWampDeploymentAccessorHelper
+	@Inject private extension FInterfaceWampStructsSupportGenerator
 
 	def generateWampStubAdapter(FInterface _interface, IFileSystemAccess fileSystemAccess, PropertyAccessor deploymentAccessor,  List<FDProvider> providers, IResource modelid) {
 
@@ -178,20 +178,191 @@ class FInterfaceWampStubAdapterGenerator {
 
 	def private generateWampStubAdapterSource(FInterface _interface, PropertyAccessor deploymentAccessor,  List<FDProvider> providers, IResource modelid) '''
 		«generateCommonApiWampLicenseHeader()»
-		#include <«_interface.headerPath»>
-		#include <«_interface.wampStubAdapterHeaderPath»>
 
+		#include <CommonAPI/Wamp/WampConnection.hpp>
+		#include <CommonAPI/Wamp/WampClientId.hpp>
+
+		#include "«_interface.headerPath»"
+		#include "«_interface.wampStubAdapterHeaderPath»"
+		#include "«_interface.wampStructsSupportHeaderPath»"
+
+		#include <functional>
+		
 		«_interface.generateVersionNamespaceBegin»
 		«_interface.model.generateNamespaceBeginDeclaration»
 
+		std::shared_ptr<CommonAPI::Wamp::WampStubAdapter> create«_interface.wampStubAdapterClassName»(
+								const CommonAPI::Wamp::WampAddress &_address,
+								const std::shared_ptr<CommonAPI::Wamp::WampProxyConnection> &_connection,
+								const std::shared_ptr<CommonAPI::StubBase> &_stub) {
+			std::cout << "create«_interface.wampStubAdapterClassName» called" << std::endl;
+			return std::make_shared<«_interface.wampStubAdapterClassName»>(_address, _connection, _stub);
+		}
+
+		INITIALIZER(register«_interface.wampStubAdapterClassName») {
+			CommonAPI::Wamp::Factory::get()->registerStubAdapterCreateMethod(
+				«_interface.name»::getInterface(), &create«_interface.wampStubAdapterClassName»);
+			std::cout << "registerStubAdapterCreateMethod(create«_interface.wampStubAdapterClassName»)" << std::endl;
+		}
+
+		«_interface.wampStubAdapterClassNameInternal»::~«_interface.wampStubAdapterClassNameInternal»() {
+			deactivateManagedInstances();
+			«_interface.wampStubAdapterHelperClassName»::deinit();
+		}
+
+		void «_interface.wampStubAdapterClassNameInternal»::deactivateManagedInstances() {
+
+		}
+
+		CommonAPI::Wamp::WampGetAttributeStubDispatcher<
+			«_interface.stubFullClassName»,
+			CommonAPI::Version
+		> «_interface.wampStubAdapterClassNameInternal»::getExampleInterfaceInterfaceVersionStubDispatcher(&ExampleInterfaceStub::getInterfaceVersion, "uu");
+
+
+		«FOR m : _interface.methods»
+		CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
+			«_interface.stubFullClassName»,
+			std::tuple<>,
+			std::tuple<>,
+			std::tuple<>,
+			std::tuple<>
+		> «_interface.wampStubAdapterClassNameInternal»::«m.name»StubDispatcher(
+			&«_interface.stubClassName»::«m.name», "",
+							std::make_tuple(),
+							std::make_tuple());
+
+		«ENDFOR»
+
+
+		const «_interface.wampStubAdapterHelperClassName»::StubDispatcherTable& «_interface.wampStubAdapterClassNameInternal»::getStubDispatcherTable() {
+			return stubDispatcherTable_;
+		}
+
+		const CommonAPI::Wamp::StubAttributeTable& «_interface.wampStubAdapterClassNameInternal»::getStubAttributeTable() {
+			return stubAttributeTable_;
+		}
+
+		«_interface.wampStubAdapterClassNameInternal»::«_interface.wampStubAdapterClassNameInternal»(
+				const CommonAPI::Wamp::WampAddress &_address,
+				const std::shared_ptr<CommonAPI::Wamp::WampProxyConnection> &_connection,
+				const std::shared_ptr<CommonAPI::StubBase> &_stub)
+			: CommonAPI::Wamp::WampStubAdapter(_address, _connection, false),
+			  «_interface.wampStubAdapterHelperClassName»(_address, _connection, std::dynamic_pointer_cast<«_interface.stubClassName»>(_stub), false),
+			  stubDispatcherTable_({
+					«FOR m : _interface.methods»
+						{ { "«m.name»", "" }, &example::«_interface.wampStubAdapterClassNameInternal»::«m.name»StubDispatcher }
+					«ENDFOR»
+					}),
+				stubAttributeTable_() {
+			std::cout << "«_interface.wampStubAdapterClassNameInternal» constructor called" << std::endl;
+			stubDispatcherTable_.insert({ { "getInterfaceVersion", "" }, &/*namespace::*/«_interface.wampStubAdapterClassNameInternal»::get«_interface.elementName»InterfaceVersionStubDispatcher });
+		}
+		
+		
+		//////////////////////////////////////////////////////////////////////////////////////////
+
+		void «_interface.wampStubAdapterClassNameInternal»::provideRemoteMethods() {
+			std::cout << "provideRemoteMethods called" << std::endl;
+		
+			// busy waiting until the session is started and joined
+			while(!getWampConnection()->isConnected());
+		
+			CommonAPI::Wamp::WampConnection* connection = (CommonAPI::Wamp::WampConnection*)(getWampConnection().get());
+			connection->ioMutex_.lock();
+		
+			«FOR m : _interface.methods»
+			boost::future<void> provide_future_«m.name» = connection->session_->provide(getWampAddress().getRealm() + ".«m.name»",
+					std::bind(&«_interface.wampStubAdapterClassNameInternal»::wrap_«m.name», this, std::placeholders::_1))
+				.then([&](boost::future<autobahn::wamp_registration> registration) {
+				try {
+					std::cerr << "registered procedure " << getWampAddress().getRealm() << ".«m.name»: id=" << registration.get().id() << std::endl;
+				} catch (const std::exception& e) {
+					std::cerr << e.what() << std::endl;
+					connection->io_.stop();
+					return;
+				}
+			});
+			provide_future_«m.name».get();
+
+			«ENDFOR»
+			connection->ioMutex_.unlock();
+		}
+
+
+		«FOR m : _interface.methods»
+		void «_interface.wampStubAdapterClassNameInternal»::wrap_«m.name»(autobahn::wamp_invocation invocation) {
+			std::cout << "«_interface.wampStubAdapterClassNameInternal»::wrap_«m.name» called" << std::endl;
+			auto clientNumber = invocation->argument<uint32_t>(0);
+			«FOR arg : m.inArgs»
+				«IF arg.type.isStruct»
+					«arg.type.actualDerived.name»_internal «arg.name»_internal = invocation->argument<«arg.type.actualDerived.name»_internal>(«m.inArgs.indexOf(arg) + 1»);
+					«arg.type.typename» «arg.name» = transform«arg.type.typename»(«arg.name»_internal);
+				«ELSE»
+					auto «arg.name» = invocation->argument<«arg.type.typename»>(«m.inArgs.indexOf(arg) + 1»);
+				«ENDIF»
+			«ENDFOR»
+			std::cerr << "Procedure " << getWampAddress().getRealm() << ".«m.name» invoked (clientNumber=" << clientNumber << ") "«m.inArgs.arglist1» << std::endl;
+			std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
+			«FOR arg : m.outArgs»
+				«arg.type.typename» «arg.name»;
+			«ENDFOR»
+			stub_->«m.name»(clientId«m.inArgs.map[', ' + name].join», [&](«m.outArgs.arglist2») {«m.outArgs.arglist3»});
+			«IF !m.outArgs.empty»
+			invocation->result(std::make_tuple(«m.outArgs.arglist4»));
+			«ENDIF»
+		}
+		«ENDFOR»
 
 		«_interface.model.generateNamespaceEndDeclaration»
 		«_interface.generateVersionNamespaceEnd»
 	'''
 
-	def private getAbsoluteNamespace(FModelElement fModelElement) {
-		fModelElement.model.name.replace('.', '::')
+	def private arglist1(List<FArgument> args) {
+		args.filter[!type.isStruct].map[''' << "«IF args.indexOf(it)>0», «ENDIF»«name»=" << «name»'''].join
 	}
+
+	def private arglist2(List<FArgument> args) {
+		args.map[type.typename + " _" + name].join(", ")
+	}
+
+	def private arglist3(List<FArgument> args) {
+		args.map[name + "=_" + name + "; "].join
+	}
+
+	def private arglist4(List<FArgument> args) '''«FOR it : args SEPARATOR ', '»«name»«IF type.isStruct».values_«ENDIF»«ENDFOR»'''
+
+	def private getTypename(FTypeRef typeref) {
+		if (typeref.isInteger) {
+			// all integer types are currently mapped to int64
+			"int64_t"
+		} else if (typeref.isStruct) {
+			typeref.actualDerived.name
+		} else {
+			// all other types are currently unsupported
+			"UNSUPPORTED_DATATYPE"
+		}
+	}
+
+//		void initialize«_interface.wampStubAdapterClassName»() {
+//            «FOR p : providers»
+//				«val PropertyAccessor providerAccessor = new PropertyAccessor(new FDeployedProvider(p))»
+//                «FOR i : p.instances.filter[target == _interface]»
+//					CommonAPI::SomeIP::AddressTranslator::get()->insert(
+//					"local:«_interface.fullyQualifiedNameWithVersion»:«providerAccessor.getInstanceId(i)»",
+//					«555», 0x«Integer.toHexString(
+//                            777)», «_interface.version.major», «_interface.version.minor»);
+//                «ENDFOR»
+//            «ENDFOR»
+//			CommonAPI::Wamp::Factory::get()->registerStubAdapterCreateMethod(
+//			«_interface.elementName»::getInterface(),
+//				&create«_interface.wampStubAdapterClassName»);
+//		}
+
+
+//	def private getAbsoluteNamespace(FModelElement fModelElement) {
+//		fModelElement.model.name.replace('.', '::')
+//	}
 
 	def private wampStubAdapterHeaderFile(FInterface _interface) {
 		_interface.elementName + "WampStubAdapter.hpp"
@@ -225,48 +396,48 @@ class FInterfaceWampStubAdapterGenerator {
 		fMethod.inArgs.map[getTypeName(fMethod, true)].join(', ')
 	}
 
-	def private getAllOutTypes(FMethod fMethod) {
-		var types = fMethod.outArgs.map[getTypeName(fMethod, true)].join(', ')
-
-		if (fMethod.hasError) {
-			if (!fMethod.outArgs.empty)
-				types = ', ' + types
-			types = fMethod.getErrorNameReference(fMethod.eContainer) + types
-		}
-
-		return types
-	}
+//	def private getAllOutTypes(FMethod fMethod) {
+//		var types = fMethod.outArgs.map[getTypeName(fMethod, true)].join(', ')
+//
+//		if (fMethod.hasError) {
+//			if (!fMethod.outArgs.empty)
+//				types = ', ' + types
+//			types = fMethod.getErrorNameReference(fMethod.eContainer) + types
+//		}
+//
+//		return types
+//	}
 
 	def private wampStubDispatcherVariable(FMethod fMethod) {
 		fMethod.elementName.toFirstLower + 'StubDispatcher'
 	}
 
-	def private wampGetStubDispatcherVariable(FAttribute fAttribute) {
-		fAttribute.wampGetMethodName + 'StubDispatcher'
-	}
+//	def private wampGetStubDispatcherVariable(FAttribute fAttribute) {
+//		fAttribute.wampGetMethodName + 'StubDispatcher'
+//	}
+//
+//	def private wampSetStubDispatcherVariable(FAttribute fAttribute) {
+//		fAttribute.wampSetMethodName + 'StubDispatcher'
+//	}
+//
+//	def private wampStubDispatcherVariable(FBroadcast fBroadcast) {
+//		var returnVal = fBroadcast.elementName.toFirstLower
+//
+//		if(fBroadcast.selective)
+//			returnVal = returnVal + 'Selective'
+//
+//		returnVal = returnVal + 'StubDispatcher'
+//
+//		return returnVal
+//	}
 
-	def private wampSetStubDispatcherVariable(FAttribute fAttribute) {
-		fAttribute.wampSetMethodName + 'StubDispatcher'
-	}
+//	def private wampStubDispatcherVariableSubscribe(FBroadcast fBroadcast) {
+//		"subscribe" + fBroadcast.wampStubDispatcherVariable.toFirstUpper
+//	}
 
-	def private wampStubDispatcherVariable(FBroadcast fBroadcast) {
-		var returnVal = fBroadcast.elementName.toFirstLower
-
-		if(fBroadcast.selective)
-			returnVal = returnVal + 'Selective'
-
-		returnVal = returnVal + 'StubDispatcher'
-
-		return returnVal
-	}
-
-	def private wampStubDispatcherVariableSubscribe(FBroadcast fBroadcast) {
-		"subscribe" + fBroadcast.wampStubDispatcherVariable.toFirstUpper
-	}
-
-	def private wampStubDispatcherVariableUnsubscribe(FBroadcast fBroadcast) {
-		"unsubscribe" + fBroadcast.wampStubDispatcherVariable.toFirstUpper
-	}
+//	def private wampStubDispatcherVariableUnsubscribe(FBroadcast fBroadcast) {
+//		"unsubscribe" + fBroadcast.wampStubDispatcherVariable.toFirstUpper
+//	}
 
 	var nextSectionInDispatcherNeedsComma = false;
 
@@ -274,57 +445,57 @@ class FInterfaceWampStubAdapterGenerator {
 		nextSectionInDispatcherNeedsComma = newValue
 	}
 
-	def private generateFireChangedMethodBody(FAttribute attribute, FInterface _interface, PropertyAccessor deploymentAccessor) '''
-		«val String deploymentType = attribute.getDeploymentType(_interface, true)»
-		«val String deployment = attribute.getDeploymentRef(attribute.array, null, _interface, deploymentAccessor)»
-		«IF deploymentType != "CommonAPI::EmptyDeployment" && deploymentType != ""»
-		CommonAPI::Deployable< «attribute.getTypeName(attribute, true)», «deploymentType»> deployedValue(value, «IF deployment != ""»«deployment»«ELSE»nullptr«ENDIF»);
-		«ENDIF»
-		CommonAPI::Wamp::WampStubSignalHelper<CommonAPI::Wamp::WampSerializableArguments<
-		«IF deploymentType != "CommonAPI::EmptyDeployment" && deploymentType != ""»
-			CommonAPI::Deployable<
-				«attribute.getTypeName(_interface, true)»,
-				«deploymentType»
-			>
-		«ELSE»
-			«attribute.getTypeName(_interface, true)»
-		«ENDIF»
-		>>
-			::sendSignal(
-				*this,
-				"«attribute.wampSignalName»",
-				"«attribute.wampSignature(deploymentAccessor)»",
-				«IF deploymentType != "CommonAPI::EmptyDeployment" && deploymentType != ""»deployedValue«ELSE»value«ENDIF»
+//	def private generateFireChangedMethodBody(FAttribute attribute, FInterface _interface, PropertyAccessor deploymentAccessor) '''
+//		«val String deploymentType = attribute.getDeploymentType(_interface, true)»
+//		«val String deployment = attribute.getDeploymentRef(attribute.array, null, _interface, deploymentAccessor)»
+//		«IF deploymentType != "CommonAPI::EmptyDeployment" && deploymentType != ""»
+//		CommonAPI::Deployable< «attribute.getTypeName(attribute, true)», «deploymentType»> deployedValue(value, «IF deployment != ""»«deployment»«ELSE»nullptr«ENDIF»);
+//		«ENDIF»
+//		CommonAPI::Wamp::WampStubSignalHelper<CommonAPI::Wamp::WampSerializableArguments<
+//		«IF deploymentType != "CommonAPI::EmptyDeployment" && deploymentType != ""»
+//			CommonAPI::Deployable<
+//				«attribute.getTypeName(_interface, true)»,
+//				«deploymentType»
+//			>
+//		«ELSE»
+//			«attribute.getTypeName(_interface, true)»
+//		«ENDIF»
+//		>>
+//			::sendSignal(
+//				*this,
+//				"«attribute.wampSignalName»",
+//				"«attribute.wampSignature(deploymentAccessor)»",
+//				«IF deploymentType != "CommonAPI::EmptyDeployment" && deploymentType != ""»deployedValue«ELSE»value«ENDIF»
+//
+//		);
+//	'''
 
-		);
-	'''
-
-	def private generateStubAttributeTableInitializer(FInterface _interface, PropertyAccessor deploymentAccessor) '''
-		«IF !_interface.attributes.empty»
-			«FOR attribute : _interface.attributes»
-				«_interface.generateStubAttributeTableInitializerEntry(attribute)»
-			«ENDFOR»
-		«ENDIF»
-	'''
-
-	def private generateStubAttributeTableInitializerEntry(FInterface _interface, FAttribute fAttribute) '''
-		«_interface.wampStubAdapterHelperClassName»::addAttributeDispatcher("«fAttribute.elementName»",
-				&«_interface.absoluteNamespace»::«_interface.wampStubAdapterClassNameInternal»<_Stub, _Stubs...>::«fAttribute.wampGetStubDispatcherVariable»,
-				«IF fAttribute.readonly»(CommonAPI::Wamp::WampSetFreedesktopAttributeStubDispatcher<«_interface.stubFullClassName», int>*)NULL«ELSE»&«_interface.absoluteNamespace»::«_interface.wampStubAdapterClassNameInternal»<_Stub, _Stubs...>::«fAttribute.wampSetStubDispatcherVariable»«ENDIF»
-			);
-	'''
+//	def private generateStubAttributeTableInitializer(FInterface _interface, PropertyAccessor deploymentAccessor) '''
+//		«IF !_interface.attributes.empty»
+//			«FOR attribute : _interface.attributes»
+//				«_interface.generateStubAttributeTableInitializerEntry(attribute)»
+//			«ENDFOR»
+//		«ENDIF»
+//	'''
+//
+//	def private generateStubAttributeTableInitializerEntry(FInterface _interface, FAttribute fAttribute) '''
+//		«_interface.wampStubAdapterHelperClassName»::addAttributeDispatcher("«fAttribute.elementName»",
+//				&«_interface.absoluteNamespace»::«_interface.wampStubAdapterClassNameInternal»<_Stub, _Stubs...>::«fAttribute.wampGetStubDispatcherVariable»,
+//				«IF fAttribute.readonly»(CommonAPI::Wamp::WampSetFreedesktopAttributeStubDispatcher<«_interface.stubFullClassName», int>*)NULL«ELSE»&«_interface.absoluteNamespace»::«_interface.wampStubAdapterClassNameInternal»<_Stub, _Stubs...>::«fAttribute.wampSetStubDispatcherVariable»«ENDIF»
+//			);
+//	'''
 	
-	def private generateErrorReplyCallback(FBroadcast fBroadcast, FInterface _interface, FMethod fMethod, PropertyAccessor deploymentAccessor) '''
-			
-		static void «fBroadcast.errorReplyCallbackName(deploymentAccessor)»(«fBroadcast.generateErrorReplyCallbackSignature(fMethod, deploymentAccessor)») {
-			«IF fBroadcast.errorArgs(deploymentAccessor).size > 1»
-				auto args = std::make_tuple(
-					«fBroadcast.errorArgs(deploymentAccessor).map[it.getDeployable(_interface, deploymentAccessor) + '(' + '_' + it.elementName + ', ' + getDeploymentRef(it.array, fBroadcast, _interface, deploymentAccessor) + ')'].join(",\n")  + ");"»
-			«ELSE»
-				auto args = std::make_tuple();
-			«ENDIF»
-			«fMethod.wampStubDispatcherVariable».sendErrorReply(_callId, "«fBroadcast.wampErrorReplyOutSignature(fMethod, deploymentAccessor)»", _«fBroadcast.errorName(deploymentAccessor)», args);
-		}
-	'''
+//	def private generateErrorReplyCallback(FBroadcast fBroadcast, FInterface _interface, FMethod fMethod, PropertyAccessor deploymentAccessor) '''
+//			
+//		static void «fBroadcast.errorReplyCallbackName(deploymentAccessor)»(«fBroadcast.generateErrorReplyCallbackSignature(fMethod, deploymentAccessor)») {
+//			«IF fBroadcast.errorArgs(deploymentAccessor).size > 1»
+//				auto args = std::make_tuple(
+//					«fBroadcast.errorArgs(deploymentAccessor).map[it.getDeployable(_interface, deploymentAccessor) + '(' + '_' + it.elementName + ', ' + getDeploymentRef(it.array, fBroadcast, _interface, deploymentAccessor) + ')'].join(",\n")  + ");"»
+//			«ELSE»
+//				auto args = std::make_tuple();
+//			«ENDIF»
+//			«fMethod.wampStubDispatcherVariable».sendErrorReply(_callId, "«fBroadcast.wampErrorReplyOutSignature(fMethod, deploymentAccessor)»", _«fBroadcast.errorName(deploymentAccessor)», args);
+//		}
+//	'''
 	
 }
