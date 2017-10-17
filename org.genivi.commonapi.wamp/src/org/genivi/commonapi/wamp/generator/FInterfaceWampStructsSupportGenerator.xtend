@@ -24,15 +24,15 @@ class FInterfaceWampStructsSupportGenerator {
         PropertyAccessor deploymentAccessor, List<FDProvider> providers, IResource modelid) {
 
         if(FPreferencesWamp::getInstance.getPreference(PreferenceConstantsWamp::P_GENERATE_CODE_WAMP, "true").equals("true")) {
-            fileSystemAccess.generateFile(fInterface.wampHeaderPath, PreferenceConstantsWamp.P_OUTPUT_PROXIES_WAMP,
+            fileSystemAccess.generateFile(fInterface.wampStructsSupportHeaderPath, PreferenceConstantsWamp.P_OUTPUT_PROXIES_WAMP,
                 fInterface.generateHeader(deploymentAccessor, modelid))
-            fileSystemAccess.generateFile(fInterface.wampSourcePath, PreferenceConstantsWamp.P_OUTPUT_PROXIES_WAMP,
+            fileSystemAccess.generateFile(fInterface.wampStructsSupportSourcePath, PreferenceConstantsWamp.P_OUTPUT_PROXIES_WAMP,
                 fInterface.generateSource(deploymentAccessor, providers, modelid))
         }
         else {
             // feature: suppress code generation
-            fileSystemAccess.generateFile(fInterface.wampHeaderPath, PreferenceConstantsWamp.P_OUTPUT_PROXIES_WAMP, PreferenceConstantsWamp::NO_CODE)
-            fileSystemAccess.generateFile(fInterface.wampSourcePath, PreferenceConstantsWamp.P_OUTPUT_PROXIES_WAMP, PreferenceConstantsWamp::NO_CODE)
+            fileSystemAccess.generateFile(fInterface.wampStructsSupportHeaderPath, PreferenceConstantsWamp.P_OUTPUT_PROXIES_WAMP, PreferenceConstantsWamp::NO_CODE)
+            fileSystemAccess.generateFile(fInterface.wampStructsSupportSourcePath, PreferenceConstantsWamp.P_OUTPUT_PROXIES_WAMP, PreferenceConstantsWamp::NO_CODE)
         }
     }
 
@@ -64,7 +64,7 @@ class FInterfaceWampStructsSupportGenerator {
         IResource modelid) '''
 		«generateCommonApiWampLicenseHeader()»
 
-		#include "«fInterface.wampHeaderPath»"
+		#include "«fInterface.wampStructsSupportHeaderPath»"
 
 		«fInterface.generateVersionNamespaceBegin»
 		«fInterface.model.generateNamespaceBeginDeclaration»
@@ -117,20 +117,20 @@ class FInterfaceWampStructsSupportGenerator {
 		type.elements.findFirst[it.type.isStruct]!=null
 	}
 	
-    def private wampHeaderFile(FInterface fInterface) {
+    def private wampStructsSupportHeaderFile(FInterface fInterface) {
         fInterface.elementName + "WampStructsSupport.hpp"
     }
 
-    def private wampHeaderPath(FInterface fInterface) {
-        fInterface.versionPathPrefix + fInterface.model.directoryPath + '/' + fInterface.wampHeaderFile
+    def public wampStructsSupportHeaderPath(FInterface fInterface) {
+        fInterface.versionPathPrefix + fInterface.model.directoryPath + '/' + fInterface.wampStructsSupportHeaderFile
     }
 
-    def private wampSourceFile(FInterface fInterface) {
+    def private wampStructsSupportSourceFile(FInterface fInterface) {
         fInterface.elementName + "WampStructsSupport.cpp"
     }
 
-    def private wampSourcePath(FInterface fInterface) {
-        fInterface.versionPathPrefix + fInterface.model.directoryPath + '/' + fInterface.wampSourceFile
+    def private wampStructsSupportSourcePath(FInterface fInterface) {
+        fInterface.versionPathPrefix + fInterface.model.directoryPath + '/' + fInterface.wampStructsSupportSourceFile
     }
 
 }
