@@ -20,6 +20,7 @@ Summands_internal transformSummands(const ExampleInterface::Summands &inst)
 
 ExampleInterface::Summands transformSummands(const Summands_internal &inst_internal)
 {
+	// TODO: Check if it is ok to return a struct on the stack. 
 	ExampleInterface::Summands inst;
 	inst.values_ = inst_internal;
 	return inst;
@@ -48,6 +49,7 @@ SumDiff_internal transformSumDiff(const ExampleInterface::SumDiff &inst)
 
 ExampleInterface::SumDiff transformSumDiff(const SumDiff_internal &inst_internal)
 {
+	// TODO: Check if it is ok to return a struct on the stack. 
 	ExampleInterface::SumDiff inst;
 	inst.values_ = inst_internal;
 	return inst;

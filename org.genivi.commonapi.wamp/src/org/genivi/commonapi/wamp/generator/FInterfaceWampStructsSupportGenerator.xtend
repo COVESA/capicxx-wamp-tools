@@ -100,6 +100,7 @@ class FInterfaceWampStructsSupportGenerator {
 					«ENDFOR»
 				);
 				«ELSE»
+				// TODO: Check if it is ok to return a struct on the stack. 
 				«fInterface.name»::«stype.name» inst;
 				inst.values_ = inst_internal;
 				return inst;
