@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension point="org.eclipse.ui.handlers">
+      <handler
+            class="org.genivi.commonapi.wamp.ui.WampCommandExecutableExtensionFactory:org.genivi.commonapi.wamp.ui.handler.WampGenerationCommand"
+            commandId="org.genivi.commonapi.wamp.ui.handler.WampGenerationCommand">
+      </handler>
+   </extension>
+   <extension point="org.eclipse.ui.commands">
+      <command
+            id="org.genivi.commonapi.wamp.ui.handler.WampGenerationCommand"
+            name="Generate Wamp C++ Code">
+      </command>
+   </extension>
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.genivi.commonapi.core.ui.popup.menu">
+         <command
+               commandId="org.genivi.commonapi.wamp.ui.handler.WampGenerationCommand"
+               label="Generate Wamp C++ Code"
+               style="push">
+            <visibleWhen checkEnabled="false">
+               <reference definitionId="org.genivi.commonapi.core.ui.FrancaIDL.Resources.selected"></reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.genivi.commonapi.wamp.ui.preferences.CommonAPIWampPreferencePage"
+            id="org.genivi.commonapi.wamp.ui.preferences.CommonAPIWampPreferencePage"
+            name="CommonAPI-Wamp">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.genivi.commonapi.wamp.ui.preferences.PreferenceInitializerWamp">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.genivi.commonapi.wamp.ui.preferences.CommonAPIWampPreferencePage"
+            id="org.genivi.commonapi.wamp.ui.preferences.property.CommonAPIWampPreferencePage"
+            name="CommonAPI-Wamp">
+                      <enabledWhen>
+                         <or>
+                            <instanceof
+                                  value="org.eclipse.core.resources.IProject">
+                            </instanceof>
+                            <instanceof
+                                  value="org.eclipse.core.resources.IFolder">
+                            </instanceof>
+                            <instanceof
+                                  value="org.eclipse.core.resources.IFile">
+                            </instanceof>
+                         </or>
+                      </enabledWhen>
+      </page>
+   </extension>
+    <extension
+            point="org.eclipse.ui.bindings">
+          <key
+                 commandId="org.genivi.commonapi.wamp.ui.handler.WampGenerationCommand"
+                 contextId="org.eclipse.ui.contexts.window"
+                 schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+                 sequence="Ctrl+Shift+D">
+          </key>
+   </extension>
+</plugin>
