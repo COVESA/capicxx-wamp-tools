@@ -1,0 +1,48 @@
+package testcases.example77
+
+interface ExampleInterface {
+//	version { major 0 minor 1 }
+	method play {
+	}
+	method add2 {
+		in {
+			Int64 left
+			Int64 right
+		}
+		out {
+			Int64 sum
+			Int64 diff
+		}
+	}
+	struct Summands {
+		UInt64 left
+		UInt64 right
+	}
+
+	struct Params {
+		Summands ss
+		UInt64 x
+	}
+
+	struct SumDiff {
+		UInt64 sum
+		UInt64 diff
+	}
+
+	method add2struct {
+		in {
+			Summands s
+		}
+		out {
+			SumDiff result
+		}
+	}
+	method add2nestedStruct {
+		in {
+			Params p
+		}
+		out {
+			SumDiff result
+		}
+	}
+}
