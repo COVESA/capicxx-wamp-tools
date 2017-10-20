@@ -3,11 +3,39 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>commonapi</groupId>
     <artifactId>org.genivi.commonapi.wamp.target</artifactId>
-    <packaging>eclipse-target-definition</packaging>
+    <packaging>pom</packaging>
     <parent>
         <groupId>commonapi</groupId>
-        <artifactId>org.genivi.commonapi.releng</artifactId>
+        <artifactId>org.genivi.commonapi.wamp.releng</artifactId>
         <version>0.7.0-SNAPSHOT</version>
-        <relativePath>../org.genivi.commonapi.releng</relativePath>
+        <relativePath>../org.genivi.commonapi.wamp.releng</relativePath>
     </parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.3</version>
+				<executions>
+					<execution>
+						<id>attach-artifacts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>commonapi_wamp-${platform-version-name}.target</file>
+									<type>target</type>
+									<classifier>commonapi_wamp-${platform-version-name}</classifier>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
