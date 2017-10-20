@@ -3,6 +3,7 @@ package org.genivi.commonapi.wamp.generator
 import java.util.Collection
 import java.util.HashMap
 import java.util.HashSet
+import java.util.List
 import java.util.Map
 import java.util.Set
 import javax.inject.Inject
@@ -37,18 +38,26 @@ import static com.google.common.base.Preconditions.*
 class FrancaWampGeneratorExtensions {
     @Inject private extension FrancaGeneratorExtensions
     @Inject private extension FrancaWampDeploymentAccessorHelper
+
     def String wampDeploymentHeaderFile(FInterface fInterface) {
         return fInterface.elementName + "WampDeployment.hpp"
     }
+
     def String wampDeploymentSourceFile(FInterface fInterface) {
         return fInterface.elementName + "WampDeployment.cpp"
     }
+
     def String wampDeploymentHeaderPath(FInterface fInterface) {
         return fInterface.versionPathPrefix + fInterface.model.directoryPath + '/' + fInterface.wampDeploymentHeaderFile
     }
 
     def String wampDeploymentSourcePath(FInterface fInterface) {
         return fInterface.versionPathPrefix + fInterface.model.directoryPath + '/' + fInterface.wampDeploymentSourceFile
+    }
+
+    def generateWampBaseInstantiations(FInterface _interface) {
+        val List<FInterface> baseInterfaces = getBaseInterfaces(_interface)
+        return baseInterfaces.map[getTypeCollectionName(_interface) + "WampProxy(_address, _connection)"].join(',\n')
     }
 
     def wampInSignature(FMethod fMethod, PropertyAccessor deploymentAccessor) {
