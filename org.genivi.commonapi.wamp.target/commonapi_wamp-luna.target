@@ -24,6 +24,10 @@
 <unit id="org.eclipselabs.xtext.utils.unittesting.feature.feature.group" version="0.9.3.201204261440"/>
 <repository location="http://franca.github.io/franca/update_site/thirdparty"/>
 </location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.genivi.commonapi.core.feature.feature.group" version="3.1.12.v201706201437"/>
+<repository location="http://genivi.github.io/capicxx-core-tools/updatesite/"/>
+</location>
 </locations>
 <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 </target>
