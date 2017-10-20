@@ -1,0 +1,38 @@
+# use new travis infrastructure (container-based)
+sudo: false
+
+# currently we use Java 8
+language: java
+jdk: oraclejdk8
+
+# activate caching to speed up build
+cache:
+  directories:
+  - $HOME/.m2
+
+# this stuff is needed for allowing UI tests
+
+env: DISPLAY=:99.0
+
+install: true
+
+addons:
+  apt:
+    packages:
+    - metacity
+
+before_script:
+- sh -e /etc/init.d/xvfb start
+- metacity --sm-disable --replace 2> metacity.err &
+
+
+# run actual build
+script:
+- export
+- cd org.genivi.commonapi.wamp.releng && mvn clean install && cd ../..
+
+# select branches per whitelist
+branches:
+  only:
+  - master
+  - develop
