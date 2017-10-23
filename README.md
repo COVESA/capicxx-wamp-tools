@@ -1,4 +1,4 @@
-# capicxx-wamp-tools
+# capicxx-wamp-tools [![Build Status](https://travis-ci.org/GENIVI/capicxx-wamp-tools.svg?branch=master)](https://travis-ci.org/GENIVI/capicxx-wamp-tools)
 Common API tooling with WAMP messaging.
 
 ## Roadmap
