@@ -8,9 +8,6 @@
 * http://mozilla.org/MPL/2.0/.
 */
 
-#include <CommonAPI/Wamp/WampConnection.hpp>
-#include <CommonAPI/Wamp/WampClientId.hpp>
-
 #include "testcases/example77/ExampleInterface.hpp"
 #include "testcases/example77/ExampleInterfaceWampStubAdapter.hpp"
 #include "testcases/example77/ExampleInterfaceWampStructsSupport.hpp"

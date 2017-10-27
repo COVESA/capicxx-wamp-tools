@@ -22,6 +22,9 @@
 #include <CommonAPI/Wamp/WampStubAdapter.hpp>
 //#include <CommonAPI/Wamp/WampDeployment.hpp>
 
+#include <CommonAPI/Wamp/WampConnection.hpp>
+#include <CommonAPI/Wamp/WampClientId.hpp>
+
 #undef COMMONAPI_INTERNAL_COMPILATION
 
 #include <autobahn/autobahn.hpp>

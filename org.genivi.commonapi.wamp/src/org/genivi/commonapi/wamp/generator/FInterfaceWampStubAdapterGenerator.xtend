@@ -66,6 +66,9 @@ class FInterfaceWampStubAdapterGenerator {
 		#include <CommonAPI/Wamp/WampStubAdapter.hpp>
 		//#include <CommonAPI/Wamp/WampDeployment.hpp>
 
+		#include <CommonAPI/Wamp/WampConnection.hpp>
+		#include <CommonAPI/Wamp/WampClientId.hpp>
+
 		#undef COMMONAPI_INTERNAL_COMPILATION
 
 		#include <autobahn/autobahn.hpp>
@@ -178,9 +181,6 @@ class FInterfaceWampStubAdapterGenerator {
 
 	def private generateWampStubAdapterSource(FInterface _interface, PropertyAccessor deploymentAccessor,  List<FDProvider> providers, IResource modelid) '''
 		«generateCommonApiWampLicenseHeader()»
-
-		#include <CommonAPI/Wamp/WampConnection.hpp>
-		#include <CommonAPI/Wamp/WampClientId.hpp>
 
 		#include "«_interface.headerPath»"
 		#include "«_interface.wampStubAdapterHeaderPath»"
