@@ -37,7 +37,7 @@ Params_internal transformParams(const ExampleInterface::Params &inst)
 
 ExampleInterface::Params transformParams(const Params_internal &inst_internal)
 {
-	return ExampleInterface::Params_internal(
+	return ExampleInterface::Params(
 		transformSummands(std::get<0>(inst_internal)),
 		std::get<1>(inst_internal)
 	);

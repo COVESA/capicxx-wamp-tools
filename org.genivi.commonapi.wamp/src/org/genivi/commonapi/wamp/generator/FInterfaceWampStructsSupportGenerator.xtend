@@ -90,7 +90,7 @@ class FInterfaceWampStructsSupportGenerator {
 			«fInterface.name»::«stype.name» transform«stype.name»(const «stype.name»_internal &inst_internal)
 			{
 				«IF stype.isNested»
-				return «fInterface.name»::«stype.name»_internal(
+				return «fInterface.name»::«stype.name»(
 					«FOR elem : stype.elements SEPARATOR ","»
 						«IF elem.type.isStruct»
 						transform«elem.type.actualDerived.name»(std::get<«stype.elements.indexOf(elem)»>(inst_internal))
