@@ -111,10 +111,6 @@ class FInterfaceWampStubAdapterGenerator {
 				CommonAPI::Version
 			> get«_interface.elementName»InterfaceVersionStubDispatcher;
 
-			«var counterMap = new HashMap<String, Integer>()»
-			«var methodNumberMap = new HashMap<FMethod, Integer>()»
-			«_interface.generateMethodDispatcherDeclarations(_interface, counterMap, methodNumberMap)»
-
 		private:
 			«_interface.wampStubAdapterHelperClassName»::StubDispatcherTable stubDispatcherTable_;
 			CommonAPI::Wamp::StubAttributeTable stubAttributeTable_;
@@ -138,44 +134,6 @@ class FInterfaceWampStubAdapterGenerator {
 		«_interface.generateVersionNamespaceEnd»
 
 		#endif // «_interface.defineName»_WAMP_STUB_ADAPTER_HPP_
-	'''
-
-
-	def private String generateMethodDispatcherDeclarations(FInterface _interface,
-															FInterface _container,
-															HashMap<String, Integer> _counters, 
-															HashMap<FMethod, Integer> _methods) '''
-		«val accessor = getAccessor(_interface)»						   
-		«FOR method : _interface.methods»			  
-			«FTypeGenerator::generateComments(method, false)»
-			«IF !method.isFireAndForget»
-				static CommonAPI::Wamp::MethodWithReplyStubDispatcher<
-					«_interface.stubFullClassName»,
-					std::tuple<>,
-					std::tuple<>,
-					std::tuple<>,
-					std::tuple<>
-					«IF !(_counters.containsKey(method.wampStubDispatcherVariable))»
-						«{_counters.put(method.wampStubDispatcherVariable, 0);  _methods.put(method, 0);""}»
-				> «method.wampStubDispatcherVariable»;
-				«ELSE»
-					«{_counters.put(method.wampStubDispatcherVariable, _counters.get(method.wampStubDispatcherVariable) + 1);  _methods.put(method, _counters.get(method.wampStubDispatcherVariable));""}»
-				> «method.wampStubDispatcherVariable»«Integer::toString(_counters.get(method.wampStubDispatcherVariable))»;
-				«ENDIF»
-			«ELSE»
-				static CommonAPI::SomeIP::MethodStubDispatcher<
-					«_interface.stubFullClassName»,
-					std::tuple<«method.allInTypes»>,
-					std::tuple<«method.inArgs.getDeploymentTypes(_interface, accessor)»>
-					«IF !(_counters.containsKey(method.wampStubDispatcherVariable))»
-						«{_counters.put(method.wampStubDispatcherVariable, 0); _methods.put(method, 0);""}»
-				> «method.wampStubDispatcherVariable»;
-				«ELSE»
-					«{_counters.put(method.wampStubDispatcherVariable, _counters.get(method.wampStubDispatcherVariable) + 1);  _methods.put(method, _counters.get(method.wampStubDispatcherVariable));""}»
-				> «method.wampStubDispatcherVariable»«Integer::toString(_counters.get(method.wampStubDispatcherVariable))»;
-				«ENDIF»
-			«ENDIF»
-		«ENDFOR»
 	'''
 
 
@@ -220,21 +178,6 @@ class FInterfaceWampStubAdapterGenerator {
 		> «_interface.wampStubAdapterClassNameInternal»::getExampleInterfaceInterfaceVersionStubDispatcher(&ExampleInterfaceStub::getInterfaceVersion, "uu");
 
 
-		«FOR m : _interface.methods»
-		CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
-			«_interface.stubFullClassName»,
-			std::tuple<>,
-			std::tuple<>,
-			std::tuple<>,
-			std::tuple<>
-		> «_interface.wampStubAdapterClassNameInternal»::«m.name»StubDispatcher(
-			&«_interface.stubClassName»::«m.name», "",
-							std::make_tuple(),
-							std::make_tuple());
-
-		«ENDFOR»
-
-
 		const «_interface.wampStubAdapterHelperClassName»::StubDispatcherTable& «_interface.wampStubAdapterClassNameInternal»::getStubDispatcherTable() {
 			return stubDispatcherTable_;
 		}
@@ -249,11 +192,7 @@ class FInterfaceWampStubAdapterGenerator {
 				const std::shared_ptr<CommonAPI::StubBase> &_stub)
 			: CommonAPI::Wamp::WampStubAdapter(_address, _connection, false),
 			  «_interface.wampStubAdapterHelperClassName»(_address, _connection, std::dynamic_pointer_cast<«_interface.stubClassName»>(_stub), false),
-			  stubDispatcherTable_({
-					«FOR m : _interface.methods»
-						{ { "«m.name»", "" }, &«_interface.wampStubAdapterClassNameInternal»::«m.name»StubDispatcher }
-					«ENDFOR»
-					}),
+			  stubDispatcherTable_({ /* TODO: is stubDispatcherTable needed at all? */ }),
 				stubAttributeTable_() {
 			std::cout << "«_interface.wampStubAdapterClassNameInternal» constructor called" << std::endl;
 			stubDispatcherTable_.insert({ { "getInterfaceVersion", "" }, &/*namespace::*/«_interface.wampStubAdapterClassNameInternal»::get«_interface.elementName»InterfaceVersionStubDispatcher });

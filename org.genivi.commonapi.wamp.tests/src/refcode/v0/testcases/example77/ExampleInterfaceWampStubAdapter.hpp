@@ -68,35 +68,6 @@ public:
 		CommonAPI::Version
 	> getExampleInterfaceInterfaceVersionStubDispatcher;
 
-	static CommonAPI::Wamp::MethodWithReplyStubDispatcher<
-		::v0::testcases::example77::ExampleInterfaceStub,
-		std::tuple<>,
-		std::tuple<>,
-		std::tuple<>,
-		std::tuple<>
-	> playStubDispatcher;
-	static CommonAPI::Wamp::MethodWithReplyStubDispatcher<
-		::v0::testcases::example77::ExampleInterfaceStub,
-		std::tuple<>,
-		std::tuple<>,
-		std::tuple<>,
-		std::tuple<>
-	> add2StubDispatcher;
-	static CommonAPI::Wamp::MethodWithReplyStubDispatcher<
-		::v0::testcases::example77::ExampleInterfaceStub,
-		std::tuple<>,
-		std::tuple<>,
-		std::tuple<>,
-		std::tuple<>
-	> add2structStubDispatcher;
-	static CommonAPI::Wamp::MethodWithReplyStubDispatcher<
-		::v0::testcases::example77::ExampleInterfaceStub,
-		std::tuple<>,
-		std::tuple<>,
-		std::tuple<>,
-		std::tuple<>
-	> add2nestedStructStubDispatcher;
-
 private:
 	ExampleInterfaceWampStubAdapterHelper::StubDispatcherTable stubDispatcherTable_;
 	CommonAPI::Wamp::StubAttributeTable stubAttributeTable_;

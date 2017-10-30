@@ -47,52 +47,6 @@ CommonAPI::Wamp::WampGetAttributeStubDispatcher<
 > ExampleInterfaceWampStubAdapterInternal::getExampleInterfaceInterfaceVersionStubDispatcher(&ExampleInterfaceStub::getInterfaceVersion, "uu");
 
 
-CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
-	::v0::testcases::example77::ExampleInterfaceStub,
-	std::tuple<>,
-	std::tuple<>,
-	std::tuple<>,
-	std::tuple<>
-> ExampleInterfaceWampStubAdapterInternal::playStubDispatcher(
-	&ExampleInterfaceStub::play, "",
-					std::make_tuple(),
-					std::make_tuple());
-
-CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
-	::v0::testcases::example77::ExampleInterfaceStub,
-	std::tuple<>,
-	std::tuple<>,
-	std::tuple<>,
-	std::tuple<>
-> ExampleInterfaceWampStubAdapterInternal::add2StubDispatcher(
-	&ExampleInterfaceStub::add2, "",
-					std::make_tuple(),
-					std::make_tuple());
-
-CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
-	::v0::testcases::example77::ExampleInterfaceStub,
-	std::tuple<>,
-	std::tuple<>,
-	std::tuple<>,
-	std::tuple<>
-> ExampleInterfaceWampStubAdapterInternal::add2structStubDispatcher(
-	&ExampleInterfaceStub::add2struct, "",
-					std::make_tuple(),
-					std::make_tuple());
-
-CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
-	::v0::testcases::example77::ExampleInterfaceStub,
-	std::tuple<>,
-	std::tuple<>,
-	std::tuple<>,
-	std::tuple<>
-> ExampleInterfaceWampStubAdapterInternal::add2nestedStructStubDispatcher(
-	&ExampleInterfaceStub::add2nestedStruct, "",
-					std::make_tuple(),
-					std::make_tuple());
-
-
-
 const ExampleInterfaceWampStubAdapterHelper::StubDispatcherTable& ExampleInterfaceWampStubAdapterInternal::getStubDispatcherTable() {
 	return stubDispatcherTable_;
 }
@@ -107,12 +61,7 @@ ExampleInterfaceWampStubAdapterInternal::ExampleInterfaceWampStubAdapterInternal
 		const std::shared_ptr<CommonAPI::StubBase> &_stub)
 	: CommonAPI::Wamp::WampStubAdapter(_address, _connection, false),
 	  ExampleInterfaceWampStubAdapterHelper(_address, _connection, std::dynamic_pointer_cast<ExampleInterfaceStub>(_stub), false),
-	  stubDispatcherTable_({
-			{ { "play", "" }, &ExampleInterfaceWampStubAdapterInternal::playStubDispatcher }
-			{ { "add2", "" }, &ExampleInterfaceWampStubAdapterInternal::add2StubDispatcher }
-			{ { "add2struct", "" }, &ExampleInterfaceWampStubAdapterInternal::add2structStubDispatcher }
-			{ { "add2nestedStruct", "" }, &ExampleInterfaceWampStubAdapterInternal::add2nestedStructStubDispatcher }
-			}),
+	  stubDispatcherTable_({ /* TODO: is stubDispatcherTable needed at all? */ }),
 		stubAttributeTable_() {
 	std::cout << "ExampleInterfaceWampStubAdapterInternal constructor called" << std::endl;
 	stubDispatcherTable_.insert({ { "getInterfaceVersion", "" }, &/*namespace::*/ExampleInterfaceWampStubAdapterInternal::getExampleInterfaceInterfaceVersionStubDispatcher });
