@@ -350,10 +350,10 @@ class FrancaWampGenerator implements IGenerator {
 	                deploymentAccessor = new PropertyAccessor()
 	            }
 			}
-            if (FPreferencesWamp::instance.getPreference(PreferenceConstantsWamp::P_GENERATE_PROXY_WAMP, "true").
-                equals("true")) {
-                it.generateWampProxy(_access, deploymentAccessor, _providers, _res)
-            }
+//            if (FPreferencesWamp::instance.getPreference(PreferenceConstantsWamp::P_GENERATE_PROXY_WAMP, "true").
+//                equals("true")) {
+//                it.generateWampProxy(_access, deploymentAccessor, _providers, _res)
+//            }
             if (FPreferencesWamp::instance.getPreference(PreferenceConstantsWamp::P_GENERATE_STUB_WAMP, "true").
                 equals("true")) {
                 it.generateWampStubAdapter(_access, deploymentAccessor, _providers, _res)
