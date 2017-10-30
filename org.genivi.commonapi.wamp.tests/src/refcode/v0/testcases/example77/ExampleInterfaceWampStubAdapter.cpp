@@ -8,12 +8,13 @@
 * http://mozilla.org/MPL/2.0/.
 */
 
-#include "testcases/example77/ExampleInterface.hpp"
-#include "testcases/example77/ExampleInterfaceWampStubAdapter.hpp"
-#include "testcases/example77/ExampleInterfaceWampStructsSupport.hpp"
+#include "v0/testcases/example77/ExampleInterface.hpp"
+#include "v0/testcases/example77/ExampleInterfaceWampStubAdapter.hpp"
+#include "v0/testcases/example77/ExampleInterfaceWampStructsSupport.hpp"
 
 #include <functional>
 
+namespace v0 {
 namespace testcases {
 namespace example77 {
 
@@ -41,13 +42,13 @@ void ExampleInterfaceWampStubAdapterInternal::deactivateManagedInstances() {
 }
 
 CommonAPI::Wamp::WampGetAttributeStubDispatcher<
-	::testcases::example77::ExampleInterfaceStub,
+	::v0::testcases::example77::ExampleInterfaceStub,
 	CommonAPI::Version
 > ExampleInterfaceWampStubAdapterInternal::getExampleInterfaceInterfaceVersionStubDispatcher(&ExampleInterfaceStub::getInterfaceVersion, "uu");
 
 
 CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
-	::testcases::example77::ExampleInterfaceStub,
+	::v0::testcases::example77::ExampleInterfaceStub,
 	std::tuple<>,
 	std::tuple<>,
 	std::tuple<>,
@@ -58,7 +59,7 @@ CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
 					std::make_tuple());
 
 CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
-	::testcases::example77::ExampleInterfaceStub,
+	::v0::testcases::example77::ExampleInterfaceStub,
 	std::tuple<>,
 	std::tuple<>,
 	std::tuple<>,
@@ -69,7 +70,7 @@ CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
 					std::make_tuple());
 
 CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
-	::testcases::example77::ExampleInterfaceStub,
+	::v0::testcases::example77::ExampleInterfaceStub,
 	std::tuple<>,
 	std::tuple<>,
 	std::tuple<>,
@@ -80,7 +81,7 @@ CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
 					std::make_tuple());
 
 CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<
-	::testcases::example77::ExampleInterfaceStub,
+	::v0::testcases::example77::ExampleInterfaceStub,
 	std::tuple<>,
 	std::tuple<>,
 	std::tuple<>,
@@ -229,3 +230,4 @@ void ExampleInterfaceWampStubAdapterInternal::wrap_add2nestedStruct(autobahn::wa
 
 } // namespace example77
 } // namespace testcases
+} // namespace v0

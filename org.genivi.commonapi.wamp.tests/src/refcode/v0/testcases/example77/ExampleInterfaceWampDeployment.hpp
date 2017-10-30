@@ -8,10 +8,10 @@
 * http://mozilla.org/MPL/2.0/.
 */
 
-#ifndef TESTCASES_EXAMPLE77_Example_Interface_WAMP_DEPLOYMENT_HPP_
-#define TESTCASES_EXAMPLE77_Example_Interface_WAMP_DEPLOYMENT_HPP_
+#ifndef V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_DEPLOYMENT_HPP_
+#define V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_DEPLOYMENT_HPP_
 
-#include <testcases/example77/ExampleInterfaceWampDeployment.hpp>
+#include <v0/testcases/example77/ExampleInterfaceWampDeployment.hpp>
 
 
 #if !defined (COMMONAPI_INTERNAL_COMPILATION)
@@ -20,6 +20,7 @@
 #include <CommonAPI/Wamp/WampDeployment.hpp>
 #undef COMMONAPI_INTERNAL_COMPILATION
 
+namespace v0 {
 namespace testcases {
 namespace example77 {
 namespace ExampleInterface_ {
@@ -56,6 +57,7 @@ typedef CommonAPI::Wamp::StructDeployment<
 } // namespace ExampleInterface_
 } // namespace example77
 } // namespace testcases
+} // namespace v0
 
-#endif // TESTCASES_EXAMPLE77_Example_Interface_WAMP_DEPLOYMENT_HPP_
+#endif // V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_DEPLOYMENT_HPP_
 

@@ -7,11 +7,11 @@
 * If a copy of the MPL was not distributed with this file, You can obtain one at
 * http://mozilla.org/MPL/2.0/.
 */
-#ifndef TESTCASES_EXAMPLE77_Example_Interface_WAMP_STUB_ADAPTER_HPP_
-#define TESTCASES_EXAMPLE77_Example_Interface_WAMP_STUB_ADAPTER_HPP_
+#ifndef V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_STUB_ADAPTER_HPP_
+#define V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_STUB_ADAPTER_HPP_
 
-#include "testcases/example77/ExampleInterfaceStub.hpp"
-//#include "testcases/example77/ExampleInterfaceWampDeployment.hpp"
+#include "v0/testcases/example77/ExampleInterfaceStub.hpp"
+//#include "v0/testcases/example77/ExampleInterfaceWampDeployment.hpp"
 
 #if !defined (COMMONAPI_INTERNAL_COMPILATION)
 #define COMMONAPI_INTERNAL_COMPILATION
@@ -29,6 +29,7 @@
 
 #include <autobahn/autobahn.hpp>
 
+namespace v0 {
 namespace testcases {
 namespace example77 {
 
@@ -63,33 +64,33 @@ public:
 	void deactivateManagedInstances();
 
 	static CommonAPI::Wamp::WampGetAttributeStubDispatcher<
-		::testcases::example77::ExampleInterfaceStub,
+		::v0::testcases::example77::ExampleInterfaceStub,
 		CommonAPI::Version
 	> getExampleInterfaceInterfaceVersionStubDispatcher;
 
 	static CommonAPI::Wamp::MethodWithReplyStubDispatcher<
-		::testcases::example77::ExampleInterfaceStub,
+		::v0::testcases::example77::ExampleInterfaceStub,
 		std::tuple<>,
 		std::tuple<>,
 		std::tuple<>,
 		std::tuple<>
 	> playStubDispatcher;
 	static CommonAPI::Wamp::MethodWithReplyStubDispatcher<
-		::testcases::example77::ExampleInterfaceStub,
+		::v0::testcases::example77::ExampleInterfaceStub,
 		std::tuple<>,
 		std::tuple<>,
 		std::tuple<>,
 		std::tuple<>
 	> add2StubDispatcher;
 	static CommonAPI::Wamp::MethodWithReplyStubDispatcher<
-		::testcases::example77::ExampleInterfaceStub,
+		::v0::testcases::example77::ExampleInterfaceStub,
 		std::tuple<>,
 		std::tuple<>,
 		std::tuple<>,
 		std::tuple<>
 	> add2structStubDispatcher;
 	static CommonAPI::Wamp::MethodWithReplyStubDispatcher<
-		::testcases::example77::ExampleInterfaceStub,
+		::v0::testcases::example77::ExampleInterfaceStub,
 		std::tuple<>,
 		std::tuple<>,
 		std::tuple<>,
@@ -117,5 +118,6 @@ public:
 
 } // namespace example77
 } // namespace testcases
+} // namespace v0
 
-#endif // TESTCASES_EXAMPLE77_Example_Interface_WAMP_STUB_ADAPTER_HPP_
+#endif // V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_STUB_ADAPTER_HPP_

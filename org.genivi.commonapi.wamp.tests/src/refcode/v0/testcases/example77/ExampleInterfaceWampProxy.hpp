@@ -7,11 +7,11 @@
 * If a copy of the MPL was not distributed with this file, You can obtain one at
 * http://mozilla.org/MPL/2.0/.
 */
-#ifndef TESTCASES_EXAMPLE77_Example_Interface_WAMP_PROXY_HPP_
-#define TESTCASES_EXAMPLE77_Example_Interface_WAMP_PROXY_HPP_
+#ifndef V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_PROXY_HPP_
+#define V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_PROXY_HPP_
 
-#include <testcases/example77/ExampleInterfaceProxyBase.hpp>
-#include "testcases/example77/ExampleInterfaceWampDeployment.hpp"
+#include <v0/testcases/example77/ExampleInterfaceProxyBase.hpp>
+#include "v0/testcases/example77/ExampleInterfaceWampDeployment.hpp"
 
 #if !defined (COMMONAPI_INTERNAL_COMPILATION)
 #define COMMONAPI_INTERNAL_COMPILATION
@@ -38,6 +38,7 @@
 #  endif
 # endif
 
+namespace v0 {
 namespace testcases {
 namespace example77 {
 
@@ -73,6 +74,7 @@ private:
 
 } // namespace example77
 } // namespace testcases
+} // namespace v0
 
-#endif // TESTCASES_EXAMPLE77_Example_Interface_WAMP_PROXY_HPP_
+#endif // V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_PROXY_HPP_
 

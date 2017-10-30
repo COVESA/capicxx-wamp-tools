@@ -7,8 +7,9 @@
 * If a copy of the MPL was not distributed with this file, You can obtain one at
 * http://mozilla.org/MPL/2.0/.
 */
-#include <testcases/example77/ExampleInterfaceWampProxy.hpp>
+#include <v0/testcases/example77/ExampleInterfaceWampProxy.hpp>
 
+namespace v0 {
 namespace testcases {
 namespace example77 {
 
@@ -119,14 +120,14 @@ _diff = deploy_diff.getValue();
         std::make_tuple(deploy_sum, deploy_diff));
     }
     void ExampleInterfaceWampProxy::add2struct(const ExampleInterface::Summands &_s, CommonAPI::CallStatus &_internalCallStatus, ExampleInterface::SumDiff &_result, const CommonAPI::CallInfo *_info) {
-        CommonAPI::Deployable< ExampleInterface::Summands, ::testcases::example77::ExampleInterface_::SummandsDeployment_t> deploy_s(_s, static_cast< ::testcases::example77::ExampleInterface_::SummandsDeployment_t* >(nullptr));
-        CommonAPI::Deployable< ExampleInterface::SumDiff, ::testcases::example77::ExampleInterface_::SumDiffDeployment_t> deploy_result(static_cast< ::testcases::example77::ExampleInterface_::SumDiffDeployment_t* >(nullptr));
+        CommonAPI::Deployable< ExampleInterface::Summands, ::v0::testcases::example77::ExampleInterface_::SummandsDeployment_t> deploy_s(_s, static_cast< ::v0::testcases::example77::ExampleInterface_::SummandsDeployment_t* >(nullptr));
+        CommonAPI::Deployable< ExampleInterface::SumDiff, ::v0::testcases::example77::ExampleInterface_::SumDiffDeployment_t> deploy_result(static_cast< ::v0::testcases::example77::ExampleInterface_::SumDiffDeployment_t* >(nullptr));
         CommonAPI::Wamp::WampProxyHelper<
             CommonAPI::Wamp::WampSerializableArguments<
-            CommonAPI::Deployable< ExampleInterface::Summands, ::testcases::example77::ExampleInterface_::SummandsDeployment_t >
+            CommonAPI::Deployable< ExampleInterface::Summands, ::v0::testcases::example77::ExampleInterface_::SummandsDeployment_t >
             >,
             CommonAPI::Wamp::WampSerializableArguments<
-            CommonAPI::Deployable< ExampleInterface::SumDiff,::testcases::example77::ExampleInterface_::SumDiffDeployment_t>
+            CommonAPI::Deployable< ExampleInterface::SumDiff,::v0::testcases::example77::ExampleInterface_::SumDiffDeployment_t>
             >
             >::callMethodWithReply(
         *this,
@@ -139,14 +140,14 @@ deploy_result);
 _result = deploy_result.getValue();
 }
     std::future<CommonAPI::CallStatus> ExampleInterfaceWampProxy::add2structAsync(const ExampleInterface::Summands &_s, Add2structAsyncCallback _callback, const CommonAPI::CallInfo *_info) {
-        CommonAPI::Deployable< ExampleInterface::Summands, ::testcases::example77::ExampleInterface_::SummandsDeployment_t> deploy_s(_s, static_cast< ::testcases::example77::ExampleInterface_::SummandsDeployment_t* >(nullptr));
-        CommonAPI::Deployable< ExampleInterface::SumDiff, ::testcases::example77::ExampleInterface_::SumDiffDeployment_t> deploy_result(static_cast< ::testcases::example77::ExampleInterface_::SumDiffDeployment_t* >(nullptr));
+        CommonAPI::Deployable< ExampleInterface::Summands, ::v0::testcases::example77::ExampleInterface_::SummandsDeployment_t> deploy_s(_s, static_cast< ::v0::testcases::example77::ExampleInterface_::SummandsDeployment_t* >(nullptr));
+        CommonAPI::Deployable< ExampleInterface::SumDiff, ::v0::testcases::example77::ExampleInterface_::SumDiffDeployment_t> deploy_result(static_cast< ::v0::testcases::example77::ExampleInterface_::SumDiffDeployment_t* >(nullptr));
         return CommonAPI::Wamp::WampProxyHelper<
             CommonAPI::Wamp::WampSerializableArguments<
-            CommonAPI::Deployable< ExampleInterface::Summands, ::testcases::example77::ExampleInterface_::SummandsDeployment_t >
+            CommonAPI::Deployable< ExampleInterface::Summands, ::v0::testcases::example77::ExampleInterface_::SummandsDeployment_t >
             >,
             CommonAPI::Wamp::WampSerializableArguments<
-            CommonAPI::Deployable< ExampleInterface::SumDiff,::testcases::example77::ExampleInterface_::SumDiffDeployment_t>
+            CommonAPI::Deployable< ExampleInterface::SumDiff,::v0::testcases::example77::ExampleInterface_::SumDiffDeployment_t>
             >
             >::callMethodAsync(
         *this,
@@ -154,21 +155,21 @@ _result = deploy_result.getValue();
         "(tt)",
         (_info ? _info : &CommonAPI::Wamp::defaultCallInfo),
         deploy_s,
-        [_callback] (CommonAPI::CallStatus _internalCallStatus, CommonAPI::Deployable< ExampleInterface::SumDiff, ::testcases::example77::ExampleInterface_::SumDiffDeployment_t > _result) {
+        [_callback] (CommonAPI::CallStatus _internalCallStatus, CommonAPI::Deployable< ExampleInterface::SumDiff, ::v0::testcases::example77::ExampleInterface_::SumDiffDeployment_t > _result) {
             if (_callback)
                 _callback(_internalCallStatus, _result.getValue());
         },
         std::make_tuple(deploy_result));
     }
     void ExampleInterfaceWampProxy::add2nestedStruct(const ExampleInterface::Params &_p, CommonAPI::CallStatus &_internalCallStatus, ExampleInterface::SumDiff &_result, const CommonAPI::CallInfo *_info) {
-        CommonAPI::Deployable< ExampleInterface::Params, ::testcases::example77::ExampleInterface_::ParamsDeployment_t> deploy_p(_p, static_cast< ::testcases::example77::ExampleInterface_::ParamsDeployment_t* >(nullptr));
-        CommonAPI::Deployable< ExampleInterface::SumDiff, ::testcases::example77::ExampleInterface_::SumDiffDeployment_t> deploy_result(static_cast< ::testcases::example77::ExampleInterface_::SumDiffDeployment_t* >(nullptr));
+        CommonAPI::Deployable< ExampleInterface::Params, ::v0::testcases::example77::ExampleInterface_::ParamsDeployment_t> deploy_p(_p, static_cast< ::v0::testcases::example77::ExampleInterface_::ParamsDeployment_t* >(nullptr));
+        CommonAPI::Deployable< ExampleInterface::SumDiff, ::v0::testcases::example77::ExampleInterface_::SumDiffDeployment_t> deploy_result(static_cast< ::v0::testcases::example77::ExampleInterface_::SumDiffDeployment_t* >(nullptr));
         CommonAPI::Wamp::WampProxyHelper<
             CommonAPI::Wamp::WampSerializableArguments<
-            CommonAPI::Deployable< ExampleInterface::Params, ::testcases::example77::ExampleInterface_::ParamsDeployment_t >
+            CommonAPI::Deployable< ExampleInterface::Params, ::v0::testcases::example77::ExampleInterface_::ParamsDeployment_t >
             >,
             CommonAPI::Wamp::WampSerializableArguments<
-            CommonAPI::Deployable< ExampleInterface::SumDiff,::testcases::example77::ExampleInterface_::SumDiffDeployment_t>
+            CommonAPI::Deployable< ExampleInterface::SumDiff,::v0::testcases::example77::ExampleInterface_::SumDiffDeployment_t>
             >
             >::callMethodWithReply(
         *this,
@@ -181,14 +182,14 @@ deploy_result);
 _result = deploy_result.getValue();
 }
     std::future<CommonAPI::CallStatus> ExampleInterfaceWampProxy::add2nestedStructAsync(const ExampleInterface::Params &_p, Add2nestedStructAsyncCallback _callback, const CommonAPI::CallInfo *_info) {
-        CommonAPI::Deployable< ExampleInterface::Params, ::testcases::example77::ExampleInterface_::ParamsDeployment_t> deploy_p(_p, static_cast< ::testcases::example77::ExampleInterface_::ParamsDeployment_t* >(nullptr));
-        CommonAPI::Deployable< ExampleInterface::SumDiff, ::testcases::example77::ExampleInterface_::SumDiffDeployment_t> deploy_result(static_cast< ::testcases::example77::ExampleInterface_::SumDiffDeployment_t* >(nullptr));
+        CommonAPI::Deployable< ExampleInterface::Params, ::v0::testcases::example77::ExampleInterface_::ParamsDeployment_t> deploy_p(_p, static_cast< ::v0::testcases::example77::ExampleInterface_::ParamsDeployment_t* >(nullptr));
+        CommonAPI::Deployable< ExampleInterface::SumDiff, ::v0::testcases::example77::ExampleInterface_::SumDiffDeployment_t> deploy_result(static_cast< ::v0::testcases::example77::ExampleInterface_::SumDiffDeployment_t* >(nullptr));
         return CommonAPI::Wamp::WampProxyHelper<
             CommonAPI::Wamp::WampSerializableArguments<
-            CommonAPI::Deployable< ExampleInterface::Params, ::testcases::example77::ExampleInterface_::ParamsDeployment_t >
+            CommonAPI::Deployable< ExampleInterface::Params, ::v0::testcases::example77::ExampleInterface_::ParamsDeployment_t >
             >,
             CommonAPI::Wamp::WampSerializableArguments<
-            CommonAPI::Deployable< ExampleInterface::SumDiff,::testcases::example77::ExampleInterface_::SumDiffDeployment_t>
+            CommonAPI::Deployable< ExampleInterface::SumDiff,::v0::testcases::example77::ExampleInterface_::SumDiffDeployment_t>
             >
             >::callMethodAsync(
         *this,
@@ -196,7 +197,7 @@ _result = deploy_result.getValue();
         "((tt)t)",
         (_info ? _info : &CommonAPI::Wamp::defaultCallInfo),
         deploy_p,
-        [_callback] (CommonAPI::CallStatus _internalCallStatus, CommonAPI::Deployable< ExampleInterface::SumDiff, ::testcases::example77::ExampleInterface_::SumDiffDeployment_t > _result) {
+        [_callback] (CommonAPI::CallStatus _internalCallStatus, CommonAPI::Deployable< ExampleInterface::SumDiff, ::v0::testcases::example77::ExampleInterface_::SumDiffDeployment_t > _result) {
             if (_callback)
                 _callback(_internalCallStatus, _result.getValue());
         },
@@ -206,9 +207,10 @@ _result = deploy_result.getValue();
 
 void ExampleInterfaceWampProxy::getOwnVersion(uint16_t& ownVersionMajor, uint16_t& ownVersionMinor) const {
           ownVersionMajor = 0;
-          ownVersionMinor = 0;
+          ownVersionMinor = 7;
       }
 
       } // namespace example77
       } // namespace testcases
+      } // namespace v0
 

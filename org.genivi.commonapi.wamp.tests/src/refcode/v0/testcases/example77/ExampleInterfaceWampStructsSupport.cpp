@@ -8,8 +8,9 @@
 * http://mozilla.org/MPL/2.0/.
 */
 
-#include "testcases/example77/ExampleInterfaceWampStructsSupport.hpp"
+#include "v0/testcases/example77/ExampleInterfaceWampStructsSupport.hpp"
 
+namespace v0 {
 namespace testcases {
 namespace example77 {
 
@@ -58,3 +59,4 @@ ExampleInterface::SumDiff transformSumDiff(const SumDiff_internal &inst_internal
 
 } // namespace example77
 } // namespace testcases
+} // namespace v0

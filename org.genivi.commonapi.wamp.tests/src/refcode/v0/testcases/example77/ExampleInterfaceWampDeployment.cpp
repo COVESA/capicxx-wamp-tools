@@ -9,6 +9,7 @@
 */
 #include "ExampleInterfaceWampDeployment.hpp"
 
+namespace v0 {
 namespace testcases {
 namespace example77 {
 namespace ExampleInterface_ {
@@ -24,3 +25,4 @@ namespace ExampleInterface_ {
 } // namespace ExampleInterface_
 } // namespace example77
 } // namespace testcases
+} // namespace v0

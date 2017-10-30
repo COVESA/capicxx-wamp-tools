@@ -7,11 +7,12 @@
 * If a copy of the MPL was not distributed with this file, You can obtain one at
 * http://mozilla.org/MPL/2.0/.
 */
-#ifndef TESTCASES_EXAMPLE77_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
-#define TESTCASES_EXAMPLE77_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
+#ifndef V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
+#define V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
 
-#include <testcases/example77/ExampleInterface.hpp>
+#include <v0/testcases/example77/ExampleInterface.hpp>
 
+namespace v0 {
 namespace testcases {
 namespace example77 {
 
@@ -29,6 +30,7 @@ extern ExampleInterface::SumDiff transformSumDiff(const SumDiff_internal &sumDif
 
 } // namespace example77
 } // namespace testcases
+} // namespace v0
 
-#endif // TESTCASES_EXAMPLE77_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
+#endif // V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
 

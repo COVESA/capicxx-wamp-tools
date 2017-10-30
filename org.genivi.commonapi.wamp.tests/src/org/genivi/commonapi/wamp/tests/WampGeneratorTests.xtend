@@ -33,6 +33,7 @@ public class WampGeneratorTests extends GeneratorTestBase {
 	val private static TEST_MODEL_FOLDER = "models/"
 	val private static EXAMPLE_SUBFOLDER = "testcases"
 	val private static REFCODE_FOLDER    = "src/refcode/"
+	val private static VERSION_TAG = "v0"
 	
 	@Inject FrancaPersistenceManager loader
 	@Inject IGenerator generator
@@ -68,7 +69,8 @@ public class WampGeneratorTests extends GeneratorTestBase {
 		generator.doGenerate(fmodel.eResource, fsa)
 
 		// check if all reference files have been generated
-		val refFolderPath = REFCODE_FOLDER + SEP + path
+		val expectedPath = VERSION_TAG + SEP + path
+		val refFolderPath = REFCODE_FOLDER + SEP + expectedPath
 		val refFolder = new File(refFolderPath)
 		assertTrue("Missing folder for reference files '" + refFolderPath + "'", refFolder.exists())
 		val refFiles = refFolder.listFiles 
@@ -93,10 +95,10 @@ public class WampGeneratorTests extends GeneratorTestBase {
 				val output = fsa.getTextFiles().get(key) 
 				
 				// check that outpath starts with correct path
-				val expectedPath = path + SEP
-				assertTrue(outpath.startsWith(expectedPath))
+				val expectedPathSep = expectedPath + SEP
+				assertTrue(outpath.startsWith(expectedPathSep))
 				
-				val outfile = outpath.substring(expectedPath.length)
+				val outfile = outpath.substring(expectedPathSep.length)
 				val referenceFile = REFCODE_FOLDER + SEP + outpath
 				if (OVERRIDE) { 
 					overrideFile(referenceFile, output.toString) 
