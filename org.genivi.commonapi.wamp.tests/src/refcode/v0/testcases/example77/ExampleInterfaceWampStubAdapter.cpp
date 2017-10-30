@@ -108,10 +108,10 @@ ExampleInterfaceWampStubAdapterInternal::ExampleInterfaceWampStubAdapterInternal
 	: CommonAPI::Wamp::WampStubAdapter(_address, _connection, false),
 	  ExampleInterfaceWampStubAdapterHelper(_address, _connection, std::dynamic_pointer_cast<ExampleInterfaceStub>(_stub), false),
 	  stubDispatcherTable_({
-			{ { "play", "" }, &example::ExampleInterfaceWampStubAdapterInternal::playStubDispatcher }
-			{ { "add2", "" }, &example::ExampleInterfaceWampStubAdapterInternal::add2StubDispatcher }
-			{ { "add2struct", "" }, &example::ExampleInterfaceWampStubAdapterInternal::add2structStubDispatcher }
-			{ { "add2nestedStruct", "" }, &example::ExampleInterfaceWampStubAdapterInternal::add2nestedStructStubDispatcher }
+			{ { "play", "" }, &ExampleInterfaceWampStubAdapterInternal::playStubDispatcher }
+			{ { "add2", "" }, &ExampleInterfaceWampStubAdapterInternal::add2StubDispatcher }
+			{ { "add2struct", "" }, &ExampleInterfaceWampStubAdapterInternal::add2structStubDispatcher }
+			{ { "add2nestedStruct", "" }, &ExampleInterfaceWampStubAdapterInternal::add2nestedStructStubDispatcher }
 			}),
 		stubAttributeTable_() {
 	std::cout << "ExampleInterfaceWampStubAdapterInternal constructor called" << std::endl;

@@ -251,7 +251,7 @@ class FInterfaceWampStubAdapterGenerator {
 			  «_interface.wampStubAdapterHelperClassName»(_address, _connection, std::dynamic_pointer_cast<«_interface.stubClassName»>(_stub), false),
 			  stubDispatcherTable_({
 					«FOR m : _interface.methods»
-						{ { "«m.name»", "" }, &example::«_interface.wampStubAdapterClassNameInternal»::«m.name»StubDispatcher }
+						{ { "«m.name»", "" }, &«_interface.wampStubAdapterClassNameInternal»::«m.name»StubDispatcher }
 					«ENDFOR»
 					}),
 				stubAttributeTable_() {
