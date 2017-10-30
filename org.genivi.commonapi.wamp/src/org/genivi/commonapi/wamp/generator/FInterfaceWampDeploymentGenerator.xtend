@@ -40,33 +40,34 @@ class FInterfaceWampDeploymentGenerator extends FTypeCollectionWampDeploymentGen
     def private generateDeploymentHeader(FInterface _interface,
                                          PropertyAccessor _accessor,
                                          IResource _modelid) '''
-        «generateCommonApiWampLicenseHeader()»
+		«generateCommonApiWampLicenseHeader()»
 
-        #ifndef «_interface.defineName»_WAMP_DEPLOYMENT_HPP_
-        #define «_interface.defineName»_WAMP_DEPLOYMENT_HPP_
+		#ifndef «_interface.defineName»_WAMP_DEPLOYMENT_HPP_
+		#define «_interface.defineName»_WAMP_DEPLOYMENT_HPP_
 
-        «val DeploymentHeaders = _interface.getDeploymentInputIncludes(_accessor)»
-        «DeploymentHeaders.map["#include <" + it + ">"].join("\n")»
-        «val generatedHeaders = new HashSet<String>»
-        «_interface.attributes.forEach[
+		«val DeploymentHeaders = _interface.getDeploymentInputIncludes(_accessor)»
+		«DeploymentHeaders.map["#include <" + it + ">"].join("\n")»
+		«val generatedHeaders = new HashSet<String>»
+		«_interface.attributes.forEach[
             if(type.derived != null) {
                 type.derived.addRequiredHeaders(generatedHeaders)
             } ]»
 
         «FOR requiredHeaderFile : generatedHeaders.sort»
-            #include <«requiredHeaderFile»>
+			#include <«requiredHeaderFile»>
         «ENDFOR»
 
-        #if !defined (COMMONAPI_INTERNAL_COMPILATION)
-        #define COMMONAPI_INTERNAL_COMPILATION
-        #endif
-        #include <CommonAPI/Wamp/WampDeployment.hpp>
-        #undef COMMONAPI_INTERNAL_COMPILATION
+		#if !defined (COMMONAPI_INTERNAL_COMPILATION)
+		#define COMMONAPI_INTERNAL_COMPILATION
+		#endif
+		//#include <CommonAPI/Wamp/WampDeployment.hpp>
+		#undef COMMONAPI_INTERNAL_COMPILATION
 
-        «_interface.generateVersionNamespaceBegin»
-        «_interface.model.generateNamespaceBeginDeclaration»
-        «_interface.generateDeploymentNamespaceBegin»
+		«_interface.generateVersionNamespaceBegin»
+		«_interface.model.generateNamespaceBeginDeclaration»
+		«_interface.generateDeploymentNamespaceBegin»
 
+		«IF false /* TODO: is deployment needed? */»
         // Interface-specific deployment types
         «FOR t: _interface.types»
             «IF !(t instanceof FEnumerationType)»
@@ -102,14 +103,14 @@ class FInterfaceWampDeploymentGenerator extends FTypeCollectionWampDeploymentGen
                 «a.generateDeploymentDeclaration(broadcast, _interface, _accessor)»
             «ENDFOR»
         «ENDFOR»
+		«ENDIF»
 
+		«_interface.generateDeploymentNamespaceEnd»
+		«_interface.model.generateNamespaceEndDeclaration»
+		«_interface.generateVersionNamespaceEnd»
 
-        «_interface.generateDeploymentNamespaceEnd»
-        «_interface.model.generateNamespaceEndDeclaration»
-        «_interface.generateVersionNamespaceEnd»
+		#endif // «_interface.defineName»_WAMP_DEPLOYMENT_HPP_
 
-        #endif // «_interface.defineName»_WAMP_DEPLOYMENT_HPP_
-        
     '''
 
     def private generateDeploymentSource(FInterface _interface,

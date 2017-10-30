@@ -17,41 +17,13 @@
 #if !defined (COMMONAPI_INTERNAL_COMPILATION)
 #define COMMONAPI_INTERNAL_COMPILATION
 #endif
-#include <CommonAPI/Wamp/WampDeployment.hpp>
+//#include <CommonAPI/Wamp/WampDeployment.hpp>
 #undef COMMONAPI_INTERNAL_COMPILATION
 
 namespace v0 {
 namespace testcases {
 namespace example77 {
 namespace ExampleInterface_ {
-
-// Interface-specific deployment types
-typedef CommonAPI::Wamp::StructDeployment<
-    CommonAPI::EmptyDeployment,
-    CommonAPI::EmptyDeployment
-> SummandsDeployment_t;
-
-typedef CommonAPI::Wamp::StructDeployment<
-    CommonAPI::Wamp::StructDeployment<
-        CommonAPI::EmptyDeployment,
-        CommonAPI::EmptyDeployment
-    >,
-    CommonAPI::EmptyDeployment
-> ParamsDeployment_t;
-
-typedef CommonAPI::Wamp::StructDeployment<
-    CommonAPI::EmptyDeployment,
-    CommonAPI::EmptyDeployment
-> SumDiffDeployment_t;
-
-
-// Type-specific deployments
-
-// Attribute-specific deployments
-
-// Argument-specific deployments
-
-// Broadcast-specific deployments
 
 
 } // namespace ExampleInterface_
