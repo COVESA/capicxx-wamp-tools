@@ -18,8 +18,6 @@ int main(int argc, const char * const argv[])
 
 	std::shared_ptr<CommonAPI::Runtime> runtime = CommonAPI::Runtime::get();
 
-	COMMONAPI_INFO("INFO BLA");
-
 	std::string domain = "local";
 	std::string instance = "testcases.example77.ExampleInterface";
 	std::string connection = "service-sample";
