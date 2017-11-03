@@ -40,7 +40,7 @@ include(FindPkgConfig)
 #pkg_check_modules (DBUS "dbus-1 >= 1.4")
 
 # Source Files
-set(PRJ_SRC_PATH src)
+set(PRJ_SRC_PATH src/example77/server)
 set(PRJ_SRC_GEN_PATH src-gen/v0/testcases/example77)
 
 #set(PRJ_NAME_CLIENT ${PRJ_NAME}Client)
