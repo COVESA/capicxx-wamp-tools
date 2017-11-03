@@ -33,5 +33,15 @@ It will be extended later, the example folder and build structure is subject to 
 
 1. build the executables and shared objects (see above)
 2. cd workdir
-3. ./run.sh
+3. start crossbar (depending on your installation directory, e.g., "/opt/crossbar/bin/crossbar start", will read .crossbar configuration)
+3. open another shell and again: cd workdir
+4. start server with: ./runServer.sh
 
+### Run the example REST client
+
+1. open shell and: cd workdir
+2. issue REST client request with ./runRESTClient.sh
+
+TODO: Add C++ client and HTML/JS client here.
+
+ 
