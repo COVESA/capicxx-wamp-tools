@@ -14,12 +14,12 @@ It will be extended later, the example folder and build structure is subject to 
 
 ### Actual build steps
 
-* generate code for fidl-files in models folder with CommonAPI-C++ Core generator (this will produce some C++ headers and sources in the src-gen directory)
-* generate code for fidl-files in models folder with CommonAPI-C++ Wamp generator (this will produce some more C++ headers and sources in the src-gen directory)
-* mkdir build
-* cd build
-* cmake ..
-* make
+1. generate code for fidl-files in models folder with CommonAPI-C++ Core generator (this will produce some C++ headers and sources in the src-gen directory)
+2. generate code for fidl-files in models folder with CommonAPI-C++ Wamp generator (this will produce some more C++ headers and sources in the src-gen directory)
+3. mkdir build
+4. cd build
+5. cmake ..
+6. make
 
 
 ## How to run
@@ -31,7 +31,7 @@ It will be extended later, the example folder and build structure is subject to 
 
 ### Actual steps to run the service
 
-* build the executables and shared objects (see above)
-* cd workdir
-* ./run.sh
+1. build the executables and shared objects (see above)
+2. cd workdir
+3. ./run.sh
 
