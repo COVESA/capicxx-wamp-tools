@@ -37,11 +37,27 @@ It will be extended later, the example folder and build structure is subject to 
 3. open another shell and again: cd workdir
 4. start server with: ./runServer.sh
 
+## Run the example HTML/JS client
+
+In this example, Crossbar.io will pass the WAMP requests between client and server.
+
+1. open browser
+2. open file src/example77/client/index.html
+3. enter two numbers and press "Compute sum"
+4. a WAMP connection will be used to send the two arguments to the server and retrieve the results
+
+Note: This example is currently based on the plain Autobahn/JS API. 
+We probably will add a JS code generator lateron.
+
 ### Run the example REST client
+
+In this example, Crossbar.io will map client-side REST requests to WAMP requests for the server
+(and vice versa).
 
 1. open shell and: cd workdir
 2. issue REST client request with ./runRESTClient.sh
 
-TODO: Add C++ client and HTML/JS client here.
+
+#TODO: Add C++ client here.
 
  
