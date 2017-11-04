@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+   <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+   </head>
+   <body>
+      <h1>Franca and CommonAPI C++ WAMP Example</h1>
+      <p>This simple calculator example uses WAMP communication to interact with a C++ server using CommonAPI.</p>
+      
+      <form>
+         <label for="operand1">Operand 1: </label>
+         <input type="number" data-clear-btn="false" name="operand1" id="operand1" value=""><br/>
+         <label for="operand2">Operand 2: </label>
+         <input type="number" data-clear-btn="false" name="operand2" id="operand2" value=""><br/><br/>
+         <button type="button" id="add">Compute sum</button><br/><br/>
+         <label>Result: <output id="sum" /></label><br/>
+         <br/><hr/>
+         <label>Status: <output id="connectionStatus"></output></label>
+      </form>
+      
+      <script src="autobahn.min.js"></script>
+      <script type="text/javascript">
+         console.log("I am alive!");
+         var connection = new autobahn.Connection({
+            url: 'ws://127.0.0.1:8080/ws',
+            realm: 'realm1'}
+         );
+
+         connection.onopen = function(session, details) {
+            console.log("Connected", details);
+            setStatus("Connected to network.");
+
+	         document.getElementById("add").onclick = function() {
+	         	var arg1 = parseInt(document.getElementById("operand1").value);
+	         	var arg2 = parseInt(document.getElementById("operand2").value);
+	         	console.log("adding " + arg1 + " and " + arg2);
+					
+	            var clientId = 66;
+	            var addr = 'local:testcases.example77.ExampleInterface:v0_7:testcases.example77.ExampleInterface';
+	            session.call(addr + '.add2', [clientId, arg1, arg2]).then(
+	               function (res) {
+	                  console.log("Call succeeded, result: ", res);
+	                  document.getElementById("sum").value = res.args[0];
+	               },
+	               function (err) {
+	                  console.log("Call failed, error message: ", err);
+	                  document.getElementById("sum").value = "??";
+	               }
+	            );
+	         };
+         };
+
+         connection.onclose = function(reason, details) {
+            console.log("Connection closed", reason, details);
+            setStatus("Disconnected.");
+         }
+         
+         setStatus("Connecting to server...");
+         connection.open();
+
+         function setStatus(text) {
+            document.getElementById("connectionStatus").value = text;
+         }
+	        
+      </script>
+   </body>
+</html>
