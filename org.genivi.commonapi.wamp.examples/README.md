@@ -34,7 +34,7 @@ It will be extended later, the example folder and build structure is subject to 
 1. build the executables and shared objects (see above)
 2. cd workdir
 3. start crossbar (depending on your installation directory, e.g., "/opt/crossbar/bin/crossbar start", will read .crossbar configuration)
-3. open another shell and again: cd workdir
+3. open another shell: cd workdir/example77
 4. start server with: ./runServer.sh
 
 ## Run the example HTML/JS client
@@ -54,7 +54,7 @@ We probably will add a JS code generator lateron.
 In this example, Crossbar.io will map client-side REST requests to WAMP requests for the server
 (and vice versa).
 
-1. open shell and: cd workdir
+1. open shell and: cd workdir/example77
 2. issue REST client request with ./runRESTClient.sh
 
 
