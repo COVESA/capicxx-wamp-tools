@@ -39,7 +39,12 @@ public class WampGeneratorTests extends GeneratorTestBase {
 	@Inject IGenerator generator
 
 	@Test
-	def void test01() {
+	def void test10() {
+		doGeneratorTest(EXAMPLE_SUBFOLDER + SEP + "example10", "ExampleInterface"); //$NON-NLS-1$ 
+	}
+
+	@Test
+	def void test77() {
 		doGeneratorTest(EXAMPLE_SUBFOLDER + SEP + "example77", "ExampleInterface"); //$NON-NLS-1$ 
 	}
 

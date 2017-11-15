@@ -1,0 +1,14 @@
+package testcases.example10
+
+interface ExampleInterface {
+	version { major 0 minor 7 }
+
+	method method1 {
+		in {
+			Int64 arg1
+		}
+		out {
+			Int64 ret1
+		}
+	}
+}
