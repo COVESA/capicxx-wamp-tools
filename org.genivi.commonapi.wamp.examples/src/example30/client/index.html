@@ -25,9 +25,12 @@
             console.log("Connected", details);
             setStatus("Connected to network.");
             
-            var topic = 'local:testcases.example30.ExampleInterface:v0_7:testcases.example30.ExampleInterface.broadcast1';
-            session.subscribe(topic, function(args) {
-               console.log("Event:", args[0]);
+            var addr = 'local:testcases.example30.ExampleInterface:v0_7:testcases.example30.ExampleInterface.';
+            session.subscribe(addr + 'broadcast1', function(args) {
+               console.log("received broadcast1: ", args[0]);
+            });
+            session.subscribe(addr + 'broadcast2', function(args) {
+               console.log("received broadcast2: ", args[0], ", ", args[1]);
             });
             
          };
