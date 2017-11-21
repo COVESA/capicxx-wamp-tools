@@ -209,29 +209,31 @@ class FInterfaceWampStubAdapterGenerator {
 
 		void «_interface.wampStubAdapterClassNameInternal»::provideRemoteMethods() {
 			std::cout << "provideRemoteMethods called" << std::endl;
+			«IF !_interface.methods.empty»
 		
-			// busy waiting until the session is started and joined
-			while(!getWampConnection()->isConnected());
-		
-			CommonAPI::Wamp::WampConnection* connection = (CommonAPI::Wamp::WampConnection*)(getWampConnection().get());
-			connection->ioMutex_.lock();
-		
-			«FOR m : _interface.methods»
-			boost::future<void> provide_future_«m.name» = connection->session_->provide(getWampAddress().getRealm() + ".«m.name»",
-					std::bind(&«_interface.wampStubAdapterClassNameInternal»::wrap_«m.name», this, std::placeholders::_1))
-				.then([&](boost::future<autobahn::wamp_registration> registration) {
-				try {
-					std::cerr << "registered procedure " << getWampAddress().getRealm() << ".«m.name»: id=" << registration.get().id() << std::endl;
-				} catch (const std::exception& e) {
-					std::cerr << e.what() << std::endl;
-					connection->io_.stop();
-					return;
-				}
-			});
-			provide_future_«m.name».get();
+				// busy waiting until the session is started and joined
+				while(!getWampConnection()->isConnected());
+			
+				CommonAPI::Wamp::WampConnection* connection = (CommonAPI::Wamp::WampConnection*)(getWampConnection().get());
+				connection->ioMutex_.lock();
+			
+				«FOR m : _interface.methods»
+				boost::future<void> provide_future_«m.name» = connection->session_->provide(getWampAddress().getRealm() + ".«m.name»",
+						std::bind(&«_interface.wampStubAdapterClassNameInternal»::wrap_«m.name», this, std::placeholders::_1))
+					.then([&](boost::future<autobahn::wamp_registration> registration) {
+					try {
+						std::cerr << "registered procedure " << getWampAddress().getRealm() << ".«m.name»: id=" << registration.get().id() << std::endl;
+					} catch (const std::exception& e) {
+						std::cerr << e.what() << std::endl;
+						connection->io_.stop();
+						return;
+					}
+				});
+				provide_future_«m.name».get();
 
-			«ENDFOR»
-			connection->ioMutex_.unlock();
+				«ENDFOR»
+				connection->ioMutex_.unlock();
+			«ENDIF»
 		}
 
 
