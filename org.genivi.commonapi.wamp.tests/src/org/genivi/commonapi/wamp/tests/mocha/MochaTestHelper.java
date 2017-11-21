@@ -6,7 +6,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertNotNull;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -25,8 +29,19 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.xtext.generator.IFileSystemAccess;
+import org.eclipse.xtext.generator.IGenerator;
+import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
+import org.eclipse.xtext.generator.OutputConfiguration;
+import org.franca.core.dsl.FrancaPersistenceManager;
+import org.franca.core.franca.FModel;
+import org.genivi.commonapi.core.preferences.FPreferences;
+import org.genivi.commonapi.core.preferences.PreferenceConstants;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
+
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 /**
  * @author Markus Mühlbrandt
@@ -51,6 +66,15 @@ public class MochaTestHelper {
 	private final Object owner;
 	protected Compiler compiler;
 
+	@Inject
+	protected FrancaPersistenceManager loader;
+
+	@Inject
+	protected Set<IGenerator> generators;
+
+	@Inject
+	protected Injector injector;
+
 	public MochaTestHelper(Object owner) {
 		this(owner, Compiler.GCC);
 	}
@@ -59,58 +83,89 @@ public class MochaTestHelper {
 		this.owner = owner;
 		this.compiler = compiler;
 	}
-	
-	// public void generate() {
-		// IPath targetPath = getTargetPath();
-		//
-		// // copy model to JUnit workspace
-		// copyFileFromBundleToFolder(getModelBundle(), getModelPath(), targetPath);
-		//
-		// // String sgenFileName = getSgenFileName(getTestProgram());
-		// copyFileFromBundleToFolder(getTestBundle(), sgenFileName, targetPath);
-		//
-		// // GeneratorModel model = getGeneratorModel(sgenFileName);
-		// model.getEntries().get(0).setElementRef(getStatechart());
-		//
-		// performFullBuild();
-		//
-		// getGeneratorExecutorLookup().execute(model);
-		// }
 
-	
+	@SuppressWarnings("deprecation")
+	public void generate() {
+		IPath targetPath = getTargetPath();
+
+		// copy model to JUnit workspace
+//		copyFileFromBundleToFolder(getBundle(getModelBundleAnnotation()),
+//				getModelPath(), targetPath);
+//		String inputFile = targetPath + File.separator
+//				+ getModelPath().lastSegment();
+		 String inputFile = getModelAnnotation();
+		// load model
+		FModel fmodel = loader.loadModel(inputFile);
+		assertNotNull("Could not load model from file: " + inputFile, fmodel);
+		// handle generator model
+		// String sgenFileName = getSgenFileName(getTestProgram());
+		// copyFileFromBundleToFolder(getTestBundle(), sgenFileName,
+		// targetPath);
+		// GeneratorModel model = getGeneratorModel(sgenFileName);
+		// model.getEntries().get(0).setElementRef(getStatechart());
+
+		// Generate model files
+
+		JavaIoFileSystemAccess fsa = injector
+				.getInstance(JavaIoFileSystemAccess.class);
+
+		// String targetPathString = targetPath.toString();
+		// FPreferences.getInstance().setPreference(
+		// PreferenceConstants.P_OUTPUT_SUBDIRS, "true");
+		// FPreferences.getInstance().setPreference(
+		// PreferenceConstants.P_OUTPUT_DEFAULT, targetPath.toString());
+		fsa.setOutputConfigurations(FPreferences.getInstance()
+				.getOutputpathConfiguration());
+
+		generators.forEach(generator -> generator.doGenerate(
+				fmodel.eResource(), fsa));
+
+//		performFullBuild();
+
+		// getGeneratorExecutorLookup().execute(model);
+	}
+
 	public void copyFilesFromBundleToFolder() {
 		IPath targetPath = getTargetPath();
 		List<String> testDataFiles = getFilesToCopy();
 		getTestDataFiles(testDataFiles);
 		for (String file : testDataFiles) {
-			copyFileFromBundleToFolder(getTestBundle(), file, targetPath);
+			copyFileFromBundleToFolder(getBundle(getTestBundleAnnotation()),
+					file, targetPath);
 		}
 	}
 
-//	public void compile() {
-////		copyFilesFromBundleToFolder();
-//		IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(getTargetPath());
-//		File directory = resource.getLocation().toFile();
-//		List<String> command = createCommand();
-//
-//		getCommandExecutor().execute(command, directory);
-//	}
+	// public void compile() {
+	// // copyFilesFromBundleToFolder();
+	// IResource resource =
+	// ResourcesPlugin.getWorkspace().getRoot().findMember(getTargetPath());
+	// File directory = resource.getLocation().toFile();
+	// List<String> command = createCommand();
+	//
+	// getCommandExecutor().execute(command, directory);
+	// }
 
-//	protected GeneratorModel getGeneratorModel(String sgenFileName) {
-//		IPath path = new Path(sgenFileName);
-//		Resource sgenResource = loadResource(getWorkspaceFileFor(path));
-//		GeneratorModel model = (GeneratorModel) sgenResource.getContents().get(0);
-//		return model;
-//	}
+	// protected GeneratorModel getGeneratorModel(String sgenFileName) {
+	// IPath path = new Path(sgenFileName);
+	// Resource sgenResource = loadResource(getWorkspaceFileFor(path));
+	// GeneratorModel model = (GeneratorModel)
+	// sgenResource.getContents().get(0);
+	// return model;
+	// }
+
+	// protected String getModelFileName(String testProgram) {
+	// String sgenFileName = testProgram + ".sgen";
+	// return sgenFileName;
+	// }
 
 	protected List<String> getFilesToCopy() {
-		return new ArrayList<String>(
-				Arrays.asList(owner.getClass().getAnnotation(MochaTest.class).additionalFilesToCopy()));
+		return new ArrayList<String>(Arrays.asList(owner.getClass()
+				.getAnnotation(MochaTest.class).additionalFilesToCopy()));
 	}
-	
+
 	protected List<String> getFilesToCompile() {
-		return new ArrayList<String>(
-				Arrays.asList(owner.getClass().getAnnotation(MochaTest.class).additionalFilesToCompile()));
+		return new ArrayList<String>(Arrays.asList(owner.getClass()
+				.getAnnotation(MochaTest.class).additionalFilesToCompile()));
 	}
 
 	// protected GeneratorExecutorLookup getGeneratorExecutorLookup() {
@@ -121,68 +176,67 @@ public class MochaTestHelper {
 		return new CommandExecutor();
 	}
 
-	protected void performFullBuild() {
-		try {
-			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, null);
-		} catch (CoreException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected IFile getWorkspaceFileFor(IPath filePath) {
-		return ResourcesPlugin.getWorkspace().getRoot().getFile(getTargetProjectPath().append(filePath));
-	}
-
-//	protected Statechart getStatechart() {
-//		IPath path = new Path(getTargetPath().toString() + "/" + getModelPath().lastSegment());
-//		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-//		Resource resource = loadResource(file);
-//		return (Statechart) resource.getContents().get(0);
+//	protected void performFullBuild() {
+//		try {
+//			ResourcesPlugin.getWorkspace().build(
+//					IncrementalProjectBuilder.FULL_BUILD, null);
+//		} catch (CoreException e) {
+//			throw new RuntimeException(e);
+//		}
 //	}
 
+	protected IFile getWorkspaceFileFor(IPath filePath) {
+		return ResourcesPlugin.getWorkspace().getRoot()
+				.getFile(getTargetProjectPath().append(filePath));
+	}
+
+	// protected Statechart getStatechart() {
+	// IPath path = new Path(getTargetPath().toString() + "/" +
+	// getModelPath().lastSegment());
+	// IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+	// Resource resource = loadResource(file);
+	// return (Statechart) resource.getContents().get(0);
+	// }
+
 	protected Resource loadResource(IFile file) {
-		URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
+		URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(),
+				true);
 		Resource resource = new ResourceSetImpl().getResource(uri, true);
 		return resource;
 	}
 
-//	protected Bundle getModelBundle() {
-//		String bundle = getStatechartBundleAnnotation();
-//		return Platform.getBundle(bundle);
-//	}
-
-//	protected List<String> createCommand() {
-//		String gTestDirectory = getGTestDirectory();
-//
-//		List<String> includes = new ArrayList<String>();
-//		getIncludes(includes);
-//
-//		List<String> sourceFiles = getFilesToCompile();
-//		getSourceFiles(sourceFiles);
-//
-//		List<String> command = new ArrayList<String>();
-//		command.add(getCompilerCommand());
-//		command.add("-o");
-//		command.add(getFileName(getTestProgram()));
-//		command.add("-O2");
-//		if (gTestDirectory != null)
-//			command.add("-I" + gTestDirectory + "/include");
-//		for (String include : includes) {
-//			command.add("-I" + include);
-//		}
-//		if (gTestDirectory != null)
-//			command.add("-L" + gTestDirectory);
-//		for (String sourceFile : sourceFiles) {
-//			command.add(getFileName(sourceFile));
-//		}
-//		command.add("-lgtest");
-//		command.add("-lgtest_main");
-//		command.add("-lm");
-//		command.add("-lstdc++");
-//		command.add("-pthread");
-//		// command.add("-pg");
-//		return command;
-//	}
+	// protected List<String> createCommand() {
+	// String gTestDirectory = getGTestDirectory();
+	//
+	// List<String> includes = new ArrayList<String>();
+	// getIncludes(includes);
+	//
+	// List<String> sourceFiles = getFilesToCompile();
+	// getSourceFiles(sourceFiles);
+	//
+	// List<String> command = new ArrayList<String>();
+	// command.add(getCompilerCommand());
+	// command.add("-o");
+	// command.add(getFileName(getTestProgram()));
+	// command.add("-O2");
+	// if (gTestDirectory != null)
+	// command.add("-I" + gTestDirectory + "/include");
+	// for (String include : includes) {
+	// command.add("-I" + include);
+	// }
+	// if (gTestDirectory != null)
+	// command.add("-L" + gTestDirectory);
+	// for (String sourceFile : sourceFiles) {
+	// command.add(getFileName(sourceFile));
+	// }
+	// command.add("-lgtest");
+	// command.add("-lgtest_main");
+	// command.add("-lm");
+	// command.add("-lstdc++");
+	// command.add("-pthread");
+	// // command.add("-pg");
+	// return command;
+	// }
 
 	/**
 	 * @return
@@ -208,12 +262,13 @@ public class MochaTestHelper {
 	}
 
 	protected IPath getTargetPath() {
-		return getTargetProjectPath().append(new Path(getTestSourceFile()).removeLastSegments(1));
+		return getTargetProjectPath().append(
+				new Path(getTestSourceFile()).removeLastSegments(1));
 	}
 
-//	protected IPath getModelPath() {
-//		return new Path(getModelAnnotation());
-//	}
+	protected IPath getModelPath() {
+		return new Path(getModelAnnotation());
+	}
 
 	protected void getIncludes(Collection<String> includes) {
 	}
@@ -230,48 +285,55 @@ public class MochaTestHelper {
 		files.add(getTestSourceFile());
 	}
 
-//	protected String getTestProgram() {
-//		return owner.getClass().getAnnotation(MochaTest.class).program();
-//	}
+	// protected String getTestProgram() {
+	// return owner.getClass().getAnnotation(MochaTest.class).program();
+	// }
 
-//	protected String getModelAnnotation() {
-//		return owner.getClass().getAnnotation(MochaTest.class).model();
-//	}
+	protected String getModelAnnotation() {
+		return owner.getClass().getAnnotation(MochaTest.class).model();
+	}
 
 	protected String getTestBundleAnnotation() {
 		return owner.getClass().getAnnotation(MochaTest.class).testBundle();
 	}
 
-//	protected String getStatechartBundleAnnotation() {
-//		return owner.getClass().getAnnotation(MochaTest.class).statechartBundle();
-//	}
+	protected String getModelBundleAnnotation() {
+		return owner.getClass().getAnnotation(MochaTest.class).modelBundle();
+	}
 
 	protected IPath getTargetProjectPath() {
 		return new Path(getTestBundleAnnotation());
 	}
 
-	protected void copyFileFromBundleToFolder(Bundle bundle, String sourcePath, String targetPath) {
-		copyFileFromBundleToFolder(bundle, new Path(sourcePath), new Path(targetPath));
+	protected void copyFileFromBundleToFolder(Bundle bundle, String sourcePath,
+			String targetPath) {
+		copyFileFromBundleToFolder(bundle, new Path(sourcePath), new Path(
+				targetPath));
 	}
 
-	protected void copyFileFromBundleToFolder(Bundle bundle, String sourcePath, IPath targetPath) {
+	protected void copyFileFromBundleToFolder(Bundle bundle, String sourcePath,
+			IPath targetPath) {
 		copyFileFromBundleToFolder(bundle, new Path(sourcePath), targetPath);
 	}
 
-	protected void copyFileFromBundleToFolder(Bundle bundle, IPath sourcePath, IPath targetPath) {
+	protected void copyFileFromBundleToFolder(Bundle bundle, IPath sourcePath,
+			IPath targetPath) {
 		String fileName = sourcePath.lastSegment();
 		copyFileFromBundle(bundle, sourcePath, targetPath.append(fileName));
 	}
 
-	protected void copyFileFromBundle(Bundle bundle, String sourcePath, String targetPath) {
+	protected void copyFileFromBundle(Bundle bundle, String sourcePath,
+			String targetPath) {
 		copyFileFromBundle(bundle, sourcePath, new Path(targetPath));
 	}
 
-	protected void copyFileFromBundle(Bundle bundle, String sourcePath, IPath targetPath) {
+	protected void copyFileFromBundle(Bundle bundle, String sourcePath,
+			IPath targetPath) {
 		copyFileFromBundle(bundle, new Path(sourcePath), targetPath);
 	}
 
-	protected void copyFileFromBundle(Bundle bundle, IPath sourcePath, IPath targetPath) {
+	protected void copyFileFromBundle(Bundle bundle, IPath sourcePath,
+			IPath targetPath) {
 		try {
 			InputStream is = FileLocator.openStream(bundle, sourcePath, false);
 			createFile(targetPath, is);
@@ -280,23 +342,53 @@ public class MochaTestHelper {
 		}
 	}
 
-	protected Bundle getTestBundle() {
-		Bundle bundle = getAnnotatedTestBundle();
+	// protected Bundle getModelBundle() {
+	// Bundle bundle = getAnnotatedModelBundle();
+	// if (bundle == null) {
+	// return FrameworkUtil.getBundle(owner.getClass());
+	// }
+	// return bundle;
+	// }
+	//
+	// protected Bundle getAnnotatedModelBundle() {
+	// String testProject = getModelBundleAnnotation();
+	// if (!testProject.isEmpty()) {
+	// Bundle testBundle = Platform.getBundle(testProject);
+	// if (testBundle != null) {
+	// return testBundle;
+	// }
+	// }
+	// return null;
+	// }
+	//
+	// protected Bundle getTestBundle() {
+	// Bundle bundle = getAnnotatedTestBundle();
+	// if (bundle == null) {
+	// return FrameworkUtil.getBundle(owner.getClass());
+	// }
+	// return bundle;
+	// }
+	//
+	// protected Bundle getAnnotatedTestBundle() {
+	// String testProject = getTestBundleAnnotation();
+	// if (!testProject.isEmpty()) {
+	// Bundle testBundle = Platform.getBundle(testProject);
+	// if (testBundle != null) {
+	// return testBundle;
+	// }
+	// }
+	// return null;
+	// }
+
+	protected Bundle getBundle(String bundleId) {
+		Bundle bundle = null;
+		if (!bundleId.isEmpty()) {
+			bundle = Platform.getBundle(bundleId);
+		}
 		if (bundle == null) {
-			return FrameworkUtil.getBundle(owner.getClass());
+			bundle = FrameworkUtil.getBundle(owner.getClass());
 		}
 		return bundle;
-	}
-
-	protected Bundle getAnnotatedTestBundle() {
-		String testProject = getTestBundleAnnotation();
-		if (!testProject.isEmpty()) {
-			Bundle testBundle = Platform.getBundle(testProject);
-			if (testBundle != null) {
-				return testBundle;
-			}
-		}
-		return null;
 	}
 
 	protected void copyFileFromBundle(String sourcePath, IFile targetFile) {
@@ -305,7 +397,8 @@ public class MochaTestHelper {
 
 	protected void copyFileFromBundle(IPath sourcePath, IFile targetFile) {
 		try {
-			InputStream is = FileLocator.openStream(getTestBundle(), sourcePath, false);
+			InputStream is = FileLocator.openStream(
+					getBundle(getTestBundleAnnotation()), sourcePath, false);
 			createFile(targetFile, is);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -335,11 +428,13 @@ public class MochaTestHelper {
 	}
 
 	protected IFolder getFolder(String path) {
-		return ensureContainerExists(ResourcesPlugin.getWorkspace().getRoot().getFolder(new Path(path)));
+		return ensureContainerExists(ResourcesPlugin.getWorkspace().getRoot()
+				.getFolder(new Path(path)));
 	}
 
 	protected IFolder getFolder(IPath path) {
-		return ensureContainerExists(ResourcesPlugin.getWorkspace().getRoot().getFolder(path));
+		return ensureContainerExists(ResourcesPlugin.getWorkspace().getRoot()
+				.getFolder(path));
 	}
 
 	protected <T extends IContainer> T ensureContainerExists(T container) {
@@ -347,7 +442,8 @@ public class MochaTestHelper {
 		IProject project = container.getProject();
 		if (project.exists()) {
 			if (!project.isOpen()) {
-				throw new RuntimeException("Project " + project.getName() + " closed");
+				throw new RuntimeException("Project " + project.getName()
+						+ " closed");
 			}
 		} else {
 			try {
@@ -363,13 +459,15 @@ public class MochaTestHelper {
 		return container;
 	}
 
-	protected void createTestProject(IProject projectHandle, IProgressMonitor monitor) throws CoreException {
+	protected void createTestProject(IProject projectHandle,
+			IProgressMonitor monitor) throws CoreException {
 		projectHandle.create(monitor);
 	}
 
 	private void doEnsureFolderExists(IFolder folder, IProgressMonitor monitor) {
 		if (!folder.exists()) {
-			if (!folder.getParent().exists() && folder.getParent() instanceof IFolder) {
+			if (!folder.getParent().exists()
+					&& folder.getParent() instanceof IFolder) {
 				doEnsureFolderExists((IFolder) folder.getParent(), monitor);
 			}
 			try {

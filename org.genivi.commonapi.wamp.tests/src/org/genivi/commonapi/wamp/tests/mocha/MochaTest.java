@@ -18,6 +18,8 @@ public @interface MochaTest {
 
 	String sourceFile();
 	String program();
+	String model();
+	String reporterPath();
 	String[] additionalFilesToCopy() default {};
 	String[] additionalFilesToCompile() default {};
 
@@ -30,4 +32,5 @@ public @interface MochaTest {
 	 * 
 	 */
 	String testBundle() default "";
+	String modelBundle() default "";
 }

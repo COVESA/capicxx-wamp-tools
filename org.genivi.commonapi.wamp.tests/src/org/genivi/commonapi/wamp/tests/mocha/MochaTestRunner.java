@@ -2,6 +2,8 @@ package org.genivi.commonapi.wamp.tests.mocha;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,13 +18,18 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.common.util.URI;
+import org.franca.core.utils.FileHelper;
+import org.franca.core.utils.ModelPersistenceHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -198,13 +205,10 @@ public class MochaTestRunner extends Runner {
 		}
 	}
 
-	private CharSequence readSourceFile(String sourceFile) throws IOException {
-		Bundle bundle = getTestBundle();
-		// System.out.println("[MochaTestRunner] Loaded bundle " +
-		// bundle.getSymbolicName());
-		InputStream is = FileLocator.openStream(bundle, new Path(sourceFile),
-				false);
-		Reader reader = new InputStreamReader(is);
+	private CharSequence readSourceFile(String sourceFile) throws IOException,
+			InitializationError {
+		File file = getFile(sourceFile);
+		FileReader reader = new FileReader(file);
 		char[] buffer = new char[4096];
 		StringBuilder sb = new StringBuilder(buffer.length);
 		int count;
@@ -212,49 +216,29 @@ public class MochaTestRunner extends Runner {
 			sb.append(buffer, 0, count);
 		}
 		reader.close();
-		is.close();
 		return sb;
 	}
 
-	protected Bundle getTestBundle() {
-		String testProject = testClass.getAnnotation(MochaTest.class)
-				.testBundle();
-		if (!testProject.isEmpty()) {
-			Bundle testBundle = Platform.getBundle(testProject);
-			if (testBundle != null) {
-				return testBundle;
-			}
-		}
-		return FrameworkUtil.getBundle(testClass);
+	private File getFile(String sourceFile) {
+		// TODO: Create absolute Java file directly.
+		URI uri = FileHelper.createURI(sourceFile);
+		File file = new File(uri.toFileString());
+		return file;
 	}
 
 	private void runTests(RunNotifier notifier) throws IOException,
 			InterruptedException {
 		String program = testClass.getAnnotation(MochaTest.class).program();
-		String sourceFile = testClass.getAnnotation(MochaTest.class)
-				.sourceFile();
-		// if (Platform.getOS().equalsIgnoreCase(Platform.OS_WIN32)) {
-		// program += ".exe";
-		// }
-		String targetProject = testClass.getAnnotation(MochaTest.class)
-				.testBundle();
-		IPath programPath = new Path(targetProject).append(sourceFile);
-		IResource programFile = ResourcesPlugin.getWorkspace().getRoot()
-				.findMember(programPath);
-		IContainer programContainer = programFile.getParent();
-		if (!programContainer.isAccessible()) {
-			throw new RuntimeException("Test program container "
-					+ programContainer.getLocation().toOSString()
-					+ " inaccessible");
+		File sourceFile = getFile(testClass.getAnnotation(MochaTest.class)
+				.sourceFile());
+		if (!sourceFile.canRead()) {
+			throw new RuntimeException("Can not read Mocha test file \""
+					+ sourceFile + "\"");
 		}
-
-		File directory = programContainer.getLocation().toFile();
-		String sourceFileName = sourceFile.substring(sourceFile
-				.lastIndexOf('/') + 1);
-		List<String> command = Lists.newArrayList(program, sourceFileName,
-				"-R", "reporter.js");
+		List<String> command = Lists.newArrayList(program,
+				sourceFile.getName(), "-R", getReporterPath());
 		Process process = new ProcessBuilder(command).redirectErrorStream(true)
-				.directory(directory).start();
+				.directory(sourceFile.getParentFile()).start();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				process.getInputStream()));
 
@@ -326,5 +310,14 @@ public class MochaTestRunner extends Runner {
 			return new TestOutput(status, testPackageName, testName);
 		}
 		return null;
+	}
+
+	private String getReporterPath() {
+		String cwd = System.getProperty("user.dir");
+		String reporterPath = testClass.getAnnotation(MochaTest.class)
+				.reporterPath();
+		String ret = cwd + File.separator
+				+ reporterPath.substring(0, reporterPath.lastIndexOf('.'));
+		return ret;
 	}
 }
