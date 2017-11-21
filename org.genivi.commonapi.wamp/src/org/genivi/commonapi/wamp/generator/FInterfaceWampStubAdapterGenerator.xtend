@@ -127,7 +127,7 @@ class FInterfaceWampStubAdapterGenerator {
 		void «_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassFireEventMethodName»(«broadcast.generateArgs(_interface)») {
 		    //CommonAPI::Deployable< int64_t, CommonAPI::Wamp::IntegerDeployment<int64_t>> deployed_arg1(_arg1, static_cast< CommonAPI::Wamp::IntegerDeployment<int64_t>* >(nullptr));
 		
-		    std::cout << "«_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassFireEventMethodName»(" << «broadcast.outArgs.map[elementName].join(' << ')» << ")" << std::endl;
+		    std::cout << "«_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassFireEventMethodName»(" << «broadcast.outArgs.map[elementName].join(' << ", " << ')» << ")" << std::endl;
 		    CommonAPI::Wamp::WampStubTopicHelper::publishTopic(
 		    		*this,
 					getWampAddress().getRealm() + ".«broadcast.name»",
