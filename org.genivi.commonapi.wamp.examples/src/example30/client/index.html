@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+   <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+   </head>
+   <body>
+      <h1>Franca and CommonAPI C++ WAMP Example</h1>
+      <p>This simple broadcast receiver example uses WAMP communication to interact with a C++ server using CommonAPI.</p>
+      
+      <form>
+         <label>Result: <output id="received" /></label><br/>
+         <br/><hr/>
+         <label>Status: <output id="connectionStatus"></output></label>
+      </form>
+      
+      <script src="autobahn.min.js"></script>
+      <script type="text/javascript">
+         console.log("I am alive!");
+         var connection = new autobahn.Connection({
+            url: 'ws://127.0.0.1:8080/ws',
+            realm: 'realm1'}
+         );
+
+         connection.onopen = function(session, details) {
+            console.log("Connected", details);
+            setStatus("Connected to network.");
+            
+            var topic = 'local:testcases.example30.ExampleInterface:v0_7:testcases.example30.ExampleInterface.broadcast1';
+            session.subscribe(topic, function(args) {
+               console.log("Event:", args[0]);
+            });
+            
+         };
+
+         connection.onclose = function(reason, details) {
+            console.log("Connection closed", reason, details);
+            setStatus("Disconnected.");
+         }
+         
+         setStatus("Connecting to server...");
+         connection.open();
+
+         function setStatus(text) {
+            document.getElementById("connectionStatus").value = text;
+         }
+	        
+      </script>
+   </body>
+</html>

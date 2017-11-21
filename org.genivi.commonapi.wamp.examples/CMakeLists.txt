@@ -102,5 +102,6 @@ endfunction()
 
 
 buildIt("Example10" "example10")
+buildIt("Example30" "example30")
 buildIt("Example77" "example77")
 

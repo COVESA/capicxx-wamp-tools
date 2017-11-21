@@ -8,4 +8,11 @@ interface ExampleInterface {
 			Int64 arg1
 		}
 	}
+
+	broadcast broadcast2 {
+		out {
+			Int64 arg1
+			Int64 arg2
+		}
+	}
 }

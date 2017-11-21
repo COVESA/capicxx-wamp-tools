@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../build/Example77Service
+../../build/Example10Service
