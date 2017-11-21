@@ -72,17 +72,17 @@ private:
 	CommonAPI::Wamp::StubAttributeTable stubAttributeTable_;
 };
 
-
-void ExampleInterfaceWampStubAdapterInternal::fireBroadcast1Event(const int64_t& _arg1) {
+void ExampleInterfaceWampStubAdapterInternal::fireBroadcast1Event(const int64_t& arg1) {
     //CommonAPI::Deployable< int64_t, CommonAPI::Wamp::IntegerDeployment<int64_t>> deployed_arg1(_arg1, static_cast< CommonAPI::Wamp::IntegerDeployment<int64_t>* >(nullptr));
 
-    std::cout << "ExampleInterfaceWampStubAdapterInternal::fireBroadcast1Event(" << _arg1 << ")" << std::endl;
+    std::cout << "ExampleInterfaceWampStubAdapterInternal::fireBroadcast1Event(" << arg1 << ")" << std::endl;
     CommonAPI::Wamp::WampStubTopicHelper::publishTopic(
     		*this,
 			getWampAddress().getRealm() + ".broadcast1",
-			std::make_tuple("the winner is", _arg1)
+			std::make_tuple(arg1)
     );
 }
+
 
 class ExampleInterfaceWampStubAdapter
 	: public ExampleInterfaceWampStubAdapterInternal,

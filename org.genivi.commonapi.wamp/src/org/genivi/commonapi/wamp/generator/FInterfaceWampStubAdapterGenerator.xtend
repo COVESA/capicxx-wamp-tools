@@ -17,6 +17,7 @@ import org.genivi.commonapi.wamp.preferences.FPreferencesWamp
 import org.genivi.commonapi.wamp.preferences.PreferenceConstantsWamp
 
 import static extension org.franca.core.framework.FrancaHelpers.*
+import org.franca.core.franca.FBroadcast
 
 class FInterfaceWampStubAdapterGenerator {
 	@Inject private extension FrancaGeneratorExtensions
@@ -101,7 +102,7 @@ class FInterfaceWampStubAdapterGenerator {
 
 			«FOR broadcast: _interface.broadcasts»
 				«FTypeGenerator::generateComments(broadcast, false)»
-				void «broadcast.stubAdapterClassFireEventMethodName»(«broadcast.outArgs.map['const ' + getTypeName(_interface, true) + '& ' + elementName].join(', ')»);
+				void «broadcast.stubAdapterClassFireEventMethodName»(«broadcast.generateArgs(_interface)»);
 
 			«ENDFOR»
 
@@ -122,6 +123,19 @@ class FInterfaceWampStubAdapterGenerator {
 			CommonAPI::Wamp::StubAttributeTable stubAttributeTable_;
 		};
 
+		«FOR broadcast: _interface.broadcasts»
+		void «_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassFireEventMethodName»(«broadcast.generateArgs(_interface)») {
+		    //CommonAPI::Deployable< int64_t, CommonAPI::Wamp::IntegerDeployment<int64_t>> deployed_arg1(_arg1, static_cast< CommonAPI::Wamp::IntegerDeployment<int64_t>* >(nullptr));
+		
+		    std::cout << "«_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassFireEventMethodName»(" << «broadcast.outArgs.map[elementName].join(' << ')» << ")" << std::endl;
+		    CommonAPI::Wamp::WampStubTopicHelper::publishTopic(
+		    		*this,
+					getWampAddress().getRealm() + ".«broadcast.name»",
+					std::make_tuple(«broadcast.outArgs.map[elementName].join(', ')»)
+		    );
+		}
+
+		«ENDFOR»
 
 		class «_interface.wampStubAdapterClassName»
 			: public «_interface.wampStubAdapterClassNameInternal»,
@@ -142,6 +156,9 @@ class FInterfaceWampStubAdapterGenerator {
 		#endif // «_interface.defineName»_WAMP_STUB_ADAPTER_HPP_
 	'''
 
+	def private generateArgs(FBroadcast broadcast, FInterface _interface) {
+		'''«broadcast.outArgs.map['const ' + getTypeName(_interface, true) + '& ' + elementName].join(', ')»'''
+	}
 
 	def private generateWampStubAdapterSource(FInterface _interface, PropertyAccessor deploymentAccessor,  List<FDProvider> providers, IResource modelid) '''
 		«generateCommonApiWampLicenseHeader()»
