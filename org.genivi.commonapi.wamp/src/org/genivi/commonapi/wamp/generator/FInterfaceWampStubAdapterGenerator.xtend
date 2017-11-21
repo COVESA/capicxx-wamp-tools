@@ -99,6 +99,12 @@ class FInterfaceWampStubAdapterGenerator {
 			void wrap_«method.name»(autobahn::wamp_invocation invocation);
 			«ENDFOR»
 
+			«FOR broadcast: _interface.broadcasts»
+				«FTypeGenerator::generateComments(broadcast, false)»
+				void «broadcast.stubAdapterClassFireEventMethodName»(«broadcast.outArgs.map['const ' + getTypeName(_interface, true) + '& ' + elementName].join(', ')»);
+
+			«ENDFOR»
+
 			//////////////////////////////////////////////////////////////////////////////////////////
 
 			const «_interface.wampStubAdapterHelperClassName»::StubDispatcherTable& getStubDispatcherTable();

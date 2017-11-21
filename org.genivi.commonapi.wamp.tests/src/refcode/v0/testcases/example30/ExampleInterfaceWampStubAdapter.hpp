@@ -51,7 +51,9 @@ public:
 
 	virtual void provideRemoteMethods();
 
-    void fireBroadcast1Event(const int64_t& arg1);
+
+	void fireBroadcast1Event(const int64_t& arg1);
+
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
