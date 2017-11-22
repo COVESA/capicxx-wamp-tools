@@ -1,13 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2017 itemis AG (http://www.itemis.de). All rights reserved.
+ *******************************************************************************/
 package org.genivi.commonapi.wamp.tests.mocha;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -18,18 +18,8 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.internal.utils.FileUtil;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.URI;
 import org.franca.core.utils.FileHelper;
-import org.franca.core.utils.ModelPersistenceHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -38,8 +28,6 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import com.google.common.collect.Lists;
 
@@ -53,16 +41,11 @@ import junit.framework.AssertionFailedError;
  */
 public class MochaTestRunner extends Runner {
 
-	// private static final Pattern TEST_PATTERN =
-	// Pattern.compile("TEST(?:_F)?\\s*\\(\\s*(\\w+)\\s*,\\s*(\\w+)\\s*\\)");
 	private static final Pattern TEST_PATTERN = Pattern
 			.compile("describe\\(\\s*'((\\w+|\\s*)*)',\\s*|\\w*it\\(\\s*'((\\w+|\\s*)*)',");
-	private static final Pattern SL_COMMENT_PATTERN = Pattern
-			.compile("//.*(?:\\r?\\n|\\z)");
-	private static final Pattern ML_COMMENT_PATTERN = Pattern
-			.compile("(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)");
-	private static final Pattern TEST_OUTPUT_PATTERN = Pattern
-			.compile("\\[\\s*(\\w+)\\s*\\] (\\w+)\\.(\\w+)");
+	private static final Pattern SL_COMMENT_PATTERN = Pattern.compile("//.*(?:\\r?\\n|\\z)");
+	private static final Pattern ML_COMMENT_PATTERN = Pattern.compile("(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)");
+	private static final Pattern TEST_OUTPUT_PATTERN = Pattern.compile("\\[\\s*(\\w+)\\s*\\] (\\w+)\\.(\\w+)");
 
 	private boolean ignore;
 	private Class<?> testClass;
@@ -109,17 +92,19 @@ public class MochaTestRunner extends Runner {
 
 		MochaTest annotation = testClass.getAnnotation(MochaTest.class);
 		if (annotation == null) {
-			throw new InitializationError("Test class must specify "
-					+ MochaTest.class.getCanonicalName() + " annotation");
+			throw new InitializationError(
+					"Test class must specify " + MochaTest.class.getCanonicalName() + " annotation");
 		}
 
 		ignore = testClass.getAnnotation(Ignore.class) != null;
 
-		String sourceFile = annotation.sourceFile();
 		try {
-			CharSequence charSequence = readSourceFile(sourceFile);
-			String s = ML_COMMENT_PATTERN.matcher(
-					SL_COMMENT_PATTERN.matcher(charSequence).replaceAll(""))
+			File testFile = createFile(annotation.mochaTestFile());
+			if (!testFile.exists()) {
+				throw new InitializationError(createFileNotExistsMsg(testFile));
+			}
+			CharSequence charSequence = readSourceFile(testFile);
+			String s = ML_COMMENT_PATTERN.matcher(SL_COMMENT_PATTERN.matcher(charSequence).replaceAll(""))
 					.replaceAll("");
 			Matcher matcher = TEST_PATTERN.matcher(s);
 			String testPackageName = "";
@@ -153,8 +138,7 @@ public class MochaTestRunner extends Runner {
 		for (Entry<String, List<String>> entry : testCases.entrySet()) {
 			for (String test : entry.getValue()) {
 				String testPackage = entry.getKey();
-				Description childDescription = createDescription(testPackage,
-						test);
+				Description childDescription = createDescription(testPackage, test);
 				description.addChild(childDescription);
 			}
 		}
@@ -194,20 +178,15 @@ public class MochaTestRunner extends Runner {
 					}
 				}
 			} catch (InvocationTargetException e) {
-				Throwable targetException = ((InvocationTargetException) e)
-						.getTargetException();
-				notifier.fireTestFailure(new Failure(getDescription(),
-						targetException));
+				Throwable targetException = ((InvocationTargetException) e).getTargetException();
+				notifier.fireTestFailure(new Failure(getDescription(), targetException));
 			} catch (Throwable throwable) {
-				notifier.fireTestFailure(new Failure(getDescription(),
-						throwable));
+				notifier.fireTestFailure(new Failure(getDescription(), throwable));
 			}
 		}
 	}
 
-	private CharSequence readSourceFile(String sourceFile) throws IOException,
-			InitializationError {
-		File file = getFile(sourceFile);
+	private CharSequence readSourceFile(File file) throws IOException, InitializationError {
 		FileReader reader = new FileReader(file);
 		char[] buffer = new char[4096];
 		StringBuilder sb = new StringBuilder(buffer.length);
@@ -219,28 +198,16 @@ public class MochaTestRunner extends Runner {
 		return sb;
 	}
 
-	private File getFile(String sourceFile) {
-		// TODO: Create absolute Java file directly.
-		URI uri = FileHelper.createURI(sourceFile);
-		File file = new File(uri.toFileString());
-		return file;
-	}
-
-	private void runTests(RunNotifier notifier) throws IOException,
-			InterruptedException {
+	private void runTests(RunNotifier notifier) throws IOException, InterruptedException {
 		String program = testClass.getAnnotation(MochaTest.class).program();
-		File sourceFile = getFile(testClass.getAnnotation(MochaTest.class)
-				.sourceFile());
-		if (!sourceFile.canRead()) {
-			throw new RuntimeException("Can not read Mocha test file \""
-					+ sourceFile + "\"");
+		File testFile = createFile(testClass.getAnnotation(MochaTest.class).mochaTestFile());
+		if (!testFile.exists()) {
+			throw new RuntimeException(createFileNotExistsMsg(testFile));
 		}
-		List<String> command = Lists.newArrayList(program,
-				sourceFile.getName(), "-R", getReporterPath());
-		Process process = new ProcessBuilder(command).redirectErrorStream(true)
-				.directory(sourceFile.getParentFile()).start();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				process.getInputStream()));
+		List<String> command = Lists.newArrayList(program, testFile.getName(), "-R", getReporterPath());
+		Process process = new ProcessBuilder(command).redirectErrorStream(true).directory(testFile.getParentFile())
+				.start();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
 		boolean started = false;
 		boolean running = false;
@@ -273,8 +240,8 @@ public class MochaTestRunner extends Runner {
 						break;
 					default:
 						running = false;
-						notifier.fireTestFailure(new Failure(description,
-								new AssertionFailedError(message.toString())));
+						notifier.fireTestFailure(
+								new Failure(description, new AssertionFailedError(message.toString())));
 						notifier.fireTestFinished(description);
 						break;
 					}
@@ -288,8 +255,7 @@ public class MochaTestRunner extends Runner {
 		process.waitFor();
 
 		if (started) {
-			throw new RuntimeException("Test quit unexpectedly (exit status "
-					+ process.exitValue() + "):\n" + message);
+			throw new RuntimeException("Test quit unexpectedly (exit status " + process.exitValue() + "):\n" + message);
 		}
 	}
 
@@ -312,12 +278,21 @@ public class MochaTestRunner extends Runner {
 		return null;
 	}
 
+	private File createFile(String sourceFile) {
+		// TODO: Create absolute Java File or Path class directly.
+		URI uri = FileHelper.createURI(sourceFile);
+		File file = new File(uri.toFileString());
+		return file;
+	}
+	
+	private String createFileNotExistsMsg(File file) {
+		return "Mocha test file \"" + file + "\" does not exist.";
+	}
+
 	private String getReporterPath() {
 		String cwd = System.getProperty("user.dir");
-		String reporterPath = testClass.getAnnotation(MochaTest.class)
-				.reporterPath();
-		String ret = cwd + File.separator
-				+ reporterPath.substring(0, reporterPath.lastIndexOf('.'));
+		String reporterPath = testClass.getAnnotation(MochaTest.class).mochaReporterFile();
+		String ret = cwd + File.separator + reporterPath.substring(0, reporterPath.lastIndexOf('.'));
 		return ret;
 	}
 }

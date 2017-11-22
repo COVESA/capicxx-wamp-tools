@@ -1,47 +1,26 @@
+/*******************************************************************************
+ * Copyright (c) 2017 itemis AG (http://www.itemis.de). All rights reserved.
+ *******************************************************************************/
 package org.genivi.commonapi.wamp.tests.mocha;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 
 import static org.junit.Assert.assertNotNull;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.xtext.generator.IFileSystemAccess;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
-import org.eclipse.xtext.generator.OutputConfiguration;
 import org.franca.core.dsl.FrancaPersistenceManager;
 import org.franca.core.franca.FModel;
 import org.genivi.commonapi.core.preferences.FPreferences;
-import org.genivi.commonapi.core.preferences.PreferenceConstants;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 
 /**
  * @author Markus Mühlbrandt
@@ -49,245 +28,134 @@ import com.google.inject.Injector;
  */
 public class MochaTestHelper {
 
-	public enum Compiler {
-		GCC("gcc"), GPLUSPLUS("g++");
-
-		protected String command;
-
-		Compiler(String command) {
-			this.command = command;
-		}
-
-		public String getCommand() {
-			return this.command;
-		}
-	}
+	private static final String BUILD_FOLDER_NAME = "build";
 
 	private final Object owner;
 	protected Compiler compiler;
-
 	@Inject
 	protected FrancaPersistenceManager loader;
-
 	@Inject
 	protected Set<IGenerator> generators;
-
 	@Inject
-	protected Injector injector;
+	protected JavaIoFileSystemAccess fsa;
+	protected Process crossbarIOProcess;
+	protected Process commonAPIServiceProcess;
 
 	public MochaTestHelper(Object owner) {
-		this(owner, Compiler.GCC);
-	}
-
-	public MochaTestHelper(Object owner, Compiler compiler) {
 		this.owner = owner;
-		this.compiler = compiler;
 	}
 
 	@SuppressWarnings("deprecation")
 	public void generate() {
-		IPath targetPath = getTargetPath();
-
-		// copy model to JUnit workspace
-//		copyFileFromBundleToFolder(getBundle(getModelBundleAnnotation()),
-//				getModelPath(), targetPath);
-//		String inputFile = targetPath + File.separator
-//				+ getModelPath().lastSegment();
-		 String inputFile = getModelAnnotation();
+		
+		String inputFile = getModelAnnotation();
 		// load model
 		FModel fmodel = loader.loadModel(inputFile);
 		assertNotNull("Could not load model from file: " + inputFile, fmodel);
-		// handle generator model
-		// String sgenFileName = getSgenFileName(getTestProgram());
-		// copyFileFromBundleToFolder(getTestBundle(), sgenFileName,
-		// targetPath);
-		// GeneratorModel model = getGeneratorModel(sgenFileName);
-		// model.getEntries().get(0).setElementRef(getStatechart());
 
-		// Generate model files
+		fsa.setOutputConfigurations(FPreferences.getInstance().getOutputpathConfiguration());
 
-		JavaIoFileSystemAccess fsa = injector
-				.getInstance(JavaIoFileSystemAccess.class);
-
-		// String targetPathString = targetPath.toString();
-		// FPreferences.getInstance().setPreference(
-		// PreferenceConstants.P_OUTPUT_SUBDIRS, "true");
-		// FPreferences.getInstance().setPreference(
-		// PreferenceConstants.P_OUTPUT_DEFAULT, targetPath.toString());
-		fsa.setOutputConfigurations(FPreferences.getInstance()
-				.getOutputpathConfiguration());
-
-		generators.forEach(generator -> generator.doGenerate(
-				fmodel.eResource(), fsa));
-
-//		performFullBuild();
-
-		// getGeneratorExecutorLookup().execute(model);
+		generators.forEach(generator -> generator.doGenerate(fmodel.eResource(), fsa));
 	}
 
-	public void copyFilesFromBundleToFolder() {
-		IPath targetPath = getTargetPath();
-		List<String> testDataFiles = getFilesToCopy();
-		getTestDataFiles(testDataFiles);
-		for (String file : testDataFiles) {
-			copyFileFromBundleToFolder(getBundle(getTestBundleAnnotation()),
-					file, targetPath);
+	public void compile() {
+		Path buildPath = getBuildDirectory();
+		try {
+			if (Files.exists(buildPath)) {
+				Files2.clear(buildPath);
+			} else {
+				Files.createDirectory(buildPath);
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		List<String> command = createCommand("cmake", "..");
+		getCommandExecutor().startProcess(command, buildPath.toFile());
+
+		command = createCommand("make");
+		getCommandExecutor().startProcess(command, buildPath.toFile());
+	}
+
+	public void startServer() {
+		//TODO: Remove sleep time
+		List<String> command = createCommand(getCrossbarIOExecutable().toString(), "start");
+		crossbarIOProcess = getCommandExecutor().startProcess(command, getTestsBaseDirectory().toFile(), true);
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		command = createCommand(getCommonAPIServiceExecutable().toString());
+		commonAPIServiceProcess = getCommandExecutor().startProcess(command, getTestSourceDirectory().toFile(), true);
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
+	
+	public Process getCommonAPIServiceProcess() {
+		return commonAPIServiceProcess;
+	}
+	
+	public Process getCrossbarIOProcess() {
+		return crossbarIOProcess;
+	}
 
-	// public void compile() {
-	// // copyFilesFromBundleToFolder();
-	// IResource resource =
-	// ResourcesPlugin.getWorkspace().getRoot().findMember(getTargetPath());
-	// File directory = resource.getLocation().toFile();
-	// List<String> command = createCommand();
-	//
-	// getCommandExecutor().execute(command, directory);
-	// }
+	private Path getBuildDirectory() {
+		return Paths.get(System.getProperty("user.dir"), BUILD_FOLDER_NAME);
+	}
 
-	// protected GeneratorModel getGeneratorModel(String sgenFileName) {
-	// IPath path = new Path(sgenFileName);
-	// Resource sgenResource = loadResource(getWorkspaceFileFor(path));
-	// GeneratorModel model = (GeneratorModel)
-	// sgenResource.getContents().get(0);
-	// return model;
-	// }
+	private Path getCrossbarIOExecutable() {
+		return Paths.get(System.getProperty("user.home"), ".local", "bin", "crossbar");
+	}
 
-	// protected String getModelFileName(String testProgram) {
-	// String sgenFileName = testProgram + ".sgen";
-	// return sgenFileName;
-	// }
+	private Path getCommonAPIServiceExecutable() {
+		return Paths.get(getBuildDirectory().toString(), getServiceNameAnnotation());
+	}
+
+	private Path getTestSourceDirectory() {
+		return Files2.removeLastSegment(getTestSourceFile());
+	}
+
+	private Path getTestsBaseDirectory() {
+		return Files2.removeLastSegment(getTestSourceDirectory());
+	}
+
+	private Path getTestSourceFile() {
+		return Paths.get(System.getProperty("user.dir"), getTestSourceFileAnnotation());
+	}
+
+	protected List<String> createCommand(String cmd, String... args) {
+		List<String> command = new ArrayList<String>();
+		command.add(cmd);
+		for (String arg : args) {
+			command.add(arg);
+		}
+		return command;
+	}
 
 	protected List<String> getFilesToCopy() {
-		return new ArrayList<String>(Arrays.asList(owner.getClass()
-				.getAnnotation(MochaTest.class).additionalFilesToCopy()));
+		return new ArrayList<String>(
+				Arrays.asList(owner.getClass().getAnnotation(MochaTest.class).additionalFilesToCopy()));
 	}
 
 	protected List<String> getFilesToCompile() {
-		return new ArrayList<String>(Arrays.asList(owner.getClass()
-				.getAnnotation(MochaTest.class).additionalFilesToCompile()));
+		return new ArrayList<String>(
+				Arrays.asList(owner.getClass().getAnnotation(MochaTest.class).additionalFilesToCompile()));
 	}
-
-	// protected GeneratorExecutorLookup getGeneratorExecutorLookup() {
-	// return new EclipseContextGeneratorExecutorLookup();
-	// }
 
 	protected CommandExecutor getCommandExecutor() {
 		return new CommandExecutor();
 	}
 
-//	protected void performFullBuild() {
-//		try {
-//			ResourcesPlugin.getWorkspace().build(
-//					IncrementalProjectBuilder.FULL_BUILD, null);
-//		} catch (CoreException e) {
-//			throw new RuntimeException(e);
-//		}
-//	}
-
-	protected IFile getWorkspaceFileFor(IPath filePath) {
-		return ResourcesPlugin.getWorkspace().getRoot()
-				.getFile(getTargetProjectPath().append(filePath));
+	protected String getTestSourceFileAnnotation() {
+		return owner.getClass().getAnnotation(MochaTest.class).mochaTestFile();
 	}
-
-	// protected Statechart getStatechart() {
-	// IPath path = new Path(getTargetPath().toString() + "/" +
-	// getModelPath().lastSegment());
-	// IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-	// Resource resource = loadResource(file);
-	// return (Statechart) resource.getContents().get(0);
-	// }
-
-	protected Resource loadResource(IFile file) {
-		URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(),
-				true);
-		Resource resource = new ResourceSetImpl().getResource(uri, true);
-		return resource;
-	}
-
-	// protected List<String> createCommand() {
-	// String gTestDirectory = getGTestDirectory();
-	//
-	// List<String> includes = new ArrayList<String>();
-	// getIncludes(includes);
-	//
-	// List<String> sourceFiles = getFilesToCompile();
-	// getSourceFiles(sourceFiles);
-	//
-	// List<String> command = new ArrayList<String>();
-	// command.add(getCompilerCommand());
-	// command.add("-o");
-	// command.add(getFileName(getTestProgram()));
-	// command.add("-O2");
-	// if (gTestDirectory != null)
-	// command.add("-I" + gTestDirectory + "/include");
-	// for (String include : includes) {
-	// command.add("-I" + include);
-	// }
-	// if (gTestDirectory != null)
-	// command.add("-L" + gTestDirectory);
-	// for (String sourceFile : sourceFiles) {
-	// command.add(getFileName(sourceFile));
-	// }
-	// command.add("-lgtest");
-	// command.add("-lgtest_main");
-	// command.add("-lm");
-	// command.add("-lstdc++");
-	// command.add("-pthread");
-	// // command.add("-pg");
-	// return command;
-	// }
-
-	/**
-	 * @return
-	 */
-	protected String getCompilerCommand() {
-		return this.compiler.getCommand();
-	}
-
-	/**
-	 * @return
-	 */
-	private String getGTestDirectory() {
-		String gTestDirectory = System.getenv("GTEST_DIR");
-		// if (gTestDirectory == null) {
-		// throw new RuntimeException("GTEST_DIR environment variable not set");
-		// }
-		// System.out.println("GTEST_DIR = " + gTestDirectory);
-		return gTestDirectory;
-	}
-
-	protected String getFileName(String path) {
-		return new Path(path).lastSegment();
-	}
-
-	protected IPath getTargetPath() {
-		return getTargetProjectPath().append(
-				new Path(getTestSourceFile()).removeLastSegments(1));
-	}
-
-	protected IPath getModelPath() {
-		return new Path(getModelAnnotation());
-	}
-
-	protected void getIncludes(Collection<String> includes) {
-	}
-
-	protected void getSourceFiles(Collection<String> files) {
-		files.add(getFileName(getTestSourceFile()));
-	}
-
-	protected String getTestSourceFile() {
-		return owner.getClass().getAnnotation(MochaTest.class).sourceFile();
-	}
-
-	protected void getTestDataFiles(Collection<String> files) {
-		files.add(getTestSourceFile());
-	}
-
-	// protected String getTestProgram() {
-	// return owner.getClass().getAnnotation(MochaTest.class).program();
-	// }
 
 	protected String getModelAnnotation() {
 		return owner.getClass().getAnnotation(MochaTest.class).model();
@@ -301,181 +169,7 @@ public class MochaTestHelper {
 		return owner.getClass().getAnnotation(MochaTest.class).modelBundle();
 	}
 
-	protected IPath getTargetProjectPath() {
-		return new Path(getTestBundleAnnotation());
+	protected String getServiceNameAnnotation() {
+		return owner.getClass().getAnnotation(MochaTest.class).serviceName();
 	}
-
-	protected void copyFileFromBundleToFolder(Bundle bundle, String sourcePath,
-			String targetPath) {
-		copyFileFromBundleToFolder(bundle, new Path(sourcePath), new Path(
-				targetPath));
-	}
-
-	protected void copyFileFromBundleToFolder(Bundle bundle, String sourcePath,
-			IPath targetPath) {
-		copyFileFromBundleToFolder(bundle, new Path(sourcePath), targetPath);
-	}
-
-	protected void copyFileFromBundleToFolder(Bundle bundle, IPath sourcePath,
-			IPath targetPath) {
-		String fileName = sourcePath.lastSegment();
-		copyFileFromBundle(bundle, sourcePath, targetPath.append(fileName));
-	}
-
-	protected void copyFileFromBundle(Bundle bundle, String sourcePath,
-			String targetPath) {
-		copyFileFromBundle(bundle, sourcePath, new Path(targetPath));
-	}
-
-	protected void copyFileFromBundle(Bundle bundle, String sourcePath,
-			IPath targetPath) {
-		copyFileFromBundle(bundle, new Path(sourcePath), targetPath);
-	}
-
-	protected void copyFileFromBundle(Bundle bundle, IPath sourcePath,
-			IPath targetPath) {
-		try {
-			InputStream is = FileLocator.openStream(bundle, sourcePath, false);
-			createFile(targetPath, is);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	// protected Bundle getModelBundle() {
-	// Bundle bundle = getAnnotatedModelBundle();
-	// if (bundle == null) {
-	// return FrameworkUtil.getBundle(owner.getClass());
-	// }
-	// return bundle;
-	// }
-	//
-	// protected Bundle getAnnotatedModelBundle() {
-	// String testProject = getModelBundleAnnotation();
-	// if (!testProject.isEmpty()) {
-	// Bundle testBundle = Platform.getBundle(testProject);
-	// if (testBundle != null) {
-	// return testBundle;
-	// }
-	// }
-	// return null;
-	// }
-	//
-	// protected Bundle getTestBundle() {
-	// Bundle bundle = getAnnotatedTestBundle();
-	// if (bundle == null) {
-	// return FrameworkUtil.getBundle(owner.getClass());
-	// }
-	// return bundle;
-	// }
-	//
-	// protected Bundle getAnnotatedTestBundle() {
-	// String testProject = getTestBundleAnnotation();
-	// if (!testProject.isEmpty()) {
-	// Bundle testBundle = Platform.getBundle(testProject);
-	// if (testBundle != null) {
-	// return testBundle;
-	// }
-	// }
-	// return null;
-	// }
-
-	protected Bundle getBundle(String bundleId) {
-		Bundle bundle = null;
-		if (!bundleId.isEmpty()) {
-			bundle = Platform.getBundle(bundleId);
-		}
-		if (bundle == null) {
-			bundle = FrameworkUtil.getBundle(owner.getClass());
-		}
-		return bundle;
-	}
-
-	protected void copyFileFromBundle(String sourcePath, IFile targetFile) {
-		copyFileFromBundle(new Path(sourcePath), targetFile);
-	}
-
-	protected void copyFileFromBundle(IPath sourcePath, IFile targetFile) {
-		try {
-			InputStream is = FileLocator.openStream(
-					getBundle(getTestBundleAnnotation()), sourcePath, false);
-			createFile(targetFile, is);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected void createFile(String path, InputStream source) {
-		createFile(new Path(path), source);
-	}
-
-	protected void createFile(IPath path, InputStream source) {
-		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-		createFile(file, source);
-	}
-
-	protected void createFile(IFile file, InputStream source) {
-		ensureContainerExists(file.getParent());
-		try {
-			if (file.exists()) {
-				file.setContents(source, true, false, new NullProgressMonitor());
-			} else {
-				file.create(source, true, new NullProgressMonitor());
-			}
-		} catch (CoreException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected IFolder getFolder(String path) {
-		return ensureContainerExists(ResourcesPlugin.getWorkspace().getRoot()
-				.getFolder(new Path(path)));
-	}
-
-	protected IFolder getFolder(IPath path) {
-		return ensureContainerExists(ResourcesPlugin.getWorkspace().getRoot()
-				.getFolder(path));
-	}
-
-	protected <T extends IContainer> T ensureContainerExists(T container) {
-		IProgressMonitor monitor = new NullProgressMonitor();
-		IProject project = container.getProject();
-		if (project.exists()) {
-			if (!project.isOpen()) {
-				throw new RuntimeException("Project " + project.getName()
-						+ " closed");
-			}
-		} else {
-			try {
-				createTestProject(project, monitor);
-				project.open(monitor);
-			} catch (CoreException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		if (container instanceof IFolder) {
-			doEnsureFolderExists((IFolder) container, monitor);
-		}
-		return container;
-	}
-
-	protected void createTestProject(IProject projectHandle,
-			IProgressMonitor monitor) throws CoreException {
-		projectHandle.create(monitor);
-	}
-
-	private void doEnsureFolderExists(IFolder folder, IProgressMonitor monitor) {
-		if (!folder.exists()) {
-			if (!folder.getParent().exists()
-					&& folder.getParent() instanceof IFolder) {
-				doEnsureFolderExists((IFolder) folder.getParent(), monitor);
-			}
-			try {
-				folder.create(true, true, monitor);
-			} catch (CoreException e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
 }

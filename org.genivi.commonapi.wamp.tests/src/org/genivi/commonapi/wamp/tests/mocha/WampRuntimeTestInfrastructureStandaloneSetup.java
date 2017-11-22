@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * Copyright (c) 2017 itemis AG (http://www.itemis.de). All rights reserved.
+ *******************************************************************************/
 package org.genivi.commonapi.wamp.tests.mocha;
 
 import org.eclipse.xtext.util.Modules2;

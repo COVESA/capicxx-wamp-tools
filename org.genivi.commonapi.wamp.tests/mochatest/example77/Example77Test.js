@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * Copyright (c) 2017 itemis AG (http://www.itemis.de). All rights reserved.
+ *******************************************************************************/
 //Use assertion library of node.js
 var assert = require('assert');
 // Use autobahn library

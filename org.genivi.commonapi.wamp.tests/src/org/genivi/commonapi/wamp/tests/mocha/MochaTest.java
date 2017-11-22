@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * Copyright (c) 2017 itemis AG (http://www.itemis.de). All rights reserved.
+ *******************************************************************************/
 package org.genivi.commonapi.wamp.tests.mocha;
 
 import java.lang.annotation.ElementType;
@@ -11,15 +14,16 @@ import java.lang.annotation.Target;
  * @author Markus Mühlbrandt
  *
  */
-
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface MochaTest {
 
-	String sourceFile();
+	String mochaTestFile();
+	String mochaReporterFile();
 	String program();
 	String model();
-	String reporterPath();
+	String serviceName();
+	
 	String[] additionalFilesToCopy() default {};
 	String[] additionalFilesToCompile() default {};
 
