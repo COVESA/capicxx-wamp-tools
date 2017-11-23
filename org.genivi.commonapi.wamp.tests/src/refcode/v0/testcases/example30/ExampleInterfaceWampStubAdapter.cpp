@@ -72,6 +72,7 @@ ExampleInterfaceWampStubAdapterInternal::ExampleInterfaceWampStubAdapterInternal
 
 void ExampleInterfaceWampStubAdapterInternal::provideRemoteMethods() {
 	std::cout << "provideRemoteMethods called" << std::endl;
+
 }
 
 
