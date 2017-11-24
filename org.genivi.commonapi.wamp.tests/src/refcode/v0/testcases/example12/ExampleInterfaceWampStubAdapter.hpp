@@ -52,6 +52,7 @@ public:
 	virtual void provideRemoteMethods();
 
 	void wrap_method1(autobahn::wamp_invocation invocation);
+	void wrap_method2(autobahn::wamp_invocation invocation);
 
 
 	//////////////////////////////////////////////////////////////////////////////////////////
