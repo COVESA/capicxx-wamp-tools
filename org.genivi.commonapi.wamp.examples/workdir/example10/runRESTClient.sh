@@ -6,6 +6,6 @@
 
 curl -H "Content-Type: application/json" \
     -d '{"procedure": "local:testcases.example10.ExampleInterface:v0_7:testcases.example10.ExampleInterface.method1", "args": [7, 33]}' \
-    http://127.0.0.1:8080/calls
+    http://127.0.0.1:8080/call
 
 echo
