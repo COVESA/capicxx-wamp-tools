@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+   <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+   </head>
+   <body>
+      <h1>Franca and CommonAPI C++ WAMP Example</h1>
+      <p>This simple example uses WAMP communication to interact with a C++ server using CommonAPI.</p>
+      
+      <form>
+         <label for="operand1">Your number: </label>
+         <input type="number" data-clear-btn="false" name="operand1" id="operand1" value=""><br/>
+         <button type="button" id="start">Start it!</button><br/><br/>
+         <label>Result: <output id="result" /></label><br/>
+         <br/><hr/>
+         <label>Status: <output id="connectionStatus"></output></label>
+      </form>
+      
+      <script src="autobahn.min.js"></script>
+      <script type="text/javascript">
+         console.log("I am alive!");
+         var connection = new autobahn.Connection({
+            url: 'ws://127.0.0.1:8080/ws',
+            realm: 'realm1'}
+         );
+
+         connection.onopen = function(session, details) {
+            console.log("Connected", details);
+            setStatus("Connected to network.");
+
+	         document.getElementById("start").onclick = function() {
+	         	var arg1 = parseInt(document.getElementById("operand1").value);
+	         	console.log("input is " + arg1);
+					
+	            var clientId = 66;
+	            var addr = 'local:testcases.example10.ExampleInterface:v0_7:testcases.example10.ExampleInterface';
+	            session.call(addr + '.method1', [clientId, arg1]).then(
+	               function (res) {
+	                  console.log("Call succeeded, result: ", res);
+	                  document.getElementById("result").value = res; //.args[0];
+	               },
+	               function (err) {
+	                  console.log("Call failed, error message: ", err);
+	                  document.getElementById("result").value = "??";
+	               }
+	            );
+	         };
+         };
+
+         connection.onclose = function(reason, details) {
+            console.log("Connection closed", reason, details);
+            setStatus("Disconnected.");
+         }
+         
+         setStatus("Connecting to server...");
+         connection.open();
+
+         function setStatus(text) {
+            document.getElementById("connectionStatus").value = text;
+         }
+	        
+      </script>
+   </body>
+</html>
