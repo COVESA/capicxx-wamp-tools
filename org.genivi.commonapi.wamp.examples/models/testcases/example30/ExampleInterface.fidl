@@ -21,4 +21,10 @@ interface ExampleInterface {
 			String arg1
 		}
 	}
+
+	broadcast broadcast4 {
+		out {
+			Boolean arg1
+		}
+	}
 }

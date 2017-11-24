@@ -31,10 +31,11 @@ int main(int argc, const char * const argv[])
 	const int nPerMinute = 10;
 	while (true) {
 		std::cout << "Waiting for calls... (Abort with CTRL+C)" << std::endl;
+		bool toggle = false;
 		for(int j=0; j<nPerMinute; j++) {
 			int n = i*100 + j;
 
-			int action = j % 3;
+			int action = j % 4;
 			switch (action) {
 			case 0: {
 				std::cout << "Firing broadcast1 event #" << n << std::endl;
@@ -50,6 +51,12 @@ int main(int argc, const char * const argv[])
 				std::cout << "Firing broadcast3 event #" << n << std::endl;
 				std::string p = "Number";
 				myService->fireBroadcast3Event(p + std::to_string(n));
+				break;
+			}
+			case 3: {
+				std::cout << "Firing broadcast4 event #" << n << std::endl;
+				myService->fireBroadcast4Event(!toggle);
+				toggle = !toggle;
 				break;
 			}
 			}
