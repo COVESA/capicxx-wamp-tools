@@ -34,14 +34,25 @@ int main(int argc, const char * const argv[])
 		for(int j=0; j<nPerMinute; j++) {
 			int n = i*100 + j;
 
-			if (j%2 == 0) {
+			int action = j % 3;
+			switch (action) {
+			case 0: {
 				std::cout << "Firing broadcast1 event #" << n << std::endl;
 				myService->fireBroadcast1Event(n);
-			} else {
+				break;
+			}
+			case 1: {
 				std::cout << "Firing broadcast2 event #" << n << std::endl;
 				myService->fireBroadcast2Event(n, 10000+n);
+				break;
 			}
-
+			case 2: {
+				std::cout << "Firing broadcast3 event #" << n << std::endl;
+				std::string p = "Number";
+				myService->fireBroadcast3Event(p + std::to_string(n));
+				break;
+			}
+			}
 
 			std::this_thread::sleep_for(std::chrono::seconds(60/nPerMinute));
 		}

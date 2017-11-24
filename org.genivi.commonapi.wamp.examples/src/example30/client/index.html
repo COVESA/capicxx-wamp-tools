@@ -8,7 +8,9 @@
       <p>This simple broadcast receiver example uses WAMP communication to interact with a C++ server using CommonAPI.</p>
       
       <form>
-         <label>Result: <output id="received" /></label><br/>
+         <label>Last received 1: <output id="received1" /></label><br/>
+         <label>Last received 2: <output id="received2" /></label><br/>
+         <label>Last received 3: <output id="received3" /></label><br/>
          <br/><hr/>
          <label>Status: <output id="connectionStatus"></output></label>
       </form>
@@ -28,9 +30,15 @@
             var addr = 'local:testcases.example30.ExampleInterface:v0_7:testcases.example30.ExampleInterface.';
             session.subscribe(addr + 'broadcast1', function(args) {
                console.log("received broadcast1: ", args[0]);
+	           document.getElementById("received1").value = args[0];
             });
             session.subscribe(addr + 'broadcast2', function(args) {
                console.log("received broadcast2: ", args[0], ", ", args[1]);
+	           document.getElementById("received2").value = args[0] + ", " + args[1];
+            });
+            session.subscribe(addr + 'broadcast3', function(args) {
+               console.log("received broadcast3: ", args[0]);
+	           document.getElementById("received3").value = args[0];
             });
             
          };
