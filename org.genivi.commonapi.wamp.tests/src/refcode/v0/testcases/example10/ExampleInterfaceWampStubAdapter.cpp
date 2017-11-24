@@ -76,8 +76,10 @@ void ExampleInterfaceWampStubAdapterInternal::provideRemoteMethods() {
 	CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<ExampleInterfaceWampStubAdapterInternal>
 		::provideRemoteMethod(*this,
 			"method1", &ExampleInterfaceWampStubAdapterInternal::wrap_method1);
+	CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<ExampleInterfaceWampStubAdapterInternal>
+		::provideRemoteMethod(*this,
+			"methodWithError1", &ExampleInterfaceWampStubAdapterInternal::wrap_methodWithError1);
 }
-
 
 void ExampleInterfaceWampStubAdapterInternal::wrap_method1(autobahn::wamp_invocation invocation) {
 	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_method1 called" << std::endl;
@@ -86,9 +88,33 @@ void ExampleInterfaceWampStubAdapterInternal::wrap_method1(autobahn::wamp_invoca
 	std::cerr << "Procedure " << getWampAddress().getRealm() << ".method1 invoked (clientNumber=" << clientNumber << ") " << "arg1=" << arg1 << std::endl;
 	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
 	int64_t ret1;
-	stub_->method1(clientId, arg1, [&](int64_t _ret1) {ret1=_ret1; });
+	stub_->method1(
+		clientId, arg1
+		, [&](int64_t _ret1) {
+			ret1=_ret1; 
+		}
+	);
 	invocation->result(std::make_tuple(ret1));
 }
+
+void ExampleInterfaceWampStubAdapterInternal::wrap_methodWithError1(autobahn::wamp_invocation invocation) {
+	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_methodWithError1 called" << std::endl;
+	auto clientNumber = invocation->argument<uint32_t>(0);
+	auto arg1 = invocation->argument<int64_t>(1);
+	std::cerr << "Procedure " << getWampAddress().getRealm() << ".methodWithError1 invoked (clientNumber=" << clientNumber << ") " << "arg1=" << arg1 << std::endl;
+	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
+	ExampleInterface::methodWithError1Error err;
+	int64_t ret1;
+	stub_->methodWithError1(
+		clientId, arg1
+		, [&](ExampleInterface::methodWithError1Error _error, int64_t _ret1) {
+			err=_error;
+			ret1=_ret1; 
+		}
+	);
+	invocation->result(std::make_tuple(err.value_, ret1));
+}
+
 
 } // namespace example10
 } // namespace testcases

@@ -234,34 +234,58 @@ class FInterfaceWampStubAdapterGenerator {
 			«ENDFOR»
 		}
 
-
 		«FOR m : _interface.methods»
-		void «_interface.wampStubAdapterClassNameInternal»::wrap_«m.name»(autobahn::wamp_invocation invocation) {
-			std::cout << "«_interface.wampStubAdapterClassNameInternal»::wrap_«m.name» called" << std::endl;
-			auto clientNumber = invocation->argument<uint32_t>(0);
-			«FOR arg : m.inArgs»
-				«IF arg.type.isStruct»
-					«arg.type.actualDerived.name»_internal «arg.name»_internal = invocation->argument<«arg.type.actualDerived.name»_internal>(«m.inArgs.indexOf(arg) + 1»);
-					«arg.type.typename» «arg.name» = transform«arg.type.typename»(«arg.name»_internal);
-				«ELSE»
-					auto «arg.name» = invocation->argument<«arg.type.typename»>(«m.inArgs.indexOf(arg) + 1»);
-				«ENDIF»
-			«ENDFOR»
-			std::cerr << "Procedure " << getWampAddress().getRealm() << ".«m.name» invoked (clientNumber=" << clientNumber << ") "«m.inArgs.arglist1» << std::endl;
-			std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
-			«FOR arg : m.outArgs»
-				«arg.type.typename» «arg.name»;
-			«ENDFOR»
-			stub_->«m.name»(clientId«m.inArgs.map[', ' + name].join», [&](«m.outArgs.arglist2») {«m.outArgs.arglist3»});
-			«IF !m.outArgs.empty»
-			invocation->result(std::make_tuple(«m.outArgs.arglist4»));
-			«ENDIF»
-		}
+			«m.genWrapperMethod(_interface)»
+			
 		«ENDFOR»
 
 		«_interface.model.generateNamespaceEndDeclaration»
 		«_interface.generateVersionNamespaceEnd»
 	'''
+
+	def private genWrapperMethod(FMethod m, FInterface _interface) {
+		val et = m.errorType
+		val hasErr = !et.empty
+		'''
+			void «_interface.wampStubAdapterClassNameInternal»::wrap_«m.name»(autobahn::wamp_invocation invocation) {
+				std::cout << "«_interface.wampStubAdapterClassNameInternal»::wrap_«m.name» called" << std::endl;
+				auto clientNumber = invocation->argument<uint32_t>(0);
+				«FOR arg : m.inArgs»
+					«IF arg.type.isStruct»
+						«arg.type.actualDerived.name»_internal «arg.name»_internal = invocation->argument<«arg.type.actualDerived.name»_internal>(«m.inArgs.indexOf(arg) + 1»);
+						«arg.type.typename» «arg.name» = transform«arg.type.typename»(«arg.name»_internal);
+					«ELSE»
+						auto «arg.name» = invocation->argument<«arg.type.typename»>(«m.inArgs.indexOf(arg) + 1»);
+					«ENDIF»
+				«ENDFOR»
+				std::cerr << "Procedure " << getWampAddress().getRealm() << ".«m.name» invoked (clientNumber=" << clientNumber << ") "«m.inArgs.arglist1» << std::endl;
+				std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
+				«IF hasErr»
+					«et» err;
+				«ENDIF»
+				«FOR arg : m.outArgs»
+					«arg.type.typename» «arg.name»;
+				«ENDFOR»
+				stub_->«m.name»(
+					clientId«m.inArgs.map[', ' + name].join»
+					«IF !m.isFireAndForget»
+					, [&](«IF hasErr»«et» _error, «ENDIF»«m.outArgs.arglist2») {
+						«IF hasErr»err=_error;«ENDIF»
+						«m.outArgs.arglist3»
+					}
+					«ENDIF»
+				);
+				«IF !m.outArgs.empty»
+				invocation->result(std::make_tuple(«IF hasErr»err.value_, «ENDIF»«m.outArgs.arglist4»));
+				«ENDIF»
+			}
+		'''
+	}
+//ExampleInterface::methodWithError1Error err;
+//    int64_t ret1;
+//    stub_->methodWithError1(clientId, arg1, [&](ExampleInterface::methodWithError1Error _error, int64_t _ret1) {err=_error; ret1=_ret1; });
+//    invocation->result(std::make_tuple(err.value_, ret1));
+
 
 	def private arglist1(List<FArgument> args) {
 		args.filter[!type.isStruct].map[''' << "«IF args.indexOf(it)>0», «ENDIF»«name»=" << «name»'''].join

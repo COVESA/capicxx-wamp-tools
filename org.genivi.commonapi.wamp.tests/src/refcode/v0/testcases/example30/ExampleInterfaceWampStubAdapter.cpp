@@ -76,7 +76,6 @@ void ExampleInterfaceWampStubAdapterInternal::provideRemoteMethods() {
 }
 
 
-
 } // namespace example30
 } // namespace testcases
 } // namespace v0

@@ -87,14 +87,18 @@ void ExampleInterfaceWampStubAdapterInternal::provideRemoteMethods() {
 			"add2nestedStruct", &ExampleInterfaceWampStubAdapterInternal::wrap_add2nestedStruct);
 }
 
-
 void ExampleInterfaceWampStubAdapterInternal::wrap_play(autobahn::wamp_invocation invocation) {
 	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_play called" << std::endl;
 	auto clientNumber = invocation->argument<uint32_t>(0);
 	std::cerr << "Procedure " << getWampAddress().getRealm() << ".play invoked (clientNumber=" << clientNumber << ") " << std::endl;
 	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
-	stub_->play(clientId, [&]() {});
+	stub_->play(
+		clientId
+		, [&]() {
+		}
+	);
 }
+
 void ExampleInterfaceWampStubAdapterInternal::wrap_add2(autobahn::wamp_invocation invocation) {
 	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_add2 called" << std::endl;
 	auto clientNumber = invocation->argument<uint32_t>(0);
@@ -104,9 +108,15 @@ void ExampleInterfaceWampStubAdapterInternal::wrap_add2(autobahn::wamp_invocatio
 	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
 	int64_t sum;
 	int64_t diff;
-	stub_->add2(clientId, left, right, [&](int64_t _sum, int64_t _diff) {sum=_sum; diff=_diff; });
+	stub_->add2(
+		clientId, left, right
+		, [&](int64_t _sum, int64_t _diff) {
+			sum=_sum; diff=_diff; 
+		}
+	);
 	invocation->result(std::make_tuple(sum, diff));
 }
+
 void ExampleInterfaceWampStubAdapterInternal::wrap_add2struct(autobahn::wamp_invocation invocation) {
 	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_add2struct called" << std::endl;
 	auto clientNumber = invocation->argument<uint32_t>(0);
@@ -115,9 +125,15 @@ void ExampleInterfaceWampStubAdapterInternal::wrap_add2struct(autobahn::wamp_inv
 	std::cerr << "Procedure " << getWampAddress().getRealm() << ".add2struct invoked (clientNumber=" << clientNumber << ") " << std::endl;
 	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
 	SumDiff result;
-	stub_->add2struct(clientId, s, [&](SumDiff _result) {result=_result; });
+	stub_->add2struct(
+		clientId, s
+		, [&](SumDiff _result) {
+			result=_result; 
+		}
+	);
 	invocation->result(std::make_tuple(result.values_));
 }
+
 void ExampleInterfaceWampStubAdapterInternal::wrap_add2nestedStruct(autobahn::wamp_invocation invocation) {
 	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_add2nestedStruct called" << std::endl;
 	auto clientNumber = invocation->argument<uint32_t>(0);
@@ -126,9 +142,15 @@ void ExampleInterfaceWampStubAdapterInternal::wrap_add2nestedStruct(autobahn::wa
 	std::cerr << "Procedure " << getWampAddress().getRealm() << ".add2nestedStruct invoked (clientNumber=" << clientNumber << ") " << std::endl;
 	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
 	SumDiff result;
-	stub_->add2nestedStruct(clientId, p, [&](SumDiff _result) {result=_result; });
+	stub_->add2nestedStruct(
+		clientId, p
+		, [&](SumDiff _result) {
+			result=_result; 
+		}
+	);
 	invocation->result(std::make_tuple(result.values_));
 }
+
 
 } // namespace example77
 } // namespace testcases

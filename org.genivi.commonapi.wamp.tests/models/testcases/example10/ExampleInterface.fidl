@@ -1,5 +1,6 @@
 package testcases.example10
 
+// this tests simple methods (with Int64 arguments only)
 interface ExampleInterface {
 	version { major 0 minor 7 }
 
@@ -11,4 +12,19 @@ interface ExampleInterface {
 			Int64 ret1
 		}
 	}
+	
+	method methodWithError1 {
+		in {
+			Int64 arg1
+		}
+		out {
+			Int64 ret1
+		}
+		error {
+			OK // TODO: an OK error code shouldn't be necessary, the server should be able to decide if an error response is sent or not
+			ERROR1
+			ERROR2
+		}
+	}
 }
+
