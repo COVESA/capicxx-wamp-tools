@@ -1,5 +1,6 @@
 package testcases.example10
 
+// this tests simple methods (with Int64 arguments only)
 interface ExampleInterface {
 	version { major 0 minor 7 }
 
