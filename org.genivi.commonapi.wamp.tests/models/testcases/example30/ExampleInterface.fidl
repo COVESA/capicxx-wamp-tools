@@ -15,4 +15,10 @@ interface ExampleInterface {
 			Int64 arg2
 		}
 	}
+
+	broadcast broadcast3 {
+		out {
+			String arg1
+		}
+	}
 }

@@ -56,6 +56,8 @@ public:
 
 	void fireBroadcast2Event(const int64_t& arg1, const int64_t& arg2);
 
+	void fireBroadcast3Event(const std::string& arg1);
+
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
@@ -93,6 +95,17 @@ void ExampleInterfaceWampStubAdapterInternal::fireBroadcast2Event(const int64_t&
     		*this,
 			getWampAddress().getRealm() + ".broadcast2",
 			std::make_tuple(arg1, arg2)
+    );
+}
+
+void ExampleInterfaceWampStubAdapterInternal::fireBroadcast3Event(const std::string& arg1) {
+    //CommonAPI::Deployable< int64_t, CommonAPI::Wamp::IntegerDeployment<int64_t>> deployed_arg1(_arg1, static_cast< CommonAPI::Wamp::IntegerDeployment<int64_t>* >(nullptr));
+
+    std::cout << "ExampleInterfaceWampStubAdapterInternal::fireBroadcast3Event(" << arg1 << ")" << std::endl;
+    CommonAPI::Wamp::WampStubTopicHelper::publishTopic(
+    		*this,
+			getWampAddress().getRealm() + ".broadcast3",
+			std::make_tuple(arg1)
     );
 }
 
