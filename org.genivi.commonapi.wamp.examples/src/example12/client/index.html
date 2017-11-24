@@ -17,6 +17,12 @@
          <button type="button" id="setFalse">Set false</button><br/><br/>
          <label>Result: <output id="result2" /></label><br/>
          <br/><hr/>
+         <button type="button" id="sendEnum1">ENUM1</button>
+         <button type="button" id="sendEnum2">ENUM2</button>
+         <button type="button" id="sendEnum3">ENUM3</button>
+         <button type="button" id="sendEnum4">ENUM4</button><br/><br/>
+         <label>Result: <output id="result3" /></label><br/>
+         <br/><hr/>
          <label>Status: <output id="connectionStatus"></output></label>
       </form>
       
@@ -73,6 +79,34 @@
 	         document.getElementById("setFalse").onclick = function() {
 	         	setBool(false);
 	         }
+
+	         function sendEnum(value) {
+	            session.call(addr + '.method3', [clientId, value]).then(
+	               function (res) {
+	                  console.log("Call succeeded, result: ", res);
+	                  document.getElementById("result3").value = "Server responded with enum value " + res;
+	               },
+	               function (err) {
+	                  console.log("Call failed, error message: ", err);
+	                  document.getElementById("result2").value = "??";
+	               }
+	            );
+	         }
+
+			 // the enum values are determined by some algorithm in CommonAPI core
+	         document.getElementById("sendEnum1").onclick = function() {
+	         	sendEnum(0);
+	         }
+	         document.getElementById("sendEnum2").onclick = function() {
+	         	sendEnum(1);
+	         }
+	         document.getElementById("sendEnum3").onclick = function() {
+	         	sendEnum(100);
+	         }
+	         document.getElementById("sendEnum4").onclick = function() {
+	         	sendEnum(3);
+	         }
+
          };
 
          connection.onclose = function(reason, details) {

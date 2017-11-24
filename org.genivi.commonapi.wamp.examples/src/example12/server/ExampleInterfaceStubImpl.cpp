@@ -40,6 +40,28 @@ void ExampleInterfaceStubImpl::method2(const std::shared_ptr<CommonAPI::ClientId
     _reply(!_arg1);
 }
 
+void ExampleInterfaceStubImpl::method3(
+		const std::shared_ptr<CommonAPI::ClientId> _client,
+		ExampleInterface::MyEnum _arg1,
+		method3Reply_t _reply)
+{
+    std::cout << "ExampleInterfaceStubImpl::method3 called with arg1='" << _arg1 << "'" << std::endl;
+
+    ExampleInterface::MyEnum ret1;
+	switch(_arg1) {
+	case ExampleInterface::MyEnum::ENUM1:
+		ret1 = ExampleInterface::MyEnum::ENUM2; break;
+	case ExampleInterface::MyEnum::ENUM2:
+		ret1 = ExampleInterface::MyEnum::ENUM3; break;
+	case ExampleInterface::MyEnum::ENUM3:
+		ret1 = ExampleInterface::MyEnum::ENUM4; break;
+	case ExampleInterface::MyEnum::ENUM4:
+		ret1 = ExampleInterface::MyEnum::ENUM1; break;
+	}
+    _reply(ret1);
+}
+
+
 } // namespace example12
 } // namespace testcases
 } // namespace v0
