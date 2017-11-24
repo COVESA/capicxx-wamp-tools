@@ -296,10 +296,15 @@ class FInterfaceWampStubAdapterGenerator {
 
 	def private arglist4(List<FArgument> args) '''«FOR it : args SEPARATOR ', '»«name»«IF type.isStruct».values_«ENDIF»«ENDFOR»'''
 
+	// TODO: merge this with FrancaGeneratorExtensions.getElementType
 	def private getTypename(FTypeRef typeref) {
 		if (typeref.isInteger) {
 			// all integer types are currently mapped to int64
 			"int64_t"
+		} else if (typeref.isBoolean) {
+			"bool"
+		} else if (typeref.isString) {
+			"std::string"
 		} else if (typeref.isStruct) {
 			typeref.actualDerived.name
 		} else {
