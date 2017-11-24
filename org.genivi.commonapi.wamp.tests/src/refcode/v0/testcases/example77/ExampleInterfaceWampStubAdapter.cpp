@@ -73,65 +73,18 @@ ExampleInterfaceWampStubAdapterInternal::ExampleInterfaceWampStubAdapterInternal
 void ExampleInterfaceWampStubAdapterInternal::provideRemoteMethods() {
 	std::cout << "provideRemoteMethods called" << std::endl;
 
-	// busy waiting until the session is started and joined
-	while(!getWampConnection()->isConnected());
-
-	CommonAPI::Wamp::WampConnection* connection = (CommonAPI::Wamp::WampConnection*)(getWampConnection().get());
-	connection->ioMutex_.lock();
-
-	boost::future<void> provide_future_play = connection->session_->provide(getWampAddress().getRealm() + ".play",
-			std::bind(&ExampleInterfaceWampStubAdapterInternal::wrap_play, this, std::placeholders::_1))
-		.then([&](boost::future<autobahn::wamp_registration> registration) {
-		try {
-			std::cerr << "registered procedure " << getWampAddress().getRealm() << ".play: id=" << registration.get().id() << std::endl;
-		} catch (const std::exception& e) {
-			std::cerr << e.what() << std::endl;
-			connection->io_.stop();
-			return;
-		}
-	});
-	provide_future_play.get();
-
-	boost::future<void> provide_future_add2 = connection->session_->provide(getWampAddress().getRealm() + ".add2",
-			std::bind(&ExampleInterfaceWampStubAdapterInternal::wrap_add2, this, std::placeholders::_1))
-		.then([&](boost::future<autobahn::wamp_registration> registration) {
-		try {
-			std::cerr << "registered procedure " << getWampAddress().getRealm() << ".add2: id=" << registration.get().id() << std::endl;
-		} catch (const std::exception& e) {
-			std::cerr << e.what() << std::endl;
-			connection->io_.stop();
-			return;
-		}
-	});
-	provide_future_add2.get();
-
-	boost::future<void> provide_future_add2struct = connection->session_->provide(getWampAddress().getRealm() + ".add2struct",
-			std::bind(&ExampleInterfaceWampStubAdapterInternal::wrap_add2struct, this, std::placeholders::_1))
-		.then([&](boost::future<autobahn::wamp_registration> registration) {
-		try {
-			std::cerr << "registered procedure " << getWampAddress().getRealm() << ".add2struct: id=" << registration.get().id() << std::endl;
-		} catch (const std::exception& e) {
-			std::cerr << e.what() << std::endl;
-			connection->io_.stop();
-			return;
-		}
-	});
-	provide_future_add2struct.get();
-
-	boost::future<void> provide_future_add2nestedStruct = connection->session_->provide(getWampAddress().getRealm() + ".add2nestedStruct",
-			std::bind(&ExampleInterfaceWampStubAdapterInternal::wrap_add2nestedStruct, this, std::placeholders::_1))
-		.then([&](boost::future<autobahn::wamp_registration> registration) {
-		try {
-			std::cerr << "registered procedure " << getWampAddress().getRealm() << ".add2nestedStruct: id=" << registration.get().id() << std::endl;
-		} catch (const std::exception& e) {
-			std::cerr << e.what() << std::endl;
-			connection->io_.stop();
-			return;
-		}
-	});
-	provide_future_add2nestedStruct.get();
-
-	connection->ioMutex_.unlock();
+	CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<ExampleInterfaceWampStubAdapterInternal>
+		::provideRemoteMethod(*this,
+			"play", &ExampleInterfaceWampStubAdapterInternal::wrap_play);
+	CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<ExampleInterfaceWampStubAdapterInternal>
+		::provideRemoteMethod(*this,
+			"add2", &ExampleInterfaceWampStubAdapterInternal::wrap_add2);
+	CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<ExampleInterfaceWampStubAdapterInternal>
+		::provideRemoteMethod(*this,
+			"add2struct", &ExampleInterfaceWampStubAdapterInternal::wrap_add2struct);
+	CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<ExampleInterfaceWampStubAdapterInternal>
+		::provideRemoteMethod(*this,
+			"add2nestedStruct", &ExampleInterfaceWampStubAdapterInternal::wrap_add2nestedStruct);
 }
 
 

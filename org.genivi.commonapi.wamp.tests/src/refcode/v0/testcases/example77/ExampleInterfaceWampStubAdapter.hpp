@@ -56,6 +56,7 @@ public:
 	void wrap_add2struct(autobahn::wamp_invocation invocation);
 	void wrap_add2nestedStruct(autobahn::wamp_invocation invocation);
 
+
 	//////////////////////////////////////////////////////////////////////////////////////////
 
 	const ExampleInterfaceWampStubAdapterHelper::StubDispatcherTable& getStubDispatcherTable();

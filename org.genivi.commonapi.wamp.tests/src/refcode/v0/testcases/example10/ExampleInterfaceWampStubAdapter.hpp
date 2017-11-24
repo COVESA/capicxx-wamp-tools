@@ -53,6 +53,7 @@ public:
 
 	void wrap_method1(autobahn::wamp_invocation invocation);
 
+
 	//////////////////////////////////////////////////////////////////////////////////////////
 
 	const ExampleInterfaceWampStubAdapterHelper::StubDispatcherTable& getStubDispatcherTable();

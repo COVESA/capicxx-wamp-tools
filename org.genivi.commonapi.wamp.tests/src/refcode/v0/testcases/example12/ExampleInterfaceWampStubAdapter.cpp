@@ -73,26 +73,9 @@ ExampleInterfaceWampStubAdapterInternal::ExampleInterfaceWampStubAdapterInternal
 void ExampleInterfaceWampStubAdapterInternal::provideRemoteMethods() {
 	std::cout << "provideRemoteMethods called" << std::endl;
 
-		// busy waiting until the session is started and joined
-		while(!getWampConnection()->isConnected());
-	
-		CommonAPI::Wamp::WampConnection* connection = (CommonAPI::Wamp::WampConnection*)(getWampConnection().get());
-		connection->ioMutex_.lock();
-	
-		boost::future<void> provide_future_method1 = connection->session_->provide(getWampAddress().getRealm() + ".method1",
-				std::bind(&ExampleInterfaceWampStubAdapterInternal::wrap_method1, this, std::placeholders::_1))
-			.then([&](boost::future<autobahn::wamp_registration> registration) {
-			try {
-				std::cerr << "registered procedure " << getWampAddress().getRealm() << ".method1: id=" << registration.get().id() << std::endl;
-			} catch (const std::exception& e) {
-				std::cerr << e.what() << std::endl;
-				connection->io_.stop();
-				return;
-			}
-		});
-		provide_future_method1.get();
-
-		connection->ioMutex_.unlock();
+	CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<ExampleInterfaceWampStubAdapterInternal>
+		::provideRemoteMethod(*this,
+			"method1", &ExampleInterfaceWampStubAdapterInternal::wrap_method1);
 }
 
 
