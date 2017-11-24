@@ -24,7 +24,8 @@ public:
     /// This is the method that will be called on remote calls on the method method1
     virtual void method1(const std::shared_ptr<CommonAPI::ClientId> _client, int64_t _arg1, method1Reply_t _reply);
 
-private:
+    /// This is the method that will be called on remote calls on the method methodWithError1
+    virtual void methodWithError1(const std::shared_ptr<CommonAPI::ClientId> _client, int64_t _arg1, methodWithError1Reply_t _reply);
 };
 
 } // namespace example10
