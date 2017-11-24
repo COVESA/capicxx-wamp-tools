@@ -12,4 +12,14 @@ interface ExampleInterface {
 			String ret1
 		}
 	}
+
+	method method2 {
+		in {
+			Boolean arg1
+		}
+		out {
+			Boolean ret1
+		}
+	}
+
 }

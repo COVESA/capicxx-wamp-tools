@@ -11,7 +11,11 @@
          <label for="operand1">Your name: </label>
          <input type="string" data-clear-btn="true" name="operand1" id="operand1" value=""><br/>
          <button type="button" id="start">Start it!</button><br/><br/>
-         <label>Result: <output id="result" /></label><br/>
+         <label>Result: <output id="result1" /></label><br/>
+         <br/><hr/>
+         <button type="button" id="setTrue">Set true</button>
+         <button type="button" id="setFalse">Set false</button><br/><br/>
+         <label>Result: <output id="result2" /></label><br/>
          <br/><hr/>
          <label>Status: <output id="connectionStatus"></output></label>
       </form>
@@ -28,23 +32,47 @@
             console.log("Connected", details);
             setStatus("Connected to network.");
 
-	         document.getElementById("start").onclick = function() {
+	        var addr = 'local:testcases.example12.ExampleInterface:v0_7:testcases.example12.ExampleInterface';
+	        var clientId = 66;
+	        document.getElementById("start").onclick = function() {
 	         	var arg1 = document.getElementById("operand1").value;
 	         	console.log("input is " + arg1);
 					
-	            var clientId = 66;
-	            var addr = 'local:testcases.example12.ExampleInterface:v0_7:testcases.example12.ExampleInterface';
 	            session.call(addr + '.method1', [clientId, arg1]).then(
 	               function (res) {
 	                  console.log("Call succeeded, result: ", res);
-	                  document.getElementById("result").value = res; //.args[0];
+	                  document.getElementById("result1").value = res; //.args[0];
 	               },
 	               function (err) {
 	                  console.log("Call failed, error message: ", err);
-	                  document.getElementById("result").value = "??";
+	                  document.getElementById("result1").value = "??";
 	               }
 	            );
 	         };
+
+	         function setBool(value) {
+	            session.call(addr + '.method2', [clientId, value]).then(
+	               function (res) {
+	                  console.log("Call succeeded, result: ", res);
+	                  if (res) {
+		                  document.getElementById("result2").value = "Server responded with 'true'";
+	                  } else {
+		                  document.getElementById("result2").value = "Server responded with 'false'";
+	                  }
+	               },
+	               function (err) {
+	                  console.log("Call failed, error message: ", err);
+	                  document.getElementById("result2").value = "??";
+	               }
+	            );
+	         }
+	         
+	         document.getElementById("setTrue").onclick = function() {
+	         	setBool(true);
+	         }
+	         document.getElementById("setFalse").onclick = function() {
+	         	setBool(false);
+	         }
          };
 
          connection.onclose = function(reason, details) {
