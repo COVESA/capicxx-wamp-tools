@@ -50,7 +50,7 @@ public class MochaTestHelper {
 	public void generate() {
 		Path srcPath = getGeneratedSourceDirectory();
 		clearDirectory(srcPath);
-		
+
 		String inputFile = getModelAnnotation();
 		// load model
 		FModel fmodel = loader.loadModel(inputFile);
@@ -64,8 +64,9 @@ public class MochaTestHelper {
 	public void compile() {
 		Path buildPath = getBuildDirectory();
 		clearDirectory(buildPath);
-
-		List<String> command = createCommand("cmake", "..");
+		String testFolderName = getTestFolderName();
+		List<String> command = createCommand("cmake", "..", "-DPRJ_NAME:STRING=" + toFirstUpper(testFolderName),
+				"-DPRJ_FOLDER:String=" + testFolderName);
 		getCommandExecutor().startProcess(command, buildPath.toFile());
 
 		command = createCommand("make");
@@ -170,5 +171,13 @@ public class MochaTestHelper {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private String getTestFolderName() {
+		return getTestSourceDirectory().getFileName().toString();
+	}
+
+	private String toFirstUpper(String input) {
+		return Character.toUpperCase(input.charAt(0)) + input.substring(1);
 	}
 }

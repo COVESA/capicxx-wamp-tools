@@ -65,6 +65,8 @@ link_directories(
 #set(LINK_LIBRARIES -Wl,--no-as-needed -Wl,--as-needed CommonAPI -lboost_thread)
 set(LINK_LIBRARIES -Wl,--no-as-needed -Wl,--as-needed CommonAPI)
 
+SET(PRJ_NAME "ProjectName" CACHE STRING "Project Name")
+SET(PRJ_FOLDER "ProjectFolder" CACHE STRING "Project Folder")
 
 function(buildIt PRJ_NAME PRJ_FOLDER)
 	message(STATUS "BUILDING PROJECT: ${PRJ_NAME} with folder ${PRJ_FOLDER}")
@@ -100,10 +102,4 @@ function(buildIt PRJ_NAME PRJ_FOLDER)
 	target_link_libraries(${PRJ_NAME}-wamp CommonAPI-WAMP ${WAMP_LIBRARIES})
 endfunction()
 
-
-#buildIt("Example10" "example10")
-#buildIt("Example12" "example12")
-#buildIt("Example30" "example30")
-#buildIt("Example50" "example50")
-#buildIt("Example77" "example77")
-
+buildIt(${PRJ_NAME} ${PRJ_FOLDER})
