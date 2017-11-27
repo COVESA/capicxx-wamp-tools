@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 public class MochaTestHelper {
 
 	private static final String BUILD_FOLDER_NAME = "build";
+	private static final String SRC_GEN_FOLDER_NAME = "src-gen";
 
 	private final Object owner;
 	protected Compiler compiler;
@@ -47,7 +48,9 @@ public class MochaTestHelper {
 
 	@SuppressWarnings("deprecation")
 	public void generate() {
-
+		Path srcPath = getGeneratedSourceDirectory();
+		clearDirectory(srcPath);
+		
 		String inputFile = getModelAnnotation();
 		// load model
 		FModel fmodel = loader.loadModel(inputFile);
@@ -60,16 +63,7 @@ public class MochaTestHelper {
 
 	public void compile() {
 		Path buildPath = getBuildDirectory();
-		try {
-			if (Files.exists(buildPath)) {
-				Files2.clear(buildPath);
-			} else {
-				Files.createDirectory(buildPath);
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		clearDirectory(buildPath);
 
 		List<String> command = createCommand("cmake", "..");
 		getCommandExecutor().startProcess(command, buildPath.toFile());
@@ -93,6 +87,10 @@ public class MochaTestHelper {
 
 	public Process getCrossbarIOProcess() {
 		return crossbarIOProcess;
+	}
+
+	private Path getGeneratedSourceDirectory() {
+		return Paths.get(System.getProperty("user.dir"), SRC_GEN_FOLDER_NAME);
 	}
 
 	private Path getBuildDirectory() {
@@ -160,5 +158,17 @@ public class MochaTestHelper {
 
 	protected String getServiceNameAnnotation() {
 		return owner.getClass().getAnnotation(MochaTest.class).serviceName();
+	}
+
+	private void clearDirectory(Path path) {
+		try {
+			if (Files.exists(path)) {
+				Files2.clear(path);
+			} else {
+				Files.createDirectory(path);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
