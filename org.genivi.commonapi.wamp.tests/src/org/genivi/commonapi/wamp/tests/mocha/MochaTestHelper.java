@@ -47,7 +47,7 @@ public class MochaTestHelper {
 
 	@SuppressWarnings("deprecation")
 	public void generate() {
-		
+
 		String inputFile = getModelAnnotation();
 		// load model
 		FModel fmodel = loader.loadModel(inputFile);
@@ -77,9 +77,8 @@ public class MochaTestHelper {
 		command = createCommand("make");
 		getCommandExecutor().startProcess(command, buildPath.toFile());
 	}
-
+	
 	public void startServer() {
-		//TODO: Remove sleep time
 		List<String> command = createCommand(getCrossbarIOExecutable().toString(), "start");
 		crossbarIOProcess = getCommandExecutor().startProcess(command, getTestsBaseDirectory().toFile(), true);
 		try {
@@ -91,17 +90,16 @@ public class MochaTestHelper {
 		command = createCommand(getCommonAPIServiceExecutable().toString());
 		commonAPIServiceProcess = getCommandExecutor().startProcess(command, getTestSourceDirectory().toFile(), true);
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	public Process getCommonAPIServiceProcess() {
 		return commonAPIServiceProcess;
 	}
-	
+
 	public Process getCrossbarIOProcess() {
 		return crossbarIOProcess;
 	}

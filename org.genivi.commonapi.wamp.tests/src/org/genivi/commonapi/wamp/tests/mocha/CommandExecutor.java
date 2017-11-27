@@ -4,21 +4,17 @@
 package org.genivi.commonapi.wamp.tests.mocha;
 
 import java.io.File;
-/****************************************************************************
- * Copyright (c) 2008, 2012 Andreas Unger and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    Andreas Unger - initial API and implementation 
- ****************************************************************************/
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
 
+/**
+ * Helper class to execute third party programs.
+ * 
+ * @author Markus Mühlbrandt
+ *
+ */
 public class CommandExecutor {
 
 	public void startProcess(List<String> command, File directory) {
