@@ -7,7 +7,7 @@
 
 namespace v0 {
 namespace testcases {
-namespace example10 {
+namespace example12 {
 
 ExampleInterfaceStubImpl::ExampleInterfaceStubImpl() : ExampleInterfaceStub() {
 	std::cout << "ExampleInterfaceStubImpl constructor called" << std::endl;
@@ -26,27 +26,20 @@ const CommonAPI::Version& ExampleInterfaceStubImpl::getInterfaceVersion(std::sha
 	return version;
 }
 
-void ExampleInterfaceStubImpl::method1(const std::shared_ptr<CommonAPI::ClientId> _client, int64_t _arg1, method1Reply_t _reply) {
-    std::cout << "ExampleInterfaceStubImpl::method1 called" << std::endl;
+void ExampleInterfaceStubImpl::method1(const std::shared_ptr<CommonAPI::ClientId> _client, std::string _arg1, method1Reply_t _reply) {
+    std::cout << "ExampleInterfaceStubImpl::method1 called with arg1='" << _arg1 << "'" << std::endl;
 
-    // provide response
-    _reply(_arg1 * 2);
+    // return a slightly modified string
+    _reply("Hello " + _arg1 + "!");
 }
 
-void ExampleInterfaceStubImpl::methodWithError1(const std::shared_ptr<CommonAPI::ClientId> _client, int64_t _arg1, methodWithError1Reply_t _reply) {
-    std::cout << "ExampleInterfaceStubImpl::methodWithError1 called" << std::endl;
+void ExampleInterfaceStubImpl::method2(const std::shared_ptr<CommonAPI::ClientId> _client, bool _arg1, method2Reply_t _reply) {
+    std::cout << "ExampleInterfaceStubImpl::method2 called with arg1='" << _arg1 << "'" << std::endl;
 
-    // return an error if _arg1>9 (used for testing)
-	ExampleInterface::methodWithError1Error error;
-    if (_arg1>9) {
-    	error = ExampleInterface::methodWithError1Error::Literal::ERROR1;
-        _reply(error, 0);
-    } else {
-    	error = ExampleInterface::methodWithError1Error::Literal::OK;
-        _reply(error, _arg1*10);
-    }
+    // return the opposite boolean value
+    _reply(!_arg1);
 }
 
-} // namespace example10
+} // namespace example12
 } // namespace testcases
 } // namespace v0

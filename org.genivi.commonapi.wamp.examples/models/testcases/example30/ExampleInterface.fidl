@@ -1,0 +1,30 @@
+package testcases.example30
+
+interface ExampleInterface {
+	version { major 0 minor 7 }
+
+	broadcast broadcast1 {
+		out {
+			Int64 arg1
+		}
+	}
+
+	broadcast broadcast2 {
+		out {
+			Int64 arg1
+			Int64 arg2
+		}
+	}
+
+	broadcast broadcast3 {
+		out {
+			String arg1
+		}
+	}
+
+	broadcast broadcast4 {
+		out {
+			Boolean arg1
+		}
+	}
+}

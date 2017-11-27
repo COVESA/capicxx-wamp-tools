@@ -1,0 +1,25 @@
+package testcases.example12
+
+// this tests methods with various argument types (and combinations thereof)
+interface ExampleInterface {
+	version { major 0 minor 7 }
+
+	method method1 {
+		in {
+			String arg1
+		}
+		out {
+			String ret1
+		}
+	}
+
+	method method2 {
+		in {
+			Boolean arg1
+		}
+		out {
+			Boolean ret1
+		}
+	}
+
+}

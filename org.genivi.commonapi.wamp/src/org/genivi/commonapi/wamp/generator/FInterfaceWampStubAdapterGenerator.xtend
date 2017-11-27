@@ -17,6 +17,7 @@ import org.genivi.commonapi.wamp.preferences.FPreferencesWamp
 import org.genivi.commonapi.wamp.preferences.PreferenceConstantsWamp
 
 import static extension org.franca.core.framework.FrancaHelpers.*
+import org.franca.core.franca.FBroadcast
 
 class FInterfaceWampStubAdapterGenerator {
 	@Inject private extension FrancaGeneratorExtensions
@@ -99,6 +100,12 @@ class FInterfaceWampStubAdapterGenerator {
 			void wrap_«method.name»(autobahn::wamp_invocation invocation);
 			«ENDFOR»
 
+			«FOR broadcast: _interface.broadcasts»
+				«FTypeGenerator::generateComments(broadcast, false)»
+				void «broadcast.stubAdapterClassFireEventMethodName»(«broadcast.generateArgs(_interface)»);
+
+			«ENDFOR»
+
 			//////////////////////////////////////////////////////////////////////////////////////////
 
 			const «_interface.wampStubAdapterHelperClassName»::StubDispatcherTable& getStubDispatcherTable();
@@ -116,6 +123,19 @@ class FInterfaceWampStubAdapterGenerator {
 			CommonAPI::Wamp::StubAttributeTable stubAttributeTable_;
 		};
 
+		«FOR broadcast: _interface.broadcasts»
+		void «_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassFireEventMethodName»(«broadcast.generateArgs(_interface)») {
+		    //CommonAPI::Deployable< int64_t, CommonAPI::Wamp::IntegerDeployment<int64_t>> deployed_arg1(_arg1, static_cast< CommonAPI::Wamp::IntegerDeployment<int64_t>* >(nullptr));
+		
+		    std::cout << "«_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassFireEventMethodName»(" << «broadcast.outArgs.map[elementName].join(' << ", " << ')» << ")" << std::endl;
+		    CommonAPI::Wamp::WampStubTopicHelper::publishTopic(
+		    		*this,
+					getWampAddress().getRealm() + ".«broadcast.name»",
+					std::make_tuple(«broadcast.outArgs.map[elementName].join(', ')»)
+		    );
+		}
+
+		«ENDFOR»
 
 		class «_interface.wampStubAdapterClassName»
 			: public «_interface.wampStubAdapterClassNameInternal»,
@@ -136,6 +156,9 @@ class FInterfaceWampStubAdapterGenerator {
 		#endif // «_interface.defineName»_WAMP_STUB_ADAPTER_HPP_
 	'''
 
+	def private generateArgs(FBroadcast broadcast, FInterface _interface) {
+		'''«broadcast.outArgs.map['const ' + getTypeName(_interface, true) + '& ' + elementName].join(', ')»'''
+	}
 
 	def private generateWampStubAdapterSource(FInterface _interface, PropertyAccessor deploymentAccessor,  List<FDProvider> providers, IResource modelid) '''
 		«generateCommonApiWampLicenseHeader()»
@@ -203,59 +226,66 @@ class FInterfaceWampStubAdapterGenerator {
 
 		void «_interface.wampStubAdapterClassNameInternal»::provideRemoteMethods() {
 			std::cout << "provideRemoteMethods called" << std::endl;
-		
-			// busy waiting until the session is started and joined
-			while(!getWampConnection()->isConnected());
-		
-			CommonAPI::Wamp::WampConnection* connection = (CommonAPI::Wamp::WampConnection*)(getWampConnection().get());
-			connection->ioMutex_.lock();
-		
+
 			«FOR m : _interface.methods»
-			boost::future<void> provide_future_«m.name» = connection->session_->provide(getWampAddress().getRealm() + ".«m.name»",
-					std::bind(&«_interface.wampStubAdapterClassNameInternal»::wrap_«m.name», this, std::placeholders::_1))
-				.then([&](boost::future<autobahn::wamp_registration> registration) {
-				try {
-					std::cerr << "registered procedure " << getWampAddress().getRealm() << ".«m.name»: id=" << registration.get().id() << std::endl;
-				} catch (const std::exception& e) {
-					std::cerr << e.what() << std::endl;
-					connection->io_.stop();
-					return;
-				}
-			});
-			provide_future_«m.name».get();
-
+			CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<«_interface.wampStubAdapterClassNameInternal»>
+				::provideRemoteMethod(*this,
+					"«m.name»", &«_interface.wampStubAdapterClassNameInternal»::wrap_«m.name»);
 			«ENDFOR»
-			connection->ioMutex_.unlock();
 		}
-
 
 		«FOR m : _interface.methods»
-		void «_interface.wampStubAdapterClassNameInternal»::wrap_«m.name»(autobahn::wamp_invocation invocation) {
-			std::cout << "«_interface.wampStubAdapterClassNameInternal»::wrap_«m.name» called" << std::endl;
-			auto clientNumber = invocation->argument<uint32_t>(0);
-			«FOR arg : m.inArgs»
-				«IF arg.type.isStruct»
-					«arg.type.actualDerived.name»_internal «arg.name»_internal = invocation->argument<«arg.type.actualDerived.name»_internal>(«m.inArgs.indexOf(arg) + 1»);
-					«arg.type.typename» «arg.name» = transform«arg.type.typename»(«arg.name»_internal);
-				«ELSE»
-					auto «arg.name» = invocation->argument<«arg.type.typename»>(«m.inArgs.indexOf(arg) + 1»);
-				«ENDIF»
-			«ENDFOR»
-			std::cerr << "Procedure " << getWampAddress().getRealm() << ".«m.name» invoked (clientNumber=" << clientNumber << ") "«m.inArgs.arglist1» << std::endl;
-			std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
-			«FOR arg : m.outArgs»
-				«arg.type.typename» «arg.name»;
-			«ENDFOR»
-			stub_->«m.name»(clientId«m.inArgs.map[', ' + name].join», [&](«m.outArgs.arglist2») {«m.outArgs.arglist3»});
-			«IF !m.outArgs.empty»
-			invocation->result(std::make_tuple(«m.outArgs.arglist4»));
-			«ENDIF»
-		}
+			«m.genWrapperMethod(_interface)»
+			
 		«ENDFOR»
 
 		«_interface.model.generateNamespaceEndDeclaration»
 		«_interface.generateVersionNamespaceEnd»
 	'''
+
+	def private genWrapperMethod(FMethod m, FInterface _interface) {
+		val et = m.errorType
+		val hasErr = !et.empty
+		'''
+			void «_interface.wampStubAdapterClassNameInternal»::wrap_«m.name»(autobahn::wamp_invocation invocation) {
+				std::cout << "«_interface.wampStubAdapterClassNameInternal»::wrap_«m.name» called" << std::endl;
+				auto clientNumber = invocation->argument<uint32_t>(0);
+				«FOR arg : m.inArgs»
+					«IF arg.type.isStruct»
+						«arg.type.actualDerived.name»_internal «arg.name»_internal = invocation->argument<«arg.type.actualDerived.name»_internal>(«m.inArgs.indexOf(arg) + 1»);
+						«arg.type.typename» «arg.name» = transform«arg.type.typename»(«arg.name»_internal);
+					«ELSE»
+						auto «arg.name» = invocation->argument<«arg.type.typename»>(«m.inArgs.indexOf(arg) + 1»);
+					«ENDIF»
+				«ENDFOR»
+				std::cerr << "Procedure " << getWampAddress().getRealm() << ".«m.name» invoked (clientNumber=" << clientNumber << ") "«m.inArgs.arglist1» << std::endl;
+				std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
+				«IF hasErr»
+					«et» err;
+				«ENDIF»
+				«FOR arg : m.outArgs»
+					«arg.type.typename» «arg.name»;
+				«ENDFOR»
+				stub_->«m.name»(
+					clientId«m.inArgs.map[', ' + name].join»
+					«IF !m.isFireAndForget»
+					, [&](«IF hasErr»«et» _error, «ENDIF»«m.outArgs.arglist2») {
+						«IF hasErr»err=_error;«ENDIF»
+						«m.outArgs.arglist3»
+					}
+					«ENDIF»
+				);
+				«IF !m.outArgs.empty»
+				invocation->result(std::make_tuple(«IF hasErr»err.value_, «ENDIF»«m.outArgs.arglist4»));
+				«ENDIF»
+			}
+		'''
+	}
+//ExampleInterface::methodWithError1Error err;
+//    int64_t ret1;
+//    stub_->methodWithError1(clientId, arg1, [&](ExampleInterface::methodWithError1Error _error, int64_t _ret1) {err=_error; ret1=_ret1; });
+//    invocation->result(std::make_tuple(err.value_, ret1));
+
 
 	def private arglist1(List<FArgument> args) {
 		args.filter[!type.isStruct].map[''' << "«IF args.indexOf(it)>0», «ENDIF»«name»=" << «name»'''].join
@@ -271,10 +301,15 @@ class FInterfaceWampStubAdapterGenerator {
 
 	def private arglist4(List<FArgument> args) '''«FOR it : args SEPARATOR ', '»«name»«IF type.isStruct».values_«ENDIF»«ENDFOR»'''
 
+	// TODO: merge this with FrancaGeneratorExtensions.getElementType
 	def private getTypename(FTypeRef typeref) {
 		if (typeref.isInteger) {
 			// all integer types are currently mapped to int64
 			"int64_t"
+		} else if (typeref.isBoolean) {
+			"bool"
+		} else if (typeref.isString) {
+			"std::string"
 		} else if (typeref.isStruct) {
 			typeref.actualDerived.name
 		} else {

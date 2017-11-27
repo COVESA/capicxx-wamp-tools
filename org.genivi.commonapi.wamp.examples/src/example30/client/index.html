@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+   <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+   </head>
+   <body>
+      <h1>Franca and CommonAPI C++ WAMP Example</h1>
+      <p>This simple broadcast receiver example uses WAMP communication to interact with a C++ server using CommonAPI.</p>
+      
+      <form>
+         <label>Last received 1: <output id="received1" /></label><br/>
+         <label>Last received 2: <output id="received2" /></label><br/>
+         <label>Last received 3: <output id="received3" /></label><br/>
+         <label>Last received 4: <output id="received4" /></label><br/>
+         <br/><hr/>
+         <label>Status: <output id="connectionStatus"></output></label>
+      </form>
+      
+      <script src="autobahn.min.js"></script>
+      <script type="text/javascript">
+         console.log("I am alive!");
+         var connection = new autobahn.Connection({
+            url: 'ws://127.0.0.1:8080/ws',
+            realm: 'realm1'}
+         );
+
+         connection.onopen = function(session, details) {
+            console.log("Connected", details);
+            setStatus("Connected to network.");
+            
+            var addr = 'local:testcases.example30.ExampleInterface:v0_7:testcases.example30.ExampleInterface.';
+            session.subscribe(addr + 'broadcast1', function(args) {
+               console.log("received broadcast1: ", args[0]);
+	           document.getElementById("received1").value = args[0];
+            });
+            session.subscribe(addr + 'broadcast2', function(args) {
+               console.log("received broadcast2: ", args[0], ", ", args[1]);
+	           document.getElementById("received2").value = args[0] + ", " + args[1];
+            });
+            session.subscribe(addr + 'broadcast3', function(args) {
+               console.log("received broadcast3: ", args[0]);
+	           document.getElementById("received3").value = args[0];
+            });
+            session.subscribe(addr + 'broadcast4', function(args) {
+               console.log("received broadcast4: ", args[0]);
+	           document.getElementById("received4").value = args[0];
+            });
+            
+         };
+
+         connection.onclose = function(reason, details) {
+            console.log("Connection closed", reason, details);
+            setStatus("Disconnected.");
+         }
+         
+         setStatus("Connecting to server...");
+         connection.open();
+
+         function setStatus(text) {
+            document.getElementById("connectionStatus").value = text;
+         }
+	        
+      </script>
+   </body>
+</html>

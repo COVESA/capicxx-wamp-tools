@@ -6,11 +6,11 @@
 #ifndef ExampleInterfaceSTUBIMPL_H_
 #define ExampleInterfaceSTUBIMPL_H_
 
-#include "v0/testcases/example10/ExampleInterfaceStub.hpp"
+#include "v0/testcases/example12/ExampleInterfaceStub.hpp"
 
 namespace v0 {
 namespace testcases {
-namespace example10 {
+namespace example12 {
 
 class ExampleInterfaceStubImpl : public ExampleInterfaceStub {
 public:
@@ -22,13 +22,15 @@ public:
     virtual const CommonAPI::Version& getInterfaceVersion(std::shared_ptr<CommonAPI::ClientId> clientId);
 
     /// This is the method that will be called on remote calls on the method method1
-    virtual void method1(const std::shared_ptr<CommonAPI::ClientId> _client, int64_t _arg1, method1Reply_t _reply);
+    virtual void method1(const std::shared_ptr<CommonAPI::ClientId> _client, std::string _arg1, method1Reply_t _reply);
 
-    /// This is the method that will be called on remote calls on the method methodWithError1
-    virtual void methodWithError1(const std::shared_ptr<CommonAPI::ClientId> _client, int64_t _arg1, methodWithError1Reply_t _reply);
+    /// This is the method that will be called on remote calls on the method method2
+    virtual void method2(const std::shared_ptr<CommonAPI::ClientId> _client, bool _arg1, method2Reply_t _reply);
+
+private:
 };
 
-} // namespace example10
+} // namespace example12
 } // namespace testcases
 } // namespace v0
 

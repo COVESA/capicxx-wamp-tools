@@ -8,15 +8,15 @@
 * http://mozilla.org/MPL/2.0/.
 */
 
-#include "v0/testcases/example10/ExampleInterface.hpp"
-#include "v0/testcases/example10/ExampleInterfaceWampStubAdapter.hpp"
-#include "v0/testcases/example10/ExampleInterfaceWampStructsSupport.hpp"
+#include "v0/testcases/example30/ExampleInterface.hpp"
+#include "v0/testcases/example30/ExampleInterfaceWampStubAdapter.hpp"
+#include "v0/testcases/example30/ExampleInterfaceWampStructsSupport.hpp"
 
 #include <functional>
 
 namespace v0 {
 namespace testcases {
-namespace example10 {
+namespace example30 {
 
 std::shared_ptr<CommonAPI::Wamp::WampStubAdapter> createExampleInterfaceWampStubAdapter(
 						const CommonAPI::Wamp::WampAddress &_address,
@@ -42,7 +42,7 @@ void ExampleInterfaceWampStubAdapterInternal::deactivateManagedInstances() {
 }
 
 CommonAPI::Wamp::WampGetAttributeStubDispatcher<
-	::v0::testcases::example10::ExampleInterfaceStub,
+	::v0::testcases::example30::ExampleInterfaceStub,
 	CommonAPI::Version
 > ExampleInterfaceWampStubAdapterInternal::getExampleInterfaceInterfaceVersionStubDispatcher(&ExampleInterfaceStub::getInterfaceVersion, "uu");
 
@@ -73,49 +73,9 @@ ExampleInterfaceWampStubAdapterInternal::ExampleInterfaceWampStubAdapterInternal
 void ExampleInterfaceWampStubAdapterInternal::provideRemoteMethods() {
 	std::cout << "provideRemoteMethods called" << std::endl;
 
-	CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<ExampleInterfaceWampStubAdapterInternal>
-		::provideRemoteMethod(*this,
-			"method1", &ExampleInterfaceWampStubAdapterInternal::wrap_method1);
-	CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<ExampleInterfaceWampStubAdapterInternal>
-		::provideRemoteMethod(*this,
-			"methodWithError1", &ExampleInterfaceWampStubAdapterInternal::wrap_methodWithError1);
-}
-
-void ExampleInterfaceWampStubAdapterInternal::wrap_method1(autobahn::wamp_invocation invocation) {
-	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_method1 called" << std::endl;
-	auto clientNumber = invocation->argument<uint32_t>(0);
-	auto arg1 = invocation->argument<int64_t>(1);
-	std::cerr << "Procedure " << getWampAddress().getRealm() << ".method1 invoked (clientNumber=" << clientNumber << ") " << "arg1=" << arg1 << std::endl;
-	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
-	int64_t ret1;
-	stub_->method1(
-		clientId, arg1
-		, [&](int64_t _ret1) {
-			ret1=_ret1; 
-		}
-	);
-	invocation->result(std::make_tuple(ret1));
-}
-
-void ExampleInterfaceWampStubAdapterInternal::wrap_methodWithError1(autobahn::wamp_invocation invocation) {
-	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_methodWithError1 called" << std::endl;
-	auto clientNumber = invocation->argument<uint32_t>(0);
-	auto arg1 = invocation->argument<int64_t>(1);
-	std::cerr << "Procedure " << getWampAddress().getRealm() << ".methodWithError1 invoked (clientNumber=" << clientNumber << ") " << "arg1=" << arg1 << std::endl;
-	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
-	ExampleInterface::methodWithError1Error err;
-	int64_t ret1;
-	stub_->methodWithError1(
-		clientId, arg1
-		, [&](ExampleInterface::methodWithError1Error _error, int64_t _ret1) {
-			err=_error;
-			ret1=_ret1; 
-		}
-	);
-	invocation->result(std::make_tuple(err.value_, ret1));
 }
 
 
-} // namespace example10
+} // namespace example30
 } // namespace testcases
 } // namespace v0

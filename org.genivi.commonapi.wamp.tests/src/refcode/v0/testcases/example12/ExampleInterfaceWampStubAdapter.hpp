@@ -7,11 +7,11 @@
 * If a copy of the MPL was not distributed with this file, You can obtain one at
 * http://mozilla.org/MPL/2.0/.
 */
-#ifndef V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_STUB_ADAPTER_HPP_
-#define V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_STUB_ADAPTER_HPP_
+#ifndef V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_STUB_ADAPTER_HPP_
+#define V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_STUB_ADAPTER_HPP_
 
-#include "v0/testcases/example77/ExampleInterfaceStub.hpp"
-//#include "v0/testcases/example77/ExampleInterfaceWampDeployment.hpp"
+#include "v0/testcases/example12/ExampleInterfaceStub.hpp"
+//#include "v0/testcases/example12/ExampleInterfaceWampDeployment.hpp"
 
 #if !defined (COMMONAPI_INTERNAL_COMPILATION)
 #define COMMONAPI_INTERNAL_COMPILATION
@@ -31,7 +31,7 @@
 
 namespace v0 {
 namespace testcases {
-namespace example77 {
+namespace example12 {
 
 typedef CommonAPI::Wamp::WampStubAdapterHelper<ExampleInterfaceStub> ExampleInterfaceWampStubAdapterHelper;
 
@@ -51,10 +51,8 @@ public:
 
 	virtual void provideRemoteMethods();
 
-	void wrap_play(autobahn::wamp_invocation invocation);
-	void wrap_add2(autobahn::wamp_invocation invocation);
-	void wrap_add2struct(autobahn::wamp_invocation invocation);
-	void wrap_add2nestedStruct(autobahn::wamp_invocation invocation);
+	void wrap_method1(autobahn::wamp_invocation invocation);
+	void wrap_method2(autobahn::wamp_invocation invocation);
 
 
 	//////////////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +63,7 @@ public:
 	void deactivateManagedInstances();
 
 	static CommonAPI::Wamp::WampGetAttributeStubDispatcher<
-		::v0::testcases::example77::ExampleInterfaceStub,
+		::v0::testcases::example12::ExampleInterfaceStub,
 		CommonAPI::Version
 	> getExampleInterfaceInterfaceVersionStubDispatcher;
 
@@ -88,8 +86,8 @@ public:
 	}
 };
 
-} // namespace example77
+} // namespace example12
 } // namespace testcases
 } // namespace v0
 
-#endif // V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_STUB_ADAPTER_HPP_
+#endif // V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_STUB_ADAPTER_HPP_
