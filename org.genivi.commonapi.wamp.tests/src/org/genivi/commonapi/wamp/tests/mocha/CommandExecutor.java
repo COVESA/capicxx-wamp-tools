@@ -18,10 +18,10 @@ import java.util.List;
 public class CommandExecutor {
 
 	public void startProcess(List<String> command, File directory) {
-		startProcess(command, directory, false);
+		startProcess(command, directory, false, 0);
 	}
 
-	public Process startProcess(List<String> command, File directory, boolean isService) {
+	public Process startProcess(List<String> command, File directory, boolean isService, long wait) {
 
 		ProcessBuilder processBuilder = new ProcessBuilder(command).directory(directory);
 		Process process = null;
@@ -30,8 +30,12 @@ public class CommandExecutor {
 
 			if (!isService) {
 				waitForProcessTermination(process);
+			} else if (wait >= 0) {
+				Thread.sleep(wait);
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		return process;

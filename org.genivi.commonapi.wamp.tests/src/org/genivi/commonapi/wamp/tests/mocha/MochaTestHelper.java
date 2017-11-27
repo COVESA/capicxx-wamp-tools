@@ -77,23 +77,14 @@ public class MochaTestHelper {
 		command = createCommand("make");
 		getCommandExecutor().startProcess(command, buildPath.toFile());
 	}
-	
+
 	public void startServer() {
 		List<String> command = createCommand(getCrossbarIOExecutable().toString(), "start");
-		crossbarIOProcess = getCommandExecutor().startProcess(command, getTestsBaseDirectory().toFile(), true);
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		crossbarIOProcess = getCommandExecutor().startProcess(command, getTestsBaseDirectory().toFile(), true, 2000);
 
 		command = createCommand(getCommonAPIServiceExecutable().toString());
-		commonAPIServiceProcess = getCommandExecutor().startProcess(command, getTestSourceDirectory().toFile(), true);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		commonAPIServiceProcess = getCommandExecutor().startProcess(command, getTestSourceDirectory().toFile(), true,
+				1000);
 	}
 
 	public Process getCommonAPIServiceProcess() {
