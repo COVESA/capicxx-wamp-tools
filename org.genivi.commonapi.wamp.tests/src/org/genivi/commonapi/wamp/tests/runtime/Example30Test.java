@@ -8,10 +8,11 @@ import org.genivi.commonapi.wamp.tests.mocha.MochaTest;
 @MochaTest(//
 		program = "mocha", //
 		mochaReporterFile = "mochatest/reporter.js", //
-		mochaTestFile = "mochatest/example30/Example30Test.js", //		
+		mochaTestFile = "mochatest/example30/Example30Test.js", //
 		model = "models/testcases/example30/ExampleInterface.fidl", //
-		serviceName = "Example30Service"
+		serviceName = "Example30Service", //
+		generateSkeleton = true //
 )
 
-public class Example30Test extends AbstractWampRuntimeTest {	
+public class Example30Test extends AbstractWampRuntimeTest {
 }

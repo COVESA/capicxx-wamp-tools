@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -19,6 +18,7 @@ import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
 import org.franca.core.dsl.FrancaPersistenceManager;
 import org.franca.core.franca.FModel;
 import org.genivi.commonapi.core.preferences.FPreferences;
+import org.genivi.commonapi.core.preferences.PreferenceConstants;
 
 import com.google.inject.Inject;
 
@@ -56,7 +56,9 @@ public class MochaTestHelper {
 		FModel fmodel = loader.loadModel(inputFile);
 		assertNotNull("Could not load model from file: " + inputFile, fmodel);
 
-		fsa.setOutputConfigurations(FPreferences.getInstance().getOutputpathConfiguration());
+		FPreferences instance = FPreferences.getInstance();
+		instance.setPreference(PreferenceConstants.P_GENERATE_SKELETON, generateSkeleton());
+		fsa.setOutputConfigurations(instance.getOutputpathConfiguration());
 
 		generators.forEach(generator -> generator.doGenerate(fmodel.eResource(), fsa));
 	}
@@ -127,14 +129,11 @@ public class MochaTestHelper {
 		return command;
 	}
 
-	protected List<String> getFilesToCopy() {
-		return new ArrayList<String>(
-				Arrays.asList(owner.getClass().getAnnotation(MochaTest.class).additionalFilesToCopy()));
-	}
-
-	protected List<String> getFilesToCompile() {
-		return new ArrayList<String>(
-				Arrays.asList(owner.getClass().getAnnotation(MochaTest.class).additionalFilesToCompile()));
+	protected String generateSkeleton() {
+		if (getGenerateSkeletonAnnotation()) {
+			return "true";
+		}
+		return "false";
 	}
 
 	protected CommandExecutor getCommandExecutor() {
@@ -149,16 +148,12 @@ public class MochaTestHelper {
 		return owner.getClass().getAnnotation(MochaTest.class).model();
 	}
 
-	protected String getTestBundleAnnotation() {
-		return owner.getClass().getAnnotation(MochaTest.class).testBundle();
-	}
-
-	protected String getModelBundleAnnotation() {
-		return owner.getClass().getAnnotation(MochaTest.class).modelBundle();
-	}
-
 	protected String getServiceNameAnnotation() {
 		return owner.getClass().getAnnotation(MochaTest.class).serviceName();
+	}
+
+	protected boolean getGenerateSkeletonAnnotation() {
+		return owner.getClass().getAnnotation(MochaTest.class).generateSkeleton();
 	}
 
 	private void clearDirectory(Path path) {

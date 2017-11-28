@@ -23,18 +23,5 @@ public @interface MochaTest {
 	String program();
 	String model();
 	String serviceName();
-	
-	String[] additionalFilesToCopy() default {};
-	String[] additionalFilesToCompile() default {};
-
-	/**
-	 * If no test bundle provided, source test files (Mocha test) are expected to be
-	 * in the Junit test's bundle.
-	 * 
-	 * If test bundle is provided, all test files are exepcted to be located in the
-	 * test bundle. Also a project of the same name is created in Junit workspace.
-	 * 
-	 */
-	String testBundle() default "";
-	String modelBundle() default "";
+	boolean generateSkeleton() default false;
 }
