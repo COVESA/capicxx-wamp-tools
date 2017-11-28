@@ -1,3 +1,9 @@
+/*******************************************************************************
+ * Copyright (c) 2017 itemis AG (http://www.itemis.de). All rights reserved.
+ * 
+ * Author: Markus Mühlbrandt
+ * 
+ ******************************************************************************/
 var mocha = require('mocha');
 module.exports = MyReporter;
 //[==========] Running 2 tests from 1 test case.

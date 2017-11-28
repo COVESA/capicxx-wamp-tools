@@ -1,8 +1,12 @@
 /*******************************************************************************
  * Copyright (c) 2017 itemis AG (http://www.itemis.de). All rights reserved.
+ * 
+ * Author: Markus Mühlbrandt
+ * 
  ******************************************************************************/
-// Use assertion library of node.js
-var assert = require('assert');
+// Use assertion library
+var assert = require('../TestAssertions.js');
+
 // Use autobahn library
 var autobahn = require('autobahn');
 
@@ -12,17 +16,6 @@ var connection = new autobahn.Connection({
 	url : 'ws://127.0.0.1:8080/ws',
 	realm : 'realm1'
 });
-
-function callMethod(done, session, methodCall) {
-	session.call(methodCall.name, methodCall.args).then(
-			function(res) {
-				assert.equal(methodCall.expected, res.args[0],
-						'Method result does not match!');
-				done();
-			}, function(err) {
-				done(new Error(err.error));
-			});
-}
 
 // 'describe' equals a test suite, group or package. It is used to group tests.
 // 'it' equals a single test.
@@ -35,11 +28,15 @@ describe(
 			var methodCalls = [ {
 				name : address + '.' + 'method1',
 				args : [ 42, 20 ],
-				expected : 20
+				expected : 40
 			}, {
 				name : address + '.' + 'methodWithError1',
-				args : [ 42, 21 ],
-				expected : 'ERROR1'
+				args : [ 42, 20 ],
+				expected : [ 1, 0 ]
+			}, {
+				name : address + '.' + 'methodWithError1',
+				args : [ 42, 8 ],
+				expected : [ 0, 80 ]
 			} ];
 
 			before(function(done) {
@@ -63,29 +60,23 @@ describe(
 				}
 			})
 
-			it('TestConnectionState', function() {
-				assert.equal(true, connection.isConnected,
-						'No connection to server!');
-			});
-
 			// Actually the JUnit wrapper parses the 'it' tests to create the
 			// JUnit test descriptor. So iterating the methodCalls array here is
 			// not possible.
 			it('TestMethodCall_method1', function(done) {
-				if (connection.isConnected) {
-					callMethod.call(null, done, connection.session,
-							methodCalls[0]);
-				} else {
-					done(new Error("No connection to server!"));
-				}
+				assert.connectionState(connection);
+				assert.methodCall(done, connection.session, methodCalls[0]);
 			});
-			
+
 			it('TestMethodCall_methodWithError1', function(done) {
-				if (connection.isConnected) {
-					callMethod.call(null, done, connection.session,
-							methodCalls[1]);
-				} else {
-					done(new Error("No connection to server!"));
-				}
+				assert.connectionState(connection);
+				assert.methodCall(done, connection.session, methodCalls[1]);
+
+			});
+
+			it('TestMethodCall_methodWithError1_noError', function(done) {
+				assert.connectionState(connection);
+				assert.methodCall(done, connection.session, methodCalls[2]);
+
 			});
 		});
