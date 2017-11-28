@@ -14,10 +14,11 @@ exports.methodCall = function(done, session, methodCall) {
 			.then(
 					function(res) {
 						if (Array.isArray(res.args)) {
-							assert
-									.equal(Array.isArray(res.args), Array
-											.isArray(methodCall.expected),
-											'Returned type is array. Expected type is primitive.');
+							assert.equal(Array.isArray(res.args), Array
+									.isArray(methodCall.expected),
+									'\nActual array type: ' + res.args
+											+ '\nExpected primitive type: '
+											+ methodCall.expected);
 							assert.equal(res.args.length,
 									methodCall.expected.length,
 									'Actual array length: ' + res.args.length
