@@ -49,6 +49,13 @@ exports.methodCall = function(done, session, methodCall) {
 					});
 }
 
+exports.broadcast = function(done, session, broadcast) {
+	session.subscribe(broadcast.name, function(args) {
+		console.log("received " + broadcast.name + ': ' + args[0]);
+		done();
+	});
+}
+
 exports.connectionState = function(connection) {
 	assert.equal(true, connection.isConnected, 'No connection to server!');
 }

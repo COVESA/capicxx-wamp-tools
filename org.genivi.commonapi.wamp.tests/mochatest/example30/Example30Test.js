@@ -22,13 +22,17 @@ describe(
 
 			var address = 'local:testcases.example30.ExampleInterface:v0_7:testcases.example30.ExampleInterface';
 
-			var methodCalls = [ {
-				name : address + '.' + 'method1',
-				args : [ 42, "TestString" ],
-				expected : "Hello TestString!"
+			var broadcasts = [ {
+				name : address + '.' + 'broadcast1',
+				expected : 1
 			}, {
-				name : address + '.' + 'method2',
-				args : [ 42, true ],
+				name : address + '.' + 'broadcast2',
+				expected : [ 1, 2 ]
+			}, {
+				name : address + '.' + 'broadcast3',
+				expected : "1"
+			}, {
+				name : address + '.' + 'broadcast4',
 				expected : true
 			} ];
 
@@ -56,13 +60,23 @@ describe(
 			// Actually the JUnit wrapper parses the 'it' tests to create the
 			// JUnit test descriptor. So iterating the methodCalls array here is
 			// not possible.
-			it('TestMethodCall_method1', function(done) {
+			it('TestMethodCall_broadcast1', function(done) {
 				assert.connectionState(connection);
-				assert.methodCall(done, connection.session, methodCalls[0]);
+				assert.broadcast(done, connection.session, broadcasts[0]);
 			});
+
+			// it('TestMethodCall_broadcast2', function(done) {
+			// assert.connectionState(connection);
+			// assert.methodCall(done, connection.session, methodCalls[1]);
+			// });
 			
-			it('TestMethodCall_method2', function(done) {
-				assert.connectionState(connection);
-				assert.methodCall(done, connection.session, methodCalls[1]);
-			});
+			// it('TestMethodCall_broadcast3', function(done) {
+			// assert.connectionState(connection);
+			// assert.methodCall(done, connection.session, methodCalls[2]);
+			// });
+			
+			// it('TestMethodCall_broadcast4', function(done) {
+			// assert.connectionState(connection);
+			// assert.methodCall(done, connection.session, methodCalls[4]);
+			// });
 		});
