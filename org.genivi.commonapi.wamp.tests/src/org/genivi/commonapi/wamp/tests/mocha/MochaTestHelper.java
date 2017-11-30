@@ -30,6 +30,7 @@ public class MochaTestHelper {
 
 	private static final String BUILD_FOLDER_NAME = "build";
 	private static final String SRC_GEN_FOLDER_NAME = "src-gen";
+	private static final Path CROSSBAR_IO_PATH = Paths.get(System.getProperty("user.home"), ".local", "bin", "crossbar");
 
 	private final Object owner;
 	protected Compiler compiler;
@@ -101,7 +102,7 @@ public class MochaTestHelper {
 	}
 
 	private Path getCrossbarIOExecutable() {
-		return Paths.get(System.getProperty("user.home"), ".local", "bin", "crossbar");
+		return CROSSBAR_IO_PATH;
 	}
 
 	private Path getCommonAPIServiceExecutable() {
