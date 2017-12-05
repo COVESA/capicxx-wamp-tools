@@ -11,6 +11,7 @@
 #ifndef V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_DEPLOYMENT_HPP_
 #define V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_DEPLOYMENT_HPP_
 
+#include <v0/testcases/example12/ExampleInterfaceWampDeployment.hpp>
 
 
 #if !defined (COMMONAPI_INTERNAL_COMPILATION)

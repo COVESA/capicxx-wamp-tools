@@ -22,4 +22,20 @@ interface ExampleInterface {
 		}
 	}
 
+	enumeration MyEnum {
+		ENUM1
+		ENUM2
+		ENUM3 = 100
+		ENUM4
+	}
+
+	method method3 {
+		in {
+			MyEnum arg1
+		}
+		out {
+			MyEnum ret1
+		}
+	}
+
 }
