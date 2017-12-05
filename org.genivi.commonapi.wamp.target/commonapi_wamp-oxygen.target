@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="CommonAPI WAMP Oxygen SR1" sequenceNumber="6">
+<?pde version="3.8"?><target name="CommonAPI WAMP Oxygen SR1" sequenceNumber="7">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.cdt.sdk.feature.group" version="9.3.2.201709131603"/>
@@ -26,6 +26,10 @@
 <unit id="org.eclipse.equinox.sdk.feature.group" version="3.13.1.v20170928-1405"/>
 <unit id="org.eclipse.platform.sdk" version="4.7.1.M20171009-0410"/>
 <repository location="http://download.eclipse.org/eclipse/updates/4.7/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="com.google.inject.multibindings" version="3.0.0.v201605172100"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20170919201930/repository/"/>
 </location>
 </locations>
 </target>
