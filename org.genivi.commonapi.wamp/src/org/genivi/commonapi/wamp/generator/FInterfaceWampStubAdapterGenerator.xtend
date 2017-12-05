@@ -17,6 +17,7 @@ import org.genivi.commonapi.wamp.preferences.FPreferencesWamp
 import org.genivi.commonapi.wamp.preferences.PreferenceConstantsWamp
 
 import static extension org.franca.core.framework.FrancaHelpers.*
+import static extension org.franca.core.FrancaModelExtensions.*
 import org.franca.core.franca.FBroadcast
 
 class FInterfaceWampStubAdapterGenerator {
@@ -255,7 +256,7 @@ class FInterfaceWampStubAdapterGenerator {
 						«arg.type.actualDerived.name»_internal «arg.name»_internal = invocation->argument<«arg.type.actualDerived.name»_internal>(«m.inArgs.indexOf(arg) + 1»);
 						«arg.type.typename» «arg.name» = transform«arg.type.typename»(«arg.name»_internal);
 					«ELSE»
-						auto «arg.name» = invocation->argument<«arg.type.typename»>(«m.inArgs.indexOf(arg) + 1»);
+						auto «arg.name» = invocation->argument<«arg.type.typenameOnWire»>(«m.inArgs.indexOf(arg) + 1»);
 					«ENDIF»
 				«ENDFOR»
 				std::cerr << "Procedure " << getWampAddress().getRealm() << ".«m.name» invoked (clientNumber=" << clientNumber << ") "«m.inArgs.arglist1» << std::endl;
@@ -264,10 +265,14 @@ class FInterfaceWampStubAdapterGenerator {
 					«et» err;
 				«ENDIF»
 				«FOR arg : m.outArgs»
-					«arg.type.typename» «arg.name»;
+					«arg.type.typenameOnWire» «arg.name»;
+				«ENDFOR»
+				«FOR arg : m.inArgs.filter[type.isEnumeration]»
+					«_interface.name»::«arg.type.actualDerived.name» «arg.wrappedName»;
+					«arg.wrappedName».value_ = «arg.name»; 
 				«ENDFOR»
 				stub_->«m.name»(
-					clientId«m.inArgs.map[', ' + name].join»
+					clientId«m.inArgs.map[', ' + wrappedName].join»
 					«IF !m.isFireAndForget»
 					, [&](«IF hasErr»«et» _error, «ENDIF»«m.outArgs.arglist2») {
 						«IF hasErr»err=_error;«ENDIF»
@@ -281,6 +286,14 @@ class FInterfaceWampStubAdapterGenerator {
 			}
 		'''
 	}
+	
+	def private wrappedName(FArgument arg) {
+		if (arg.type.isEnumeration)
+			"__" + arg.name
+		else
+			arg.name
+	}
+
 //ExampleInterface::methodWithError1Error err;
 //    int64_t ret1;
 //    stub_->methodWithError1(clientId, arg1, [&](ExampleInterface::methodWithError1Error _error, int64_t _ret1) {err=_error; ret1=_ret1; });
@@ -296,13 +309,21 @@ class FInterfaceWampStubAdapterGenerator {
 	}
 
 	def private arglist3(List<FArgument> args) {
-		args.map[name + "=_" + name + "; "].join
+		args.map[name + "=_" + name + (if (it.type.isEnumeration) ".value_" else "") + "; "].join
 	}
 
 	def private arglist4(List<FArgument> args) '''«FOR it : args SEPARATOR ', '»«name»«IF type.isStruct».values_«ENDIF»«ENDFOR»'''
 
-	// TODO: merge this with FrancaGeneratorExtensions.getElementType
+	val private ENUM_WIRE_TYPE = "uint32_t"
+	
+	def private getTypenameOnWire(FTypeRef typeref) {
+		typeref.getTypename(true)
+	}
 	def private getTypename(FTypeRef typeref) {
+		typeref.getTypename(false)
+	}
+	// TODO: merge this with FrancaGeneratorExtensions.getElementType
+	def private getTypename(FTypeRef typeref, boolean onWire) {
 		if (typeref.isInteger) {
 			// all integer types are currently mapped to int64
 			"int64_t"
@@ -312,6 +333,12 @@ class FInterfaceWampStubAdapterGenerator {
 			"std::string"
 		} else if (typeref.isStruct) {
 			typeref.actualDerived.name
+		} else if (typeref.isEnumeration) {
+			if (onWire) {
+				ENUM_WIRE_TYPE
+			} else {
+				typeref.interface.name + "::" + typeref.actualDerived.name
+			}
 		} else {
 			// all other types are currently unsupported
 			"UNSUPPORTED_DATATYPE"

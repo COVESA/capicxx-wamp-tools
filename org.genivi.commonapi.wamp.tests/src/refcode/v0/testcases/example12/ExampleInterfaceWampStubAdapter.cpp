@@ -124,11 +124,11 @@ void ExampleInterfaceWampStubAdapterInternal::wrap_method3(autobahn::wamp_invoca
 	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
 	uint32_t ret1;
 	ExampleInterface::MyEnum __arg1;
-	__arg1.value_ = arg1;
+	__arg1.value_ = arg1; 
 	stub_->method3(
 		clientId, __arg1
 		, [&](ExampleInterface::MyEnum _ret1) {
-			ret1=_ret1.value_;
+			ret1=_ret1.value_; 
 		}
 	);
 	invocation->result(std::make_tuple(ret1));
