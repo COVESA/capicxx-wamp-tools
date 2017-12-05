@@ -7,6 +7,7 @@ This is work in progress, we plan to provide initial releases later this year (2
 
 The binding code generator from this project will create C++ code which needs a proper runtime library.
 One can find the runtime library in the companion project https://github.com/GENIVI/capicxx-wamp-runtime.
+Please ensure that the runtime library version matches the code generator version.
 
 ## Further information
 
