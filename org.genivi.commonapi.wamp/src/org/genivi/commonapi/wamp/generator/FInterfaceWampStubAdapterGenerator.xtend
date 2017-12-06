@@ -132,7 +132,7 @@ class FInterfaceWampStubAdapterGenerator {
 		    CommonAPI::Wamp::WampStubTopicHelper::publishTopic(
 		    		*this,
 					getWampAddress().getRealm() + ".«broadcast.name»",
-					std::make_tuple(«broadcast.outArgs.map[elementName].join(', ')»)
+					std::make_tuple(«FOR it : broadcast.outArgs SEPARATOR ', '»«elementName»«IF type.isEnumeration».value_«ENDIF»«ENDFOR»)
 		    );
 		}
 

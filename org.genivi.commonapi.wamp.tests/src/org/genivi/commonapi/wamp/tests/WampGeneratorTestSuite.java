@@ -13,6 +13,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		Example10Test.class, //
 		Example12Test.class, //
 		//Example30Test.class, //
+		//Example32Test.class, //
 		Example77Test.class, //
 })
 public class WampGeneratorTestSuite {
