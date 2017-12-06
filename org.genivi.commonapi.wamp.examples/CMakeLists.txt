@@ -104,6 +104,7 @@ endfunction()
 buildIt("Example10" "example10")
 buildIt("Example12" "example12")
 buildIt("Example30" "example30")
+buildIt("Example32" "example32")
 #buildIt("Example50" "example50")
 buildIt("Example77" "example77")
 
