@@ -1,5 +1,6 @@
 package testcases.example30
 
+// this tests simple broadcasts (with primitive-type arguments only)
 interface ExampleInterface {
 	version { major 0 minor 7 }
 
