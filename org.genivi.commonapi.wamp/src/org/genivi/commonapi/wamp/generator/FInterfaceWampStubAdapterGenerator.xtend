@@ -128,7 +128,7 @@ class FInterfaceWampStubAdapterGenerator {
 		void «_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassFireEventMethodName»(«broadcast.generateArgs(_interface)») {
 		    //CommonAPI::Deployable< int64_t, CommonAPI::Wamp::IntegerDeployment<int64_t>> deployed_arg1(_arg1, static_cast< CommonAPI::Wamp::IntegerDeployment<int64_t>* >(nullptr));
 		
-		    std::cout << "«_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassFireEventMethodName»(" << «broadcast.outArgs.map[elementName].join(' << ", " << ')» << ")" << std::endl;
+		    std::cout << "«_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassFireEventMethodName»(" << «broadcast.outArgs.map[debug].join(' << ", " << ')» << ")" << std::endl;
 		    CommonAPI::Wamp::WampStubTopicHelper::publishTopic(
 		    		*this,
 					getWampAddress().getRealm() + ".«broadcast.name»",
@@ -159,6 +159,13 @@ class FInterfaceWampStubAdapterGenerator {
 
 	def private generateArgs(FBroadcast broadcast, FInterface _interface) {
 		'''«broadcast.outArgs.map['const ' + getTypeName(_interface, true) + '& ' + elementName].join(', ')»'''
+	}
+
+	def private getDebug(FArgument arg) {
+		if (arg.type.isArray)
+			'''"[<" << «arg.elementName».size() << ">]"'''
+		else
+			'''«arg.elementName»'''
 	}
 
 	def private generateWampStubAdapterSource(FInterface _interface, PropertyAccessor deploymentAccessor,  List<FDProvider> providers, IResource modelid) '''
@@ -331,6 +338,8 @@ class FInterfaceWampStubAdapterGenerator {
 			"bool"
 		} else if (typeref.isString) {
 			"std::string"
+		} else if (typeref.isArray) {
+			typeref.interface.name + "::" + typeref.actualDerived.name
 		} else if (typeref.isStruct) {
 			typeref.actualDerived.name
 		} else if (typeref.isEnumeration) {

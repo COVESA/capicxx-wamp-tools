@@ -54,6 +54,8 @@ public:
 
 	void fireBroadcast1Event(const ::v0::testcases::example32::ExampleInterface::MyEnum& arg1);
 
+	void fireBroadcast2Event(const ::v0::testcases::example32::ExampleInterface::MyArray1& arg1);
+
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
@@ -80,6 +82,17 @@ void ExampleInterfaceWampStubAdapterInternal::fireBroadcast1Event(const ::v0::te
     		*this,
 			getWampAddress().getRealm() + ".broadcast1",
 			std::make_tuple(arg1.value_)
+    );
+}
+
+void ExampleInterfaceWampStubAdapterInternal::fireBroadcast2Event(const ::v0::testcases::example32::ExampleInterface::MyArray1& arg1) {
+    //CommonAPI::Deployable< int64_t, CommonAPI::Wamp::IntegerDeployment<int64_t>> deployed_arg1(_arg1, static_cast< CommonAPI::Wamp::IntegerDeployment<int64_t>* >(nullptr));
+
+    std::cout << "ExampleInterfaceWampStubAdapterInternal::fireBroadcast2Event(" << "[<" << arg1.size() << ">]" << ")" << std::endl;
+    CommonAPI::Wamp::WampStubTopicHelper::publishTopic(
+    		*this,
+			getWampAddress().getRealm() + ".broadcast2",
+			std::make_tuple(arg1)
     );
 }
 
