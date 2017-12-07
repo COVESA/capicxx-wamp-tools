@@ -10,7 +10,7 @@
       <form>
          <label for="operand1">Your name: </label>
          <input type="string" data-clear-btn="true" name="operand1" id="operand1" value=""><br/>
-         <button type="button" id="start">Start it!</button><br/><br/>
+         <button type="button" id="start1">Start it!</button><br/><br/>
          <label>Result: <output id="result1" /></label><br/>
          <br/><hr/>
          <button type="button" id="setTrue">Set true</button>
@@ -22,6 +22,11 @@
          <button type="button" id="sendEnum3">ENUM3</button>
          <button type="button" id="sendEnum4">ENUM4</button><br/><br/>
          <label>Result: <output id="result3" /></label><br/>
+         <br/><hr/>
+         <label for="m4arg1">Add number: </label>
+         <input type="number" data-clear-btn="true" name="m4arg1" id="m4arg1" value=""><br/>
+         <button type="button" id="start4">Reverse!</button><br/><br/>
+         <label>Result: <output id="result4" /></label><br/>
          <br/><hr/>
          <label>Status: <output id="connectionStatus"></output></label>
       </form>
@@ -40,7 +45,7 @@
 
 	        var addr = 'local:testcases.example12.ExampleInterface:v0_7:testcases.example12.ExampleInterface';
 	        var clientId = 66;
-	        document.getElementById("start").onclick = function() {
+	        document.getElementById("start1").onclick = function() {
 	         	var arg1 = document.getElementById("operand1").value;
 	         	console.log("input is " + arg1);
 					
@@ -106,6 +111,23 @@
 	         document.getElementById("sendEnum4").onclick = function() {
 	         	sendEnum(3);
 	         }
+
+	        document.getElementById("start4").onclick = function() {
+	         	var arg1 = parseInt(document.getElementById("m4arg1").value);
+	         	console.log("input is " + arg1);
+				
+				var argList = [arg1, arg1*2, arg1*3]
+	            session.call(addr + '.method4', [clientId, argList]).then(
+	               function (res) {
+	                  console.log("Call succeeded, result: ", res);
+	                  document.getElementById("result4").value = res; //.args[0];
+	               },
+	               function (err) {
+	                  console.log("Call failed, error message: ", err);
+	                  document.getElementById("result4").value = "??";
+	               }
+	            );
+	         };
 
          };
 

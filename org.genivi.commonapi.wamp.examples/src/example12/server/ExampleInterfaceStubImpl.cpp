@@ -61,6 +61,18 @@ void ExampleInterfaceStubImpl::method3(
     _reply(ret1);
 }
 
+void ExampleInterfaceStubImpl::method4(const std::shared_ptr<CommonAPI::ClientId> _client, ExampleInterface::MyArray1 _arg1, method4Reply_t _reply) {
+    ExampleInterface::MyArray1 ret1 = {};
+
+    // add elements in reverse order
+    for(int i=_arg1.size()-1; i>=0; i--) {
+    	ret1.push_back(_arg1[i]);
+    }
+
+    _reply(ret1);
+}
+
+
 
 } // namespace example12
 } // namespace testcases
