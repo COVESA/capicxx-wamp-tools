@@ -28,6 +28,11 @@
          <button type="button" id="start4">Reverse!</button><br/><br/>
          <label>Result: <output id="result4" /></label><br/>
          <br/><hr/>
+         <label for="m5arg1">Add number: </label>
+         <input type="number" data-clear-btn="true" name="m4arg1" id="m5arg1" value=""><br/>
+         <button type="button" id="start5">Reverse!</button><br/><br/>
+         <label>Result: <output id="result5" /></label><br/>
+         <br/><hr/>
          <label>Status: <output id="connectionStatus"></output></label>
       </form>
       
@@ -125,6 +130,23 @@
 	               function (err) {
 	                  console.log("Call failed, error message: ", err);
 	                  document.getElementById("result4").value = "??";
+	               }
+	            );
+	         };
+
+	        document.getElementById("start5").onclick = function() {
+	         	var arg1 = parseInt(document.getElementById("m5arg1").value);
+	         	console.log("input is " + arg1);
+				
+				var argList = [arg1, arg1*2, arg1*3, arg1*4]
+	            session.call(addr + '.method5', [clientId, argList]).then(
+	               function (res) {
+	                  console.log("Call succeeded, result: ", res);
+	                  document.getElementById("result5").value = res; //.args[0];
+	               },
+	               function (err) {
+	                  console.log("Call failed, error message: ", err);
+	                  document.getElementById("result5").value = "??";
 	               }
 	            );
 	         };

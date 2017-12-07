@@ -38,7 +38,7 @@ int main(int argc, const char * const argv[])
 		for(int j=0; j<nPerMinute; j++) {
 			int n = i*100 + j;
 
-			int action = j % 2;
+			int action = j % 3;
 			switch (action) {
 			case 0: {
 				std::cout << "Firing broadcast1 event #" << n << std::endl;
@@ -55,6 +55,16 @@ int main(int argc, const char * const argv[])
 				arg1.push_back(n*2);
 				arg1.push_back(n*3);
 				myService->fireBroadcast2Event(arg1);
+				break;
+			}
+			case 2: {
+				std::cout << "Firing broadcast3 event #" << n << std::endl;
+				ExampleInterface::MyArray1 arg1;
+				arg1.push_back(n);
+				arg1.push_back(n*2);
+				arg1.push_back(n*3);
+				arg1.push_back(n*4);
+				myService->fireBroadcast3Event(arg1);
 				break;
 			}
 //			case 2: {
