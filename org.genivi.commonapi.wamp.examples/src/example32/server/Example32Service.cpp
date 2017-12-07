@@ -31,14 +31,14 @@ int main(int argc, const char * const argv[])
 	runtime->registerService(domain, instance, myService);
 
 	int i=0;
-	const int nPerMinute = 10;
+	const int nPerMinute = 12;
 	while (true) {
 		std::cout << "Waiting for calls... (Abort with CTRL+C)" << std::endl;
 		bool toggle = true;
 		for(int j=0; j<nPerMinute; j++) {
 			int n = i*100 + j;
 
-			int action = j % 1;
+			int action = j % 2;
 			switch (action) {
 			case 0: {
 				std::cout << "Firing broadcast1 event #" << n << std::endl;
@@ -48,11 +48,15 @@ int main(int argc, const char * const argv[])
 				toggle = !toggle;
 				break;
 			}
-//			case 1: {
-//				std::cout << "Firing broadcast2 event #" << n << std::endl;
-//				myService->fireBroadcast2Event(ExampleInterface::MyEnum::ENUM3);
-//				break;
-//			}
+			case 1: {
+				std::cout << "Firing broadcast2 event #" << n << std::endl;
+				ExampleInterface::MyArray1 arg1;
+				arg1.push_back(n);
+				arg1.push_back(n*2);
+				arg1.push_back(n*3);
+				myService->fireBroadcast2Event(arg1);
+				break;
+			}
 //			case 2: {
 //				std::cout << "Firing broadcast3 event #" << n << std::endl;
 //				std::string p = "Number";

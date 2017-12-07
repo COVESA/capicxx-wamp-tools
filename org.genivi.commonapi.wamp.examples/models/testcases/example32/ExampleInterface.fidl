@@ -17,4 +17,12 @@ interface ExampleInterface {
 		}
 	}
 
+	array MyArray1 of UInt64
+
+	broadcast broadcast2 {
+		out {
+			MyArray1 arg1
+		}
+	}
+
 }
