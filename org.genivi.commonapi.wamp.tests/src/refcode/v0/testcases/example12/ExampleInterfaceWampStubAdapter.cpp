@@ -82,6 +82,9 @@ void ExampleInterfaceWampStubAdapterInternal::provideRemoteMethods() {
 	CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<ExampleInterfaceWampStubAdapterInternal>
 		::provideRemoteMethod(*this,
 			"method3", &ExampleInterfaceWampStubAdapterInternal::wrap_method3);
+	CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<ExampleInterfaceWampStubAdapterInternal>
+		::provideRemoteMethod(*this,
+			"method4", &ExampleInterfaceWampStubAdapterInternal::wrap_method4);
 }
 
 void ExampleInterfaceWampStubAdapterInternal::wrap_method1(autobahn::wamp_invocation invocation) {
@@ -129,6 +132,22 @@ void ExampleInterfaceWampStubAdapterInternal::wrap_method3(autobahn::wamp_invoca
 		clientId, __arg1
 		, [&](ExampleInterface::MyEnum _ret1) {
 			ret1=_ret1.value_; 
+		}
+	);
+	invocation->result(std::make_tuple(ret1));
+}
+
+void ExampleInterfaceWampStubAdapterInternal::wrap_method4(autobahn::wamp_invocation invocation) {
+	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_method4 called" << std::endl;
+	auto clientNumber = invocation->argument<uint32_t>(0);
+	auto arg1 = invocation->argument<ExampleInterface::MyArray1>(1);
+	std::cerr << "Procedure " << getWampAddress().getRealm() << ".method4 invoked (clientNumber=" << clientNumber << ") " << "arg1=" << "[<" << arg1.size() << ">]" << std::endl;
+	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
+	ExampleInterface::MyArray1 ret1;
+	stub_->method4(
+		clientId, arg1
+		, [&](ExampleInterface::MyArray1 _ret1) {
+			ret1=_ret1; 
 		}
 	);
 	invocation->result(std::make_tuple(ret1));

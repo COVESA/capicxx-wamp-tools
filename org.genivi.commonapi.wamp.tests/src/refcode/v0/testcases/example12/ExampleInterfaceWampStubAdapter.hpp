@@ -54,6 +54,7 @@ public:
 	void wrap_method1(autobahn::wamp_invocation invocation);
 	void wrap_method2(autobahn::wamp_invocation invocation);
 	void wrap_method3(autobahn::wamp_invocation invocation);
+	void wrap_method4(autobahn::wamp_invocation invocation);
 
 
 	//////////////////////////////////////////////////////////////////////////////////////////

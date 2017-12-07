@@ -161,13 +161,6 @@ class FInterfaceWampStubAdapterGenerator {
 		'''«broadcast.outArgs.map['const ' + getTypeName(_interface, true) + '& ' + elementName].join(', ')»'''
 	}
 
-	def private getDebug(FArgument arg) {
-		if (arg.type.isArray)
-			'''"[<" << «arg.elementName».size() << ">]"'''
-		else
-			'''«arg.elementName»'''
-	}
-
 	def private generateWampStubAdapterSource(FInterface _interface, PropertyAccessor deploymentAccessor,  List<FDProvider> providers, IResource modelid) '''
 		«generateCommonApiWampLicenseHeader()»
 
@@ -301,14 +294,9 @@ class FInterfaceWampStubAdapterGenerator {
 			arg.name
 	}
 
-//ExampleInterface::methodWithError1Error err;
-//    int64_t ret1;
-//    stub_->methodWithError1(clientId, arg1, [&](ExampleInterface::methodWithError1Error _error, int64_t _ret1) {err=_error; ret1=_ret1; });
-//    invocation->result(std::make_tuple(err.value_, ret1));
-
 
 	def private arglist1(List<FArgument> args) {
-		args.filter[!type.isStruct].map[''' << "«IF args.indexOf(it)>0», «ENDIF»«name»=" << «name»'''].join
+		args.filter[!type.isStruct].map[''' << "«IF args.indexOf(it)>0», «ENDIF»«name»=" << «debug»'''].join
 	}
 
 	def private arglist2(List<FArgument> args) {
@@ -320,6 +308,13 @@ class FInterfaceWampStubAdapterGenerator {
 	}
 
 	def private arglist4(List<FArgument> args) '''«FOR it : args SEPARATOR ', '»«name»«IF type.isStruct».values_«ENDIF»«ENDFOR»'''
+
+	def private getDebug(FArgument arg) {
+		if (arg.type.isArray)
+			'''"[<" << «arg.elementName».size() << ">]"'''
+		else
+			'''«arg.elementName»'''
+	}
 
 	val private ENUM_WIRE_TYPE = "uint32_t"
 	
