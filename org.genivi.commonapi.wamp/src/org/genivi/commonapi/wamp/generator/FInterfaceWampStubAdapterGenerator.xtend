@@ -9,8 +9,6 @@ import org.franca.core.franca.FBroadcast
 import org.franca.core.franca.FInterface
 import org.franca.core.franca.FMethod
 import org.franca.core.franca.FModelElement
-import org.franca.core.franca.FTypeRef
-import org.franca.core.franca.FTypedElement
 import org.franca.deploymodel.dsl.fDeploy.FDProvider
 import org.genivi.commonapi.core.generator.FTypeGenerator
 import org.genivi.commonapi.core.generator.FrancaGeneratorExtensions
@@ -23,6 +21,7 @@ import static extension org.franca.core.framework.FrancaHelpers.*
 class FInterfaceWampStubAdapterGenerator {
 	@Inject private extension FrancaGeneratorExtensions
 	@Inject private extension FrancaWampGeneratorExtensions
+	@Inject private extension FrancaWampTypeExtensions
 	//@Inject private extension FrancaWampDeploymentAccessorHelper
 	@Inject private extension FInterfaceWampStructsSupportGenerator
 
@@ -316,50 +315,6 @@ class FInterfaceWampStubAdapterGenerator {
 			'''«arg.elementName»'''
 	}
 
-	val private ENUM_WIRE_TYPE = "uint32_t"
-	
-	def private getTypenameOnWire(FTypedElement elem) {
-		elem.getTypename(null, true)
-	}
-	def private getTypenameOnWire(FTypedElement elem, FModelElement _container) {
-		elem.getTypename(_container, true)
-	}
-	def private getTypenameCode(FTypedElement elem) {
-		elem.getTypename(null, false)
-	}
-	def private getTypenameCode(FTypedElement elem, FModelElement _container) {
-		elem.getTypename(_container, false)
-	}
-	// TODO: merge this with FrancaGeneratorExtensions.getElementType or .getTypeName
-	def private getTypename(FTypedElement elem, FModelElement _container, boolean onWire) {
-		val typeref = elem.type
-		if (elem.isArray) {
-			// TODO: check if this still works when the element type is a struct
-			elem.getTypeName(_container, true)
-		} else {
-			if (typeref.isInteger) {
-				// all integer types are currently mapped to int64
-				"int64_t"
-			} else if (typeref.isBoolean) {
-				"bool"
-			} else if (typeref.isString) {
-				"std::string"
-			} else if (typeref.isArray) {
-				elem.getTypeName(_container, true)
-			} else if (typeref.isStruct) {
-				typeref.actualDerived.name
-			} else if (typeref.isEnumeration) {
-				if (onWire) {
-					ENUM_WIRE_TYPE
-				} else {
-					elem.getTypeName(_container, true)
-				}
-			} else {
-				// all other types are currently unsupported
-				"UNSUPPORTED_DATATYPE"
-			}
-		}
-	}
 
 //		void initialize«_interface.wampStubAdapterClassName»() {
 //            «FOR p : providers»

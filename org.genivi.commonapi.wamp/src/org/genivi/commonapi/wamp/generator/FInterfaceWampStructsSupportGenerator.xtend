@@ -48,7 +48,7 @@ class FInterfaceWampStructsSupportGenerator {
 		«fInterface.model.generateNamespaceBeginDeclaration»
 
 		«FOR stype : fInterface.types.filter(FStructType)»
-			typedef std::tuple<«stype.elements.map[type.genType].join(', ')»> «stype.name»_internal;
+			typedef std::tuple<«stype.elements.map[it.getTypenameInternal(fInterface)].join(', ')»> «stype.name»_internal;
 			extern «stype.name»_internal transform«stype.name»(const «fInterface.name»::«stype.name» &«stype.name.toFirstLower»);
 			extern «fInterface.name»::«stype.name» transform«stype.name»(const «stype.name»_internal &«stype.name.toFirstLower»_internal);
 			
