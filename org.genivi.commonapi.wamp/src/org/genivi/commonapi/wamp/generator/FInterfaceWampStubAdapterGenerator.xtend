@@ -251,12 +251,7 @@ class FInterfaceWampStubAdapterGenerator {
 				std::cout << "«_interface.wampStubAdapterClassNameInternal»::wrap_«m.name» called" << std::endl;
 				auto clientNumber = invocation->argument<uint32_t>(0);
 				«FOR arg : m.inArgs»
-					«IF arg.type.isStruct»
-						«arg.type.actualDerived.name»_internal «arg.name»_internal = invocation->argument<«arg.type.actualDerived.name»_internal>(«m.inArgs.indexOf(arg) + 1»);
-						«arg.typenameCode» «arg.name» = transform«arg.typenameCode»(«arg.name»_internal);
-					«ELSE»
-						auto «arg.name» = invocation->argument<«arg.getTypenameOnWire(_interface)»>(«m.inArgs.indexOf(arg) + 1»);
-					«ENDIF»
+					auto «arg.name» = invocation->argument<«arg.getTypenameOnWire(_interface)»>(«m.inArgs.indexOf(arg) + 1»);
 				«ENDFOR»
 				std::cerr << "Procedure " << getWampAddress().getRealm() << ".«m.name» invoked (clientNumber=" << clientNumber << ") "«m.inArgs.arglist1» << std::endl;
 				std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);

@@ -11,18 +11,28 @@
 #define V0_TESTCASES_EXAMPLE32_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
 
 #include <v0/testcases/example32/ExampleInterface.hpp>
+#include <msgpack.hpp>
 
-namespace v0 {
-namespace testcases {
-namespace example32 {
+namespace msgpack {
+MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS) {
+namespace adaptor {
 
-typedef std::tuple<uint64_t, bool> MyStruct_internal;
-extern MyStruct_internal transformMyStruct(const ExampleInterface::MyStruct &myStruct);
-extern ExampleInterface::MyStruct transformMyStruct(const MyStruct_internal &myStruct_internal);
+template<>
+struct convert<::v0::testcases::example32::ExampleInterface::MyStruct> {
+	msgpack::object const& operator()(msgpack::object const& o, ::v0::testcases::example32::ExampleInterface::MyStruct& v) const {
+		if (o.type != msgpack::type::ARRAY) throw msgpack::type_error();
+		if (o.via.array.size != 2) throw msgpack::type_error();
+		v = ::v0::testcases::example32::ExampleInterface::MyStruct (
+			o.via.array.ptr[0].as<uint64_t>(),
+			o.via.array.ptr[1].as<bool>()
+        );
+		return o;
+	}
+};
 
-} // namespace example32
-} // namespace testcases
-} // namespace v0
+} // namespace adaptor
+} // MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS)
+} // namespace msgpack
 
 #endif // V0_TESTCASES_EXAMPLE32_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
 

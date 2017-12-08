@@ -120,14 +120,13 @@ void ExampleInterfaceWampStubAdapterInternal::wrap_add2(autobahn::wamp_invocatio
 void ExampleInterfaceWampStubAdapterInternal::wrap_add2struct(autobahn::wamp_invocation invocation) {
 	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_add2struct called" << std::endl;
 	auto clientNumber = invocation->argument<uint32_t>(0);
-	Summands_internal s_internal = invocation->argument<Summands_internal>(1);
-	Summands s = transformSummands(s_internal);
+	auto s = invocation->argument<::v0::testcases::example77::ExampleInterface::Summands>(1);
 	std::cerr << "Procedure " << getWampAddress().getRealm() << ".add2struct invoked (clientNumber=" << clientNumber << ") " << std::endl;
 	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
-	SumDiff result;
+	::v0::testcases::example77::ExampleInterface::SumDiff result;
 	stub_->add2struct(
 		clientId, s
-		, [&](SumDiff _result) {
+		, [&](::v0::testcases::example77::ExampleInterface::SumDiff _result) {
 			result=_result; 
 		}
 	);
@@ -137,14 +136,13 @@ void ExampleInterfaceWampStubAdapterInternal::wrap_add2struct(autobahn::wamp_inv
 void ExampleInterfaceWampStubAdapterInternal::wrap_add2nestedStruct(autobahn::wamp_invocation invocation) {
 	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_add2nestedStruct called" << std::endl;
 	auto clientNumber = invocation->argument<uint32_t>(0);
-	Params_internal p_internal = invocation->argument<Params_internal>(1);
-	Params p = transformParams(p_internal);
+	auto p = invocation->argument<::v0::testcases::example77::ExampleInterface::Params>(1);
 	std::cerr << "Procedure " << getWampAddress().getRealm() << ".add2nestedStruct invoked (clientNumber=" << clientNumber << ") " << std::endl;
 	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
-	SumDiff result;
+	::v0::testcases::example77::ExampleInterface::SumDiff result;
 	stub_->add2nestedStruct(
 		clientId, p
-		, [&](SumDiff _result) {
+		, [&](::v0::testcases::example77::ExampleInterface::SumDiff _result) {
 			result=_result; 
 		}
 	);

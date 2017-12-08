@@ -13,47 +13,28 @@ class FrancaWampTypeExtensions {
 	val private ENUM_WIRE_TYPE = "uint32_t"
 		
 	def getTypenameOnWire(FTypedElement elem) {
-		elem.getTypename(null, true, false)
+		elem.getTypename(null, true)
 	}
 
 	def getTypenameOnWire(FTypedElement elem, FModelElement _container) {
-		elem.getTypename(_container, true, false)
+		elem.getTypename(_container, true)
 	}
 
 	def getTypenameCode(FTypedElement elem) {
-		elem.getTypename(null, false, false)
+		elem.getTypename(null, false)
 	}
 
 	def getTypenameCode(FTypedElement elem, FModelElement _container) {
-		elem.getTypename(_container, false, false)
+		elem.getTypename(_container, false)
 	}
 
-	def getTypenameInternal(FTypedElement elem, FModelElement _container) {
-		elem.getTypename(_container, false, true)
-	}
-
-	// TODO: merge this with FrancaGeneratorExtensions.getElementType or .getTypeName
-	def private getTypename(FTypedElement elem, FModelElement _container, boolean onWire, boolean internal) {
+	// TODO: merge this with FrancaGeneratorExtensions.getTypeName
+	def private getTypename(FTypedElement elem, FModelElement _container, boolean onWire) {
 		val typeref = elem.type
-		if (elem.isArray) {
-			// TODO: check if this still works when the element type is a struct
-			elem.getTypeName(_container, true)
+		if (typeref.isEnumeration && onWire) {
+			ENUM_WIRE_TYPE
 		} else {
-			if (typeref.isInteger || typeref.isBoolean || typeref.isString || typeref.isArray) {
-				elem.getTypeName(_container, true)
-			} else if (typeref.isStruct) {
-				val n = typeref.actualDerived.name 
-				if (internal) n + "_internal" else n
-			} else if (typeref.isEnumeration) {
-				if (onWire) {
-					ENUM_WIRE_TYPE
-				} else {
-					elem.getTypeName(_container, true)
-				}
-			} else {
-				// all other types are currently unsupported
-				"UNSUPPORTED_DATATYPE"
-			}
+			elem.getTypeName(_container, true)
 		}
 	}
 

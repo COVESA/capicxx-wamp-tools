@@ -11,14 +11,15 @@
 #define V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
 
 #include <v0/testcases/example12/ExampleInterface.hpp>
+#include <msgpack.hpp>
 
-namespace v0 {
-namespace testcases {
-namespace example12 {
+namespace msgpack {
+MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS) {
+namespace adaptor {
 
-} // namespace example12
-} // namespace testcases
-} // namespace v0
+} // namespace adaptor
+} // MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS)
+} // namespace msgpack
 
 #endif // V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
 

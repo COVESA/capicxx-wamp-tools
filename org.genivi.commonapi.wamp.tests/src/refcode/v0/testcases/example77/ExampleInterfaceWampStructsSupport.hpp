@@ -11,26 +11,54 @@
 #define V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
 
 #include <v0/testcases/example77/ExampleInterface.hpp>
+#include <msgpack.hpp>
 
-namespace v0 {
-namespace testcases {
-namespace example77 {
+namespace msgpack {
+MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS) {
+namespace adaptor {
 
-typedef std::tuple<uint64_t, uint64_t> Summands_internal;
-extern Summands_internal transformSummands(const ExampleInterface::Summands &summands);
-extern ExampleInterface::Summands transformSummands(const Summands_internal &summands_internal);
+template<>
+struct convert<::v0::testcases::example77::ExampleInterface::Summands> {
+	msgpack::object const& operator()(msgpack::object const& o, ::v0::testcases::example77::ExampleInterface::Summands& v) const {
+		if (o.type != msgpack::type::ARRAY) throw msgpack::type_error();
+		if (o.via.array.size != 2) throw msgpack::type_error();
+		v = ::v0::testcases::example77::ExampleInterface::Summands (
+			o.via.array.ptr[0].as<uint64_t>(),
+			o.via.array.ptr[1].as<uint64_t>()
+        );
+		return o;
+	}
+};
 
-typedef std::tuple<Summands_internal, uint64_t> Params_internal;
-extern Params_internal transformParams(const ExampleInterface::Params &params);
-extern ExampleInterface::Params transformParams(const Params_internal &params_internal);
+template<>
+struct convert<::v0::testcases::example77::ExampleInterface::Params> {
+	msgpack::object const& operator()(msgpack::object const& o, ::v0::testcases::example77::ExampleInterface::Params& v) const {
+		if (o.type != msgpack::type::ARRAY) throw msgpack::type_error();
+		if (o.via.array.size != 2) throw msgpack::type_error();
+		v = ::v0::testcases::example77::ExampleInterface::Params (
+			o.via.array.ptr[0].as<::v0::testcases::example77::ExampleInterface::Summands>(),
+			o.via.array.ptr[1].as<uint64_t>()
+        );
+		return o;
+	}
+};
 
-typedef std::tuple<uint64_t, uint64_t> SumDiff_internal;
-extern SumDiff_internal transformSumDiff(const ExampleInterface::SumDiff &sumDiff);
-extern ExampleInterface::SumDiff transformSumDiff(const SumDiff_internal &sumDiff_internal);
+template<>
+struct convert<::v0::testcases::example77::ExampleInterface::SumDiff> {
+	msgpack::object const& operator()(msgpack::object const& o, ::v0::testcases::example77::ExampleInterface::SumDiff& v) const {
+		if (o.type != msgpack::type::ARRAY) throw msgpack::type_error();
+		if (o.via.array.size != 2) throw msgpack::type_error();
+		v = ::v0::testcases::example77::ExampleInterface::SumDiff (
+			o.via.array.ptr[0].as<uint64_t>(),
+			o.via.array.ptr[1].as<uint64_t>()
+        );
+		return o;
+	}
+};
 
-} // namespace example77
-} // namespace testcases
-} // namespace v0
+} // namespace adaptor
+} // MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS)
+} // namespace msgpack
 
 #endif // V0_TESTCASES_EXAMPLE77_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
 
