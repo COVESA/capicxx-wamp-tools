@@ -1,14 +1,16 @@
 package org.genivi.commonapi.wamp.generator
 
-import java.util.HashMap
 import java.util.List
 import javax.inject.Inject
 import org.eclipse.core.resources.IResource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.franca.core.franca.FArgument
+import org.franca.core.franca.FBroadcast
 import org.franca.core.franca.FInterface
 import org.franca.core.franca.FMethod
+import org.franca.core.franca.FModelElement
 import org.franca.core.franca.FTypeRef
+import org.franca.core.franca.FTypedElement
 import org.franca.deploymodel.dsl.fDeploy.FDProvider
 import org.genivi.commonapi.core.generator.FTypeGenerator
 import org.genivi.commonapi.core.generator.FrancaGeneratorExtensions
@@ -17,8 +19,6 @@ import org.genivi.commonapi.wamp.preferences.FPreferencesWamp
 import org.genivi.commonapi.wamp.preferences.PreferenceConstantsWamp
 
 import static extension org.franca.core.framework.FrancaHelpers.*
-import static extension org.franca.core.FrancaModelExtensions.*
-import org.franca.core.franca.FBroadcast
 
 class FInterfaceWampStubAdapterGenerator {
 	@Inject private extension FrancaGeneratorExtensions
@@ -254,9 +254,9 @@ class FInterfaceWampStubAdapterGenerator {
 				«FOR arg : m.inArgs»
 					«IF arg.type.isStruct»
 						«arg.type.actualDerived.name»_internal «arg.name»_internal = invocation->argument<«arg.type.actualDerived.name»_internal>(«m.inArgs.indexOf(arg) + 1»);
-						«arg.type.typename» «arg.name» = transform«arg.type.typename»(«arg.name»_internal);
+						«arg.typenameCode» «arg.name» = transform«arg.typenameCode»(«arg.name»_internal);
 					«ELSE»
-						auto «arg.name» = invocation->argument<«arg.type.typenameOnWire»>(«m.inArgs.indexOf(arg) + 1»);
+						auto «arg.name» = invocation->argument<«arg.getTypenameOnWire(_interface)»>(«m.inArgs.indexOf(arg) + 1»);
 					«ENDIF»
 				«ENDFOR»
 				std::cerr << "Procedure " << getWampAddress().getRealm() << ".«m.name» invoked (clientNumber=" << clientNumber << ") "«m.inArgs.arglist1» << std::endl;
@@ -265,7 +265,7 @@ class FInterfaceWampStubAdapterGenerator {
 					«et» err;
 				«ENDIF»
 				«FOR arg : m.outArgs»
-					«arg.type.typenameOnWire» «arg.name»;
+					«arg.getTypenameOnWire(_interface)» «arg.name»;
 				«ENDFOR»
 				«FOR arg : m.inArgs.filter[type.isEnumeration]»
 					«_interface.name»::«arg.type.actualDerived.name» «arg.wrappedName»;
@@ -274,7 +274,7 @@ class FInterfaceWampStubAdapterGenerator {
 				stub_->«m.name»(
 					clientId«m.inArgs.map[', ' + wrappedName].join»
 					«IF !m.isFireAndForget»
-					, [&](«IF hasErr»«et» _error, «ENDIF»«m.outArgs.arglist2») {
+					, [&](«IF hasErr»«et» _error, «ENDIF»«m.outArgs.arglist2(_interface)») {
 						«IF hasErr»err=_error;«ENDIF»
 						«m.outArgs.arglist3»
 					}
@@ -299,8 +299,8 @@ class FInterfaceWampStubAdapterGenerator {
 		args.filter[!type.isStruct].map[''' << "«IF args.indexOf(it)>0», «ENDIF»«name»=" << «debug»'''].join
 	}
 
-	def private arglist2(List<FArgument> args) {
-		args.map[type.typename + " _" + name].join(", ")
+	def private arglist2(List<FArgument> args, FModelElement _container) {
+		args.map[getTypenameCode(_container) + " _" + name].join(", ")
 	}
 
 	def private arglist3(List<FArgument> args) {
@@ -310,7 +310,7 @@ class FInterfaceWampStubAdapterGenerator {
 	def private arglist4(List<FArgument> args) '''«FOR it : args SEPARATOR ', '»«name»«IF type.isStruct».values_«ENDIF»«ENDFOR»'''
 
 	def private getDebug(FArgument arg) {
-		if (arg.type.isArray)
+		if (arg.type.isArray || arg.isArray)
 			'''"[<" << «arg.elementName».size() << ">]"'''
 		else
 			'''«arg.elementName»'''
@@ -318,34 +318,46 @@ class FInterfaceWampStubAdapterGenerator {
 
 	val private ENUM_WIRE_TYPE = "uint32_t"
 	
-	def private getTypenameOnWire(FTypeRef typeref) {
-		typeref.getTypename(true)
+	def private getTypenameOnWire(FTypedElement elem) {
+		elem.getTypename(null, true)
 	}
-	def private getTypename(FTypeRef typeref) {
-		typeref.getTypename(false)
+	def private getTypenameOnWire(FTypedElement elem, FModelElement _container) {
+		elem.getTypename(_container, true)
 	}
-	// TODO: merge this with FrancaGeneratorExtensions.getElementType
-	def private getTypename(FTypeRef typeref, boolean onWire) {
-		if (typeref.isInteger) {
-			// all integer types are currently mapped to int64
-			"int64_t"
-		} else if (typeref.isBoolean) {
-			"bool"
-		} else if (typeref.isString) {
-			"std::string"
-		} else if (typeref.isArray) {
-			typeref.interface.name + "::" + typeref.actualDerived.name
-		} else if (typeref.isStruct) {
-			typeref.actualDerived.name
-		} else if (typeref.isEnumeration) {
-			if (onWire) {
-				ENUM_WIRE_TYPE
-			} else {
-				typeref.interface.name + "::" + typeref.actualDerived.name
-			}
+	def private getTypenameCode(FTypedElement elem) {
+		elem.getTypename(null, false)
+	}
+	def private getTypenameCode(FTypedElement elem, FModelElement _container) {
+		elem.getTypename(_container, false)
+	}
+	// TODO: merge this with FrancaGeneratorExtensions.getElementType or .getTypeName
+	def private getTypename(FTypedElement elem, FModelElement _container, boolean onWire) {
+		val typeref = elem.type
+		if (elem.isArray) {
+			// TODO: check if this still works when the element type is a struct
+			elem.getTypeName(_container, true)
 		} else {
-			// all other types are currently unsupported
-			"UNSUPPORTED_DATATYPE"
+			if (typeref.isInteger) {
+				// all integer types are currently mapped to int64
+				"int64_t"
+			} else if (typeref.isBoolean) {
+				"bool"
+			} else if (typeref.isString) {
+				"std::string"
+			} else if (typeref.isArray) {
+				elem.getTypeName(_container, true)
+			} else if (typeref.isStruct) {
+				typeref.actualDerived.name
+			} else if (typeref.isEnumeration) {
+				if (onWire) {
+					ENUM_WIRE_TYPE
+				} else {
+					elem.getTypeName(_container, true)
+				}
+			} else {
+				// all other types are currently unsupported
+				"UNSUPPORTED_DATATYPE"
+			}
 		}
 	}
 

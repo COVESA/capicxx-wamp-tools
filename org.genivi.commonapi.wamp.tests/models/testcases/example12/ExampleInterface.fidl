@@ -29,6 +29,7 @@ interface ExampleInterface {
 		ENUM4
 	}
 
+	// enumeration type arguments
 	method method3 {
 		in {
 			MyEnum arg1
@@ -40,6 +41,7 @@ interface ExampleInterface {
 
 	array MyArray1 of UInt64
 	
+	// named array type arguments
 	method method4 {
 		in {
 			MyArray1 arg1
@@ -49,4 +51,13 @@ interface ExampleInterface {
 		}
 	}
 
+	// implicit array type arguments
+	method method5 {
+		in {
+			UInt64[] arg1
+		}
+		out {
+			UInt64[] ret1
+		}
+	}
 }

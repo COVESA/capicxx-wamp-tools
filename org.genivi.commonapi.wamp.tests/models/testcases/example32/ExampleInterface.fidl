@@ -11,6 +11,7 @@ interface ExampleInterface {
 		ENUM4
 	}
 
+	// enumeration type argument
 	broadcast broadcast1 {
 		out {
 			MyEnum arg1
@@ -19,9 +20,17 @@ interface ExampleInterface {
 
 	array MyArray1 of UInt64
 
+	// named array type argument
 	broadcast broadcast2 {
 		out {
 			MyArray1 arg1
+		}
+	}
+
+	// implicit array type argument
+	broadcast broadcast3 {
+		out {
+			UInt64[] arg1
 		}
 	}
 
