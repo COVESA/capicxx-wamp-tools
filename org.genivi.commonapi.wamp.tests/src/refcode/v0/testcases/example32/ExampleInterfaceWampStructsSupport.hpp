@@ -16,6 +16,10 @@ namespace v0 {
 namespace testcases {
 namespace example32 {
 
+typedef std::tuple<uint64_t, bool> MyStruct_internal;
+extern MyStruct_internal transformMyStruct(const ExampleInterface::MyStruct &myStruct);
+extern ExampleInterface::MyStruct transformMyStruct(const MyStruct_internal &myStruct_internal);
+
 } // namespace example32
 } // namespace testcases
 } // namespace v0

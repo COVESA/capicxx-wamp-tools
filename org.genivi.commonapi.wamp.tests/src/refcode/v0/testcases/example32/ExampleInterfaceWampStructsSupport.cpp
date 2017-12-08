@@ -14,6 +14,19 @@ namespace v0 {
 namespace testcases {
 namespace example32 {
 
+MyStruct_internal transformMyStruct(const ExampleInterface::MyStruct &inst)
+{
+	return inst.values_;
+}
+
+ExampleInterface::MyStruct transformMyStruct(const MyStruct_internal &inst_internal)
+{
+	// TODO: Check if it is ok to return a struct on the stack. 
+	ExampleInterface::MyStruct inst;
+	inst.values_ = inst_internal;
+	return inst;
+}
+
 
 } // namespace example32
 } // namespace testcases
