@@ -8,12 +8,28 @@
       <p>This simple calculator example uses WAMP communication to interact with a C++ server using CommonAPI.</p>
       
       <form>
-         <label for="operand1">Operand 1: </label>
-         <input type="number" data-clear-btn="false" name="operand1" id="operand1" value=""><br/>
-         <label for="operand2">Operand 2: </label>
-         <input type="number" data-clear-btn="false" name="operand2" id="operand2" value=""><br/><br/>
-         <button type="button" id="add">Compute sum</button><br/><br/>
-         <label>Result: <output id="sum" /></label><br/>
+         <label for="m1op1">Operand 1: </label>
+         <input type="number" data-clear-btn="false" name="m1op1" id="m1op1" value=""><br/>
+         <label for="m1op2">Operand 2: </label>
+         <input type="number" data-clear-btn="false" name="m1op2" id="m1op2" value=""><br/><br/>
+         <button type="button" id="add1">Compute sum</button><br/><br/>
+         <label>Result: <output id="sum1" /></label><br/>
+         <br/><hr/>
+         <label for="m2op1">Operand 1: </label>
+         <input type="number" data-clear-btn="false" name="m2op1" id="m2op1" value=""><br/>
+         <label for="m2op2">Operand 2: </label>
+         <input type="number" data-clear-btn="false" name="m2op2" id="m2op2" value=""><br/><br/>
+         <button type="button" id="add2">Compute sum</button><br/><br/>
+         <label>Result: <output id="sum2" /></label><br/>
+         <br/><hr/>
+         <label for="m3op1">Operand 1: </label>
+         <input type="number" data-clear-btn="false" name="m3op1" id="m3op1" value=""><br/>
+         <label for="m3op2">Operand 2: </label>
+         <input type="number" data-clear-btn="false" name="m3op2" id="m3op2" value=""><br/><br/>
+         <label for="m3op3">Operand 3: </label>
+         <input type="number" data-clear-btn="false" name="m3op3" id="m3op3" value=""><br/><br/>
+         <button type="button" id="add3">Compute sum</button><br/><br/>
+         <label>Result: <output id="sum3s" /></label><br/>
          <br/><hr/>
          <label>Status: <output id="connectionStatus"></output></label>
       </form>
@@ -26,25 +42,60 @@
             realm: 'realm1'}
          );
 
+         var clientId = 66;
+         var addr = 'local:testcases.example77.ExampleInterface:v0_7:testcases.example77.ExampleInterface';
          connection.onopen = function(session, details) {
             console.log("Connected", details);
             setStatus("Connected to network.");
 
-	         document.getElementById("add").onclick = function() {
-	         	var arg1 = parseInt(document.getElementById("operand1").value);
-	         	var arg2 = parseInt(document.getElementById("operand2").value);
+	         document.getElementById("add1").onclick = function() {
+	         	var arg1 = parseInt(document.getElementById("m1op1").value);
+	         	var arg2 = parseInt(document.getElementById("m1op2").value);
 	         	console.log("adding " + arg1 + " and " + arg2);
 					
-	            var clientId = 66;
-	            var addr = 'local:testcases.example77.ExampleInterface:v0_7:testcases.example77.ExampleInterface';
 	            session.call(addr + '.add2', [clientId, arg1, arg2]).then(
 	               function (res) {
 	                  console.log("Call succeeded, result: ", res);
-	                  document.getElementById("sum").value = res.args[0];
+	                  document.getElementById("sum1").value = res.args[0];
 	               },
 	               function (err) {
 	                  console.log("Call failed, error message: ", err);
-	                  document.getElementById("sum").value = "??";
+	                  document.getElementById("sum1").value = "??";
+	               }
+	            );
+	         };
+ 
+ 	         document.getElementById("add2").onclick = function() {
+	         	var arg1 = parseInt(document.getElementById("m2op1").value);
+	         	var arg2 = parseInt(document.getElementById("m2op2").value);
+	         	console.log("adding " + arg1 + " and " + arg2);
+					
+	            session.call(addr + '.add2struct', [clientId, [arg1, arg2]]).then(
+	               function (res) {
+	                  console.log("Call succeeded, result: ", res);
+	                  document.getElementById("sum2").value = res; //.args[0];
+	               },
+	               function (err) {
+	                  console.log("Call failed, error message: ", err);
+	                  document.getElementById("sum2").value = "??";
+	               }
+	            );
+	         };
+ 
+  	         document.getElementById("add3").onclick = function() {
+	         	var arg1 = parseInt(document.getElementById("m3op1").value);
+	         	var arg2 = parseInt(document.getElementById("m3op2").value);
+	         	var arg3 = parseInt(document.getElementById("m3op3").value);
+	         	console.log("adding " + arg1 + " and " + arg2 + " with " + arg3);
+					
+	            session.call(addr + '.add2nestedStruct', [clientId, [[arg1, arg2], arg3]]).then(
+	               function (res) {
+	                  console.log("Call succeeded, result: ", res);
+	                  document.getElementById("sum3").value = res; //.args[0];
+	               },
+	               function (err) {
+	                  console.log("Call failed, error message: ", err);
+	                  document.getElementById("sum3").value = "??";
 	               }
 	            );
 	         };
