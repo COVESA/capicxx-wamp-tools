@@ -39,7 +39,7 @@ MochaJS API.
 - [MochaJS](https://mochajs.org/)
 - Install NodeJS: `sudo apt-get install nodejs`
 - Install Ubuntu package "npm" (NodeJS package manager): `sudo apt-get install npm`
-- Install AutobahnJS: `sudo npm install -- global autobahn`
+- Install AutobahnJS: `sudo npm install --global autobahn`
 - Install MochaJS: `sudo npm install --global mocha`
 - Add environment variable: `export NODE_PATH=/usr/local/lib/node_modules/`
 
