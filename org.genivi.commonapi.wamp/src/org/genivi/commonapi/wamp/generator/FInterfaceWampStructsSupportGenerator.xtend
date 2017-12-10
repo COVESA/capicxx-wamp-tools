@@ -57,6 +57,19 @@ class FInterfaceWampStructsSupportGenerator {
 				return o;
 			}
 		};
+
+		template<>
+		struct object_with_zone<«stype.fullyQualifiedCppName»> {
+			void operator()(msgpack::object::with_zone& o, «stype.fullyQualifiedCppName» const& v) const {
+				o.type = type::ARRAY;
+				o.via.array.size = «stype.elements.size»;
+				o.via.array.ptr = static_cast<msgpack::object*>(
+				o.zone.allocate_align(sizeof(msgpack::object) * o.via.array.size));
+				«FOR elem : stype.elements»
+					o.via.array.ptr[«stype.elements.indexOf(elem)»] = msgpack::object(v.get«elem.name.toFirstUpper»(), o.zone);
+				«ENDFOR»
+			}
+		};
 		
 		«ENDFOR»
 		} // namespace adaptor
