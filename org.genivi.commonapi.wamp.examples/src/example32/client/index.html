@@ -14,6 +14,8 @@
          <br/><hr/>
          <label>Last received 3: <output id="received3" /></label><br/>
          <br/><hr/>
+         <label>Last received 4: <output id="received4" /></label><br/>
+         <br/><hr/>
          <label>Status: <output id="connectionStatus"></output></label>
       </form>
       
@@ -41,6 +43,10 @@
             session.subscribe(addr + 'broadcast3', function(args) {
                console.log("received broadcast3: ", args[0]);
 	           document.getElementById("received3").value = args[0];
+            });
+            session.subscribe(addr + 'broadcast4', function(args) {
+               console.log("received broadcast4: ", args[0]);
+	           document.getElementById("received4").value = args[0];
             });
             
          };

@@ -11,6 +11,11 @@ interface ExampleInterface {
 		ENUM4
 	}
 
+	struct MyStruct {
+		UInt64 elem1
+		Boolean elem2
+	}
+	
 	// enumeration type argument
 	broadcast broadcast1 {
 		out {
@@ -18,20 +23,25 @@ interface ExampleInterface {
 		}
 	}
 
-	array MyArray1 of UInt64
-
 	// named array type argument
+	array MyArray1 of UInt64
 	broadcast broadcast2 {
 		out {
 			MyArray1 arg1
 		}
 	}
 
-	// implicit array type argument
+	// implicit array type argument with UInt64 elements
 	broadcast broadcast3 {
 		out {
 			UInt64[] arg1
 		}
 	}
 
+	// implicit array type argument with MyStruct elements
+	broadcast broadcast4 {
+		out {
+			MyStruct[] arg1
+		}
+	}
 }

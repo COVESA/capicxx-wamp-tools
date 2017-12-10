@@ -38,7 +38,7 @@ int main(int argc, const char * const argv[])
 		for(int j=0; j<nPerMinute; j++) {
 			int n = i*100 + j;
 
-			int action = j % 3;
+			int action = j % 4;
 			switch (action) {
 			case 0: {
 				std::cout << "Firing broadcast1 event #" << n << std::endl;
@@ -67,18 +67,15 @@ int main(int argc, const char * const argv[])
 				myService->fireBroadcast3Event(arg1);
 				break;
 			}
-//			case 2: {
-//				std::cout << "Firing broadcast3 event #" << n << std::endl;
-//				std::string p = "Number";
-//				myService->fireBroadcast3Event(p + std::to_string(n));
-//				break;
-//			}
-//			case 3: {
-//				std::cout << "Firing broadcast4 event #" << n << std::endl;
-//				myService->fireBroadcast4Event(!toggle);
-//				toggle = !toggle;
-//				break;
-//			}
+			case 3: {
+				std::cout << "Firing broadcast4 event #" << n << std::endl;
+				std::vector<ExampleInterface::MyStruct> arg1;
+				arg1.push_back(ExampleInterface::MyStruct(n,   toggle));
+				arg1.push_back(ExampleInterface::MyStruct(n*2, !toggle));
+				arg1.push_back(ExampleInterface::MyStruct(n*3, toggle));
+				myService->fireBroadcast4Event(arg1);
+				break;
+			}
 			}
 
 			std::this_thread::sleep_for(std::chrono::seconds(60/nPerMinute));
