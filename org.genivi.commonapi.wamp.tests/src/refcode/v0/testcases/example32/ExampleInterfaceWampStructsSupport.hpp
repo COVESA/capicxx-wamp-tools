@@ -30,6 +30,18 @@ struct convert<::v0::testcases::example32::ExampleInterface::MyStruct> {
 	}
 };
 
+template<>
+struct object_with_zone<::v0::testcases::example32::ExampleInterface::MyStruct> {
+	void operator()(msgpack::object::with_zone& o, ::v0::testcases::example32::ExampleInterface::MyStruct const& v) const {
+		o.type = type::ARRAY;
+		o.via.array.size = 2;
+		o.via.array.ptr = static_cast<msgpack::object*>(
+		o.zone.allocate_align(sizeof(msgpack::object) * o.via.array.size));
+		o.via.array.ptr[0] = msgpack::object(v.getElem1(), o.zone);
+		o.via.array.ptr[1] = msgpack::object(v.getElem2(), o.zone);
+	}
+};
+
 } // namespace adaptor
 } // MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS)
 } // namespace msgpack

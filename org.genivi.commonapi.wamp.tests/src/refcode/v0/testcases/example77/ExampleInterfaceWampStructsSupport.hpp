@@ -31,6 +31,18 @@ struct convert<::v0::testcases::example77::ExampleInterface::Summands> {
 };
 
 template<>
+struct object_with_zone<::v0::testcases::example77::ExampleInterface::Summands> {
+	void operator()(msgpack::object::with_zone& o, ::v0::testcases::example77::ExampleInterface::Summands const& v) const {
+		o.type = type::ARRAY;
+		o.via.array.size = 2;
+		o.via.array.ptr = static_cast<msgpack::object*>(
+		o.zone.allocate_align(sizeof(msgpack::object) * o.via.array.size));
+		o.via.array.ptr[0] = msgpack::object(v.getLeft(), o.zone);
+		o.via.array.ptr[1] = msgpack::object(v.getRight(), o.zone);
+	}
+};
+
+template<>
 struct convert<::v0::testcases::example77::ExampleInterface::Params> {
 	msgpack::object const& operator()(msgpack::object const& o, ::v0::testcases::example77::ExampleInterface::Params& v) const {
 		if (o.type != msgpack::type::ARRAY) throw msgpack::type_error();
@@ -44,6 +56,18 @@ struct convert<::v0::testcases::example77::ExampleInterface::Params> {
 };
 
 template<>
+struct object_with_zone<::v0::testcases::example77::ExampleInterface::Params> {
+	void operator()(msgpack::object::with_zone& o, ::v0::testcases::example77::ExampleInterface::Params const& v) const {
+		o.type = type::ARRAY;
+		o.via.array.size = 2;
+		o.via.array.ptr = static_cast<msgpack::object*>(
+		o.zone.allocate_align(sizeof(msgpack::object) * o.via.array.size));
+		o.via.array.ptr[0] = msgpack::object(v.getSs(), o.zone);
+		o.via.array.ptr[1] = msgpack::object(v.getX(), o.zone);
+	}
+};
+
+template<>
 struct convert<::v0::testcases::example77::ExampleInterface::SumDiff> {
 	msgpack::object const& operator()(msgpack::object const& o, ::v0::testcases::example77::ExampleInterface::SumDiff& v) const {
 		if (o.type != msgpack::type::ARRAY) throw msgpack::type_error();
@@ -53,6 +77,18 @@ struct convert<::v0::testcases::example77::ExampleInterface::SumDiff> {
 			o.via.array.ptr[1].as<uint64_t>()
         );
 		return o;
+	}
+};
+
+template<>
+struct object_with_zone<::v0::testcases::example77::ExampleInterface::SumDiff> {
+	void operator()(msgpack::object::with_zone& o, ::v0::testcases::example77::ExampleInterface::SumDiff const& v) const {
+		o.type = type::ARRAY;
+		o.via.array.size = 2;
+		o.via.array.ptr = static_cast<msgpack::object*>(
+		o.zone.allocate_align(sizeof(msgpack::object) * o.via.array.size));
+		o.via.array.ptr[0] = msgpack::object(v.getSum(), o.zone);
+		o.via.array.ptr[1] = msgpack::object(v.getDiff(), o.zone);
 	}
 };
 
