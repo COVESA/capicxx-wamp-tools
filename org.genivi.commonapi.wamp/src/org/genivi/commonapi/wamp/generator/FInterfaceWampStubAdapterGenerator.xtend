@@ -9,6 +9,7 @@ import org.franca.core.franca.FBroadcast
 import org.franca.core.franca.FInterface
 import org.franca.core.franca.FMethod
 import org.franca.core.franca.FModelElement
+import org.franca.core.franca.FTypedElement
 import org.franca.deploymodel.dsl.fDeploy.FDProvider
 import org.genivi.commonapi.core.generator.FTypeGenerator
 import org.genivi.commonapi.core.generator.FrancaGeneratorExtensions
@@ -301,7 +302,7 @@ class FInterfaceWampStubAdapterGenerator {
 		args.map[name + "=_" + name + (if (it.type.isEnumeration) ".value_" else "") + "; "].join
 	}
 
-	def private arglist4(List<FArgument> args) '''«FOR it : args SEPARATOR ', '»«name»«IF type.isStruct».values_«ENDIF»«ENDFOR»'''
+	def private arglist4(List<FArgument> args) '''«FOR it : args SEPARATOR ', '»«name»«IF isRealStruct».values_«ENDIF»«ENDFOR»'''
 
 	def private getDebug(FArgument arg) {
 		if (arg.type.isArray || arg.isArray)
@@ -310,6 +311,9 @@ class FInterfaceWampStubAdapterGenerator {
 			'''«arg.elementName»'''
 	}
 
+	def private isRealStruct(FTypedElement elem) {
+		elem.type.isStruct && !elem.isArray
+	}
 
 //		void initialize«_interface.wampStubAdapterClassName»() {
 //            «FOR p : providers»

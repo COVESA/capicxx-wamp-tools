@@ -51,13 +51,27 @@ interface ExampleInterface {
 		}
 	}
 
-	// implicit array type arguments
+	// implicit array type arguments with primitive element type
 	method method5 {
 		in {
 			UInt64[] arg1
 		}
 		out {
 			UInt64[] ret1
+		}
+	}
+
+	// implicit array type arguments with struct element type
+	struct MyStruct {
+		UInt32 elem1
+		Boolean elem2
+	}
+	method method6 {
+		in {
+			MyStruct[] arg1
+		}
+		out {
+			MyStruct[] ret1
 		}
 	}
 }

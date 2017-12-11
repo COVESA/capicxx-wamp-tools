@@ -25,13 +25,18 @@
          <br/><hr/>
          <label for="m4arg1">Add number: </label>
          <input type="number" data-clear-btn="true" name="m4arg1" id="m4arg1" value=""><br/>
-         <button type="button" id="start4">Reverse!</button><br/><br/>
+         <button type="button" id="start4">Method4!</button><br/><br/>
          <label>Result: <output id="result4" /></label><br/>
          <br/><hr/>
          <label for="m5arg1">Add number: </label>
-         <input type="number" data-clear-btn="true" name="m4arg1" id="m5arg1" value=""><br/>
-         <button type="button" id="start5">Reverse!</button><br/><br/>
+         <input type="number" data-clear-btn="true" name="m5arg1" id="m5arg1" value=""><br/>
+         <button type="button" id="start5">Method5!</button><br/><br/>
          <label>Result: <output id="result5" /></label><br/>
+         <br/><hr/>
+         <label for="m6arg1">Number in struct: </label>
+         <input type="number" data-clear-btn="true" name="m6arg1" id="m6arg1" value=""><br/>
+         <button type="button" id="start6">Method6!</button><br/><br/>
+         <label>Result: <output id="result6" /></label><br/>
          <br/><hr/>
          <label>Status: <output id="connectionStatus"></output></label>
       </form>
@@ -147,6 +152,24 @@
 	               function (err) {
 	                  console.log("Call failed, error message: ", err);
 	                  document.getElementById("result5").value = "??";
+	               }
+	            );
+	         };
+
+	        document.getElementById("start6").onclick = function() {
+	         	var arg1 = parseInt(document.getElementById("m6arg1").value);
+	         	console.log("input is " + arg1);
+				
+				var b = arg1%2==0;
+				var argList = [[arg1, b], [arg1*2, !b], [arg1*3, b]];
+	            session.call(addr + '.method6', [clientId, argList]).then(
+	               function (res) {
+	                  console.log("Call succeeded, result: ", res);
+	                  document.getElementById("result6").value = res; //.args[0];
+	               },
+	               function (err) {
+	                  console.log("Call failed, error message: ", err);
+	                  document.getElementById("result6").value = "??";
 	               }
 	            );
 	         };
