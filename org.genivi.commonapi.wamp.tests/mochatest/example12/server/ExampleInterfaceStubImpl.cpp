@@ -40,6 +40,51 @@ void ExampleInterfaceStubImpl::method2(const std::shared_ptr<CommonAPI::ClientId
     _reply(!_arg1);
 }
 
+void ExampleInterfaceStubImpl::method3(
+		const std::shared_ptr<CommonAPI::ClientId> _client,
+		ExampleInterface::MyEnum _arg1,
+		method3Reply_t _reply)
+{
+    std::cout << "ExampleInterfaceStubImpl::method3 called with arg1='" << _arg1 << "'" << std::endl;
+
+    ExampleInterface::MyEnum ret1;
+	switch(_arg1) {
+	case ExampleInterface::MyEnum::ENUM1:
+		ret1 = ExampleInterface::MyEnum::ENUM2; break;
+	case ExampleInterface::MyEnum::ENUM2:
+		ret1 = ExampleInterface::MyEnum::ENUM3; break;
+	case ExampleInterface::MyEnum::ENUM3:
+		ret1 = ExampleInterface::MyEnum::ENUM4; break;
+	case ExampleInterface::MyEnum::ENUM4:
+		ret1 = ExampleInterface::MyEnum::ENUM1; break;
+	}
+    _reply(ret1);
+}
+
+void ExampleInterfaceStubImpl::method4(const std::shared_ptr<CommonAPI::ClientId> _client, ExampleInterface::MyArray1 _arg1, method4Reply_t _reply) {
+    ExampleInterface::MyArray1 ret1 = {};
+
+    // add elements in reverse order
+    for(int i=_arg1.size()-1; i>=0; i--) {
+    	ret1.push_back(_arg1[i]);
+    }
+
+    _reply(ret1);
+}
+
+void ExampleInterfaceStubImpl::method5(const std::shared_ptr<CommonAPI::ClientId> _client, std::vector<uint64_t> _arg1, method4Reply_t _reply) {
+	std::vector<uint64_t> ret1 = {};
+
+    // add elements in reverse order and duplicate each element
+    for(int i=_arg1.size()-1; i>=0; i--) {
+    	ret1.push_back(_arg1[i]);
+    	ret1.push_back(_arg1[i]);
+    }
+
+    _reply(ret1);
+}
+
+
 } // namespace example12
 } // namespace testcases
 } // namespace v0

@@ -34,6 +34,14 @@ describe(
 				name : address + '.' + 'method2',
 				args : [ 42, false ],
 				expected : true
+			}, {
+				name : address + '.' + 'method3',
+				args : [ 42, 0 ], // ENUM1
+				expected : 1  // ENUM2
+			}, {
+				name : address + '.' + 'method3',
+				args : [ 42, 100 ], // ENUM3
+				expected : 2  // ENUM4
 			} ];
 
 			before(function(done) {
@@ -73,5 +81,15 @@ describe(
 			it('TestMethodCall_method2_false', function(done) {
 				assert.connectionState(connection);
 				assert.methodCall(done, connection.session, methodCalls[2]);
+			});
+			
+			it('TestMethodCall_method3_ENUM1', function(done) {
+				assert.connectionState(connection);
+				assert.methodCall(done, connection.session, methodCalls[3]);
+			});
+			
+			it('TestMethodCall_method3_ENUM100', function(done) {
+				assert.connectionState(connection);
+				assert.methodCall(done, connection.session, methodCalls[4]);
 			});
 		});
