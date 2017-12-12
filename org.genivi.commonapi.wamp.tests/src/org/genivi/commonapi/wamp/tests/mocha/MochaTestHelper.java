@@ -30,7 +30,9 @@ public class MochaTestHelper {
 
 	private static final String BUILD_FOLDER_NAME = "build";
 	private static final String SRC_GEN_FOLDER_NAME = "src-gen";
-	private static final Path CROSSBAR_IO_PATH = Paths.get(System.getProperty("user.home"), ".local", "bin", "crossbar");
+	private static final Path CROSSBAR_IO_PATH = Paths.get("crossbar");
+	private static final int CROSSBAR_IO_STARTUPTIME = 2000;
+	private static final int SERVICE_STARTUP_TIME = 1000;
 
 	private final Object owner;
 	protected Compiler compiler;
@@ -78,11 +80,11 @@ public class MochaTestHelper {
 
 	public void startServer() {
 		List<String> command = createCommand(getCrossbarIOExecutable().toString(), "start");
-		crossbarIOProcess = getCommandExecutor().startProcess(command, getTestsBaseDirectory().toFile(), true, 2000);
+		crossbarIOProcess = getCommandExecutor().startProcess(command, getTestsBaseDirectory().toFile(), true, CROSSBAR_IO_STARTUPTIME);
 
 		command = createCommand(getCommonAPIServiceExecutable().toString());
 		commonAPIServiceProcess = getCommandExecutor().startProcess(command, getTestSourceDirectory().toFile(), true,
-				1000);
+				SERVICE_STARTUP_TIME);
 	}
 
 	public Process getCommonAPIServiceProcess() {

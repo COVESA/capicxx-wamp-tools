@@ -27,18 +27,19 @@ MochaJS API.
 ### Crossbar.io installation
 
 - Phython should be already installed in a Ubuntu distribution
-- Install the Python Package manager 'pip': `sudo apt-get install python-pip`
-- Install Crossbar.io: `pip install crossbar`
-  - Crossbar should be installed in the user home folder: **<usr_home>/.local/bin/crossbar**
-    **The JUnit test actually expects the Crossbar installation in this folder.** If not
-    add a symlink 'crossbar' to the folder which points to the crossbar executable.
+  - Install Python headers: `sudo apt install python-dev`
+- Install the Python Package manager 'pip': `sudo apt install python-pip`
+  - Upgrade 'pip': `pip install --upgrade pip`
+- Install package 'setuptools': `sudo pip install setuptools`
+- Install Crossbar.io: `sudo pip install crossbar`
+  - Crossbar should be installed globally in folder 'usr/local/bin'
+  - Display package information: `pip show crossbar`
 - Additional help for [Installation on Linux](https://crossbar.io/docs/Installation-on-Linux/)
     
 ### MochaJS/AutobahnJS installation
 
 - [MochaJS](https://mochajs.org/)
-- Install NodeJS: `sudo apt-get install nodejs`
-- Install Ubuntu package "npm" (NodeJS package manager): `sudo apt-get install npm`
+- Install NodeJS (Version >= 4.0.0) and NodeJS package manager: `sudo apt install nodejs nodejs-legacy npm`
 - Install AutobahnJS: `sudo npm install --global autobahn`
 - Install MochaJS: `sudo npm install --global mocha`
 - Add environment variable: `export NODE_PATH=/usr/local/lib/node_modules/`
