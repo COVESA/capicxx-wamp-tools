@@ -38,6 +38,16 @@
          <button type="button" id="start6">Method6!</button><br/><br/>
          <label>Result: <output id="result6" /></label><br/>
          <br/><hr/>
+         <label for="m7arg1">Keys (comma-sep): </label>
+         <input type="string" data-clear-btn="true" name="m7arg1" id="m7arg1" value=""><br/>
+         <button type="button" id="start7">Method7!</button><br/><br/>
+         <label>Result: <output id="result7" /></label><br/>
+         <br/><hr/>
+         <label for="m8arg1">Keys (comma-sep): </label>
+         <input type="string" data-clear-btn="true" name="m8arg1" id="m8arg1" value=""><br/>
+         <button type="button" id="start8">Method8!</button><br/><br/>
+         <label>Result: <output id="result8" /></label><br/>
+         <br/><hr/>
          <label>Status: <output id="connectionStatus"></output></label>
       </form>
       
@@ -174,6 +184,50 @@
 	            );
 	         };
 
+	        document.getElementById("start7").onclick = function() {
+	         	var arg1 = document.getElementById("m7arg1").value;
+	         	console.log("input is " + arg1);
+				
+				var items = arg1.split(',');
+				var argObj = { };
+				for(var i in items) {
+					var item = items[i];
+					argObj[item] = item.length;
+				}
+	            session.call(addr + '.method7', [clientId, argObj]).then(
+	               function (res) {
+	                  console.log("Call succeeded, result: ", res);
+	                  document.getElementById("result7").value = res; //.args[0];
+	               },
+	               function (err) {
+	                  console.log("Call failed, error message: ", err);
+	                  document.getElementById("result7").value = "??";
+	               }
+	            );
+	         };
+
+
+	        document.getElementById("start8").onclick = function() {
+	         	var arg1 = document.getElementById("m8arg1").value;
+	         	console.log("input is " + arg1);
+				
+				var items = arg1.split(',');
+				var argObj = { };
+				for(var i in items) {
+					var item = items[i];
+					argObj[item] = [item.length, i%2==0];
+				}
+	            session.call(addr + '.method8', [clientId, argObj]).then(
+	               function (res) {
+	                  console.log("Call succeeded, result: ", res);
+	                  document.getElementById("result8").value = res; //.args[0];
+	               },
+	               function (err) {
+	                  console.log("Call failed, error message: ", err);
+	                  document.getElementById("result8").value = "??";
+	               }
+	            );
+	         };
          };
 
          connection.onclose = function(reason, details) {

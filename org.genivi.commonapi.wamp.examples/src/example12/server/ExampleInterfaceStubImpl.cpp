@@ -96,6 +96,18 @@ void ExampleInterfaceStubImpl::method6(const std::shared_ptr<CommonAPI::ClientId
     _reply(ret1);
 }
 
+void ExampleInterfaceStubImpl::method7(const std::shared_ptr<CommonAPI::ClientId> _client, ExampleInterface::MyMap1 _arg1, method7Reply_t _reply) {
+    ExampleInterface::MyMap1 ret1;
+    ret1["method7"] = _arg1.size();
+    _reply(ret1);
+}
+
+void ExampleInterfaceStubImpl::method8(const std::shared_ptr<CommonAPI::ClientId> _client, ExampleInterface::MyMap2 _arg1, method8Reply_t _reply) {
+	ExampleInterface::MyMap2 ret1;
+    ret1["method8"] = ExampleInterface::MyStruct(_arg1.size(), _arg1.find("foo") != _arg1.end());
+	_reply(ret1);
+}
+
 
 
 } // namespace example12

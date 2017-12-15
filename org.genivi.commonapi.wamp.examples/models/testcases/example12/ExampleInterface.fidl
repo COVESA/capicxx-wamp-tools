@@ -74,4 +74,26 @@ interface ExampleInterface {
 			MyStruct[] ret1
 		}
 	}
+
+	// map type arguments with primitive value type
+	map MyMap1 { String to UInt64 }
+	method method7 {
+		in {
+			MyMap1 arg1
+		}
+		out {
+			MyMap1 ret1
+		}
+	}
+
+	// map type arguments with struct value type
+	map MyMap2 { String to MyStruct }
+	method method8 {
+		in {
+			MyMap2 arg1
+		}
+		out {
+			MyMap2 ret1
+		}
+	}
 }
