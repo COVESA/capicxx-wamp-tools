@@ -44,4 +44,22 @@ interface ExampleInterface {
 			MyStruct[] arg1
 		}
 	}
+	
+	// map type argument with primitive value type
+	//map MyMap1 { UInt32 to UInt64 }
+	map MyMap1 { String to UInt64 }
+	broadcast broadcast5 {
+		out {
+			MyMap1 arg1
+		}
+	}
+
+	// map type argument with struct value type
+	//map MyMap2 { UInt32 to MyStruct }
+	map MyMap2 { String to MyStruct }
+	broadcast broadcast6 {
+		out {
+			MyMap2 arg1
+		}
+	}
 }

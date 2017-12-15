@@ -31,14 +31,14 @@ int main(int argc, const char * const argv[])
 	runtime->registerService(domain, instance, myService);
 
 	int i=0;
-	const int nPerMinute = 12;
+	const int nPerMinute = 20;
 	while (true) {
 		std::cout << "Waiting for calls... (Abort with CTRL+C)" << std::endl;
 		bool toggle = true;
 		for(int j=0; j<nPerMinute; j++) {
 			int n = i*100 + j;
 
-			int action = j % 4;
+			int action = j % 6;
 			switch (action) {
 			case 0: {
 				std::cout << "Firing broadcast1 event #" << n << std::endl;
@@ -74,6 +74,24 @@ int main(int argc, const char * const argv[])
 				arg1.push_back(ExampleInterface::MyStruct(n*2, !toggle));
 				arg1.push_back(ExampleInterface::MyStruct(n*3, toggle));
 				myService->fireBroadcast4Event(arg1);
+				break;
+			}
+			case 4: {
+				std::cout << "Firing broadcast5 event #" << n << std::endl;
+				ExampleInterface::MyMap1 arg1;
+				arg1[std::to_string(n)]    = n*100;
+				arg1[std::to_string(n+10)] = n*200;
+				arg1[std::to_string(n+20)] = n*300;
+				myService->fireBroadcast5Event(arg1);
+				break;
+			}
+			case 5: {
+				std::cout << "Firing broadcast6 event #" << n << std::endl;
+				ExampleInterface::MyMap2 arg1;
+				arg1[std::to_string(n)]    = ExampleInterface::MyStruct(n,   toggle);
+				arg1[std::to_string(n+10)] = ExampleInterface::MyStruct(n*2, !toggle);
+				arg1[std::to_string(n+20)] = ExampleInterface::MyStruct(n*3, toggle);
+				myService->fireBroadcast6Event(arg1);
 				break;
 			}
 			}

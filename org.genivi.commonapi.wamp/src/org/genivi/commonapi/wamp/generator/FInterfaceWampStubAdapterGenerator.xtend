@@ -305,7 +305,7 @@ class FInterfaceWampStubAdapterGenerator {
 	def private arglist4(List<FArgument> args) '''«FOR it : args SEPARATOR ', '»«name»«IF isRealStruct».values_«ENDIF»«ENDFOR»'''
 
 	def private getDebug(FArgument arg) {
-		if (arg.type.isArray || arg.isArray)
+		if (arg.type.isArray || arg.isArray || arg.type.isMap)
 			'''"[<" << «arg.elementName».size() << ">]"'''
 		else
 			'''«arg.elementName»'''
