@@ -9,6 +9,8 @@ var assert = require('../TestAssertions.js');
 // Use autobahn library
 var autobahn = require('autobahn');
 
+var os = require('../UnixCommands.js');
+
 var connection = new autobahn.Connection({
 	url : 'ws://127.0.0.1:8080/ws',
 	realm : 'realm1'
@@ -27,7 +29,7 @@ describe(
 				expected : 1
 			}, {
 				name : address + '.' + 'broadcast2',
-				expected : [ 1, 2 ]
+				expected : [ 2, 10002 ]
 			}, {
 				name : address + '.' + 'broadcast3',
 				expected : "1"
@@ -63,18 +65,20 @@ describe(
 			it('TestMethodCall_broadcast1', function(done) {
 				assert.connectionState(connection);
 				assert.broadcast(done, connection.session, broadcasts[0]);
+				os.sendSignal('SIGUSR1', 'Example30Service');
 			});
 
-			// it('TestMethodCall_broadcast2', function(done) {
-			// assert.connectionState(connection);
-			// assert.methodCall(done, connection.session, methodCalls[1]);
-			// });
-			
+			it('TestMethodCall_broadcast2', function(done) {
+				assert.connectionState(connection);
+				assert.broadcast(done, connection.session, broadcasts[1]);
+				os.sendSignal('SIGUSR1', 'Example30Service');
+			});
+
 			// it('TestMethodCall_broadcast3', function(done) {
 			// assert.connectionState(connection);
 			// assert.methodCall(done, connection.session, methodCalls[2]);
 			// });
-			
+
 			// it('TestMethodCall_broadcast4', function(done) {
 			// assert.connectionState(connection);
 			// assert.methodCall(done, connection.session, methodCalls[4]);

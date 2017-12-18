@@ -51,7 +51,12 @@ exports.methodCall = function(done, session, methodCall) {
 
 exports.broadcast = function(done, session, broadcast) {
 	session.subscribe(broadcast.name, function(args) {
-		console.log("received " + broadcast.name + ': ' + args[0]);
+		console
+				.log("received " + broadcast.name + ' arguments: '
+						+ args.length);
+		for (var i = 0; i < args.length; i++) {
+			console.log("Argument %i: %i", i, args[i]);
+		}
 		done();
 	});
 }
