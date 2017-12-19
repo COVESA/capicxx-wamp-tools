@@ -10,8 +10,17 @@ var assert = require('assert');
 
 exports.methodCall = function(done, session, methodCall) {
 	session.call(methodCall.name, methodCall.args).then(function(res) {
-		assertResult(res, methodCall.expected);
-		done();
+		try {
+			var expected = methodCall.expected;
+			if (Array.isArray(expected)) {
+				assertArray(res.args, expected);
+			} else if (isPrimitive(expected)) {
+				assertPrimitive(res, expected);
+			}
+			done();
+		} catch (err) {
+			done(err);
+		}
 	},//
 	function(err) {
 		done(new Error(err.error));
@@ -20,37 +29,46 @@ exports.methodCall = function(done, session, methodCall) {
 
 exports.broadcast = function(done, session, broadcast) {
 	session.subscribe(broadcast.name, function(args) {
-		console
-				.log("received " + broadcast.name + ' arguments: '
-						+ args.length);
-		assertResult(res, broadcast.expected);
-		done();
+		try {
+			var expected = broadcast.expected;
+			if (Array.isArray(expected)) {
+				assertArray(args, expected);
+			} else if (isPrimitive(expected)) {
+				assertPrimitive(args, expected);
+			}
+			done();
+		} catch (err) {
+			done(err);
+		}
+	}).then(function(sub) {
+		broadcast.subscription = sub;
 	});
 }
 
 exports.connectionState = function(connection) {
-	assert.equal(true, connection.isConnected, 'No connection to server!');
+	assert.equal(true, connection.isConnected, 'no connection to server!');
 }
 
-function assertResult(res, expected) {
-	if (Array.isArray(res.args)) {
-		assert.equal(Array.isArray(res.args), Array.isArray(expected),
-				'\nActual array type: ' + res.args
-						+ '\nExpected primitive type: ' + expected);
-		assert.equal(res.args.length, expected.length, 'Actual array length: '
-				+ res.args.length + '\nExpected array length: '
-				+ expected.length);
+function assertArray(actual, expected) {
+	if (!(Array.isArray(actual) && Array.isArray(expected))) {
+		assert.fail(actual, expected, new TypeError('expected array type'));
+	}
 
-		for (var i = 0; i < expected.length; i++) {
-			var actual = res.args[i];
-			assert.equal(actual, expected[i], 'Actual[' + i + ']: ' + actual
-					+ '\nExpected[' + i + ']: ' + expected[i]);
-		}
-	} else {
-		assert.equal(Array.isArray(res.args), Array.isArray(expected),
-				'Returned type is no array. Expected type is array.');
+	assert.equal(actual.length, expected.length, 'array length not matching');
 
-		assert.equal(res, expected, 'Actual: ' + res + '\nExpected: '
-				+ expected);
+	for (var i = 0; i < expected.length; i++) {
+		assert.equal(actual[i], expected[i], 'values at index (' + i
+				+ ') do not match');
 	}
 }
+
+function assertPrimitive(actual, expected) {
+	if (!(isPrimitive(actual) && isPrimitive(expected))) {
+		assert.fail(actual, expected, new TypeError('expected primitive type'));
+	}
+	assert.equal(actual, expected);
+}
+
+function isPrimitive(test) {
+	return (test !== Object(test));
+};
