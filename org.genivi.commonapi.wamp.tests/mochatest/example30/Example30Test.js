@@ -26,16 +26,20 @@ describe(
 
 			var broadcasts = [ {
 				name : address + '.' + 'broadcast1',
-				expected : 1
+				expected : [ 1 ],
+				subscription : null
 			}, {
 				name : address + '.' + 'broadcast2',
-				expected : [ 2, 10002 ]
+				expected : [ 2, 10002 ],
+				subscription : null
 			}, {
 				name : address + '.' + 'broadcast3',
-				expected : "Number3"
+				expected : Object("Number3"),
+				subscription : null
 			}, {
 				name : address + '.' + 'broadcast4',
-				expected : true
+				expected : Object(true),
+				subscription : null
 			} ];
 
 			before(function(done) {
@@ -54,6 +58,18 @@ describe(
 			})
 
 			after(function() {
+				// Cleanup subscriptions
+				broadcasts.forEach(function(broadcast) {
+					if (broadcast.subscription != null) {
+						connection.session.unsubscribe(broadcast.subscription)
+								.then(function(gone) {
+
+								}, function(err) {
+									throw new Error(err.error);
+								});
+					}
+				});
+
 				if (connection.isConnected) {
 					connection.close();
 				}
@@ -63,24 +79,24 @@ describe(
 			// JUnit test descriptor. So iterating the methodCalls array here is
 			// not possible.
 			it('TestMethodCall_broadcast1', function(done) {
-				assert.connectionState(connection);
-				assert.broadcast(done, connection.session, broadcasts[0]);
-				os.sendSignal('SIGUSR1', 'Example30Service');
+				assertBroadcast(done, broadcasts[0]);
 			});
 
 			it('TestMethodCall_broadcast2', function(done) {
-				assert.connectionState(connection);
-				assert.broadcast(done, connection.session, broadcasts[1]);
-				os.sendSignal('SIGUSR1', 'Example30Service');
+				assertBroadcast(done, broadcasts[1]);
 			});
 
-			// it('TestMethodCall_broadcast3', function(done) {
-			// assert.connectionState(connection);
-			// assert.methodCall(done, connection.session, methodCalls[2]);
-			// });
+			it('TestMethodCall_broadcast3', function(done) {
+				assertBroadcast(done, broadcasts[2]);
+			});
 
-			// it('TestMethodCall_broadcast4', function(done) {
-			// assert.connectionState(connection);
-			// assert.methodCall(done, connection.session, methodCalls[4]);
-			// });
+			 it('TestMethodCall_broadcast4', function(done) {
+				 assertBroadcast(done, broadcasts[3]);
+			 });
 		});
+
+function assertBroadcast(done, broadcast) {
+	assert.connectionState(connection);
+	assert.broadcast(done, connection.session, broadcast);
+	os.sendSignal('SIGUSR1', 'Example30Service');
+}

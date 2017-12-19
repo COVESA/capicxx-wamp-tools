@@ -35,6 +35,8 @@ exports.broadcast = function(done, session, broadcast) {
 				assertArray(args, expected);
 			} else if (isPrimitive(expected)) {
 				assertPrimitive(args, expected);
+			} else {
+				assert.equal(args.toString(), expected.toString());
 			}
 			done();
 		} catch (err) {
@@ -66,7 +68,7 @@ function assertPrimitive(actual, expected) {
 	if (!(isPrimitive(actual) && isPrimitive(expected))) {
 		assert.fail(actual, expected, new TypeError('expected primitive type'));
 	}
-	assert.equal(actual, expected);
+	assert.equal(actual, expected, 'Primitive value not matching');
 }
 
 function isPrimitive(test) {
