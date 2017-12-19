@@ -32,7 +32,7 @@ describe(
 				expected : [ 2, 10002 ]
 			}, {
 				name : address + '.' + 'broadcast3',
-				expected : "1"
+				expected : "Number3"
 			}, {
 				name : address + '.' + 'broadcast4',
 				expected : true

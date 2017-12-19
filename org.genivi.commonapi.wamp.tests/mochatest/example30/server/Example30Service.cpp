@@ -20,14 +20,6 @@ void signalHandler(int signalNumber) {
 	signalReceived = true;
 }
 
-//void registerSignalHandler(int signal, sigaction* action) {
-//	std::cout << "Register signal handler..." << std::endl;
-//	action->sa_handler = signalHandler;
-//	sigemptyset(&action->sa_mask);
-//	action->sa_flags = 0;
-//	sigaction(signal, action, NULL);
-//}
-
 void registerSignalHandler(int signalNumber) {
 	std::cout << "Register signal handler..." << std::endl;
 	signal(signalNumber, signalHandler);
