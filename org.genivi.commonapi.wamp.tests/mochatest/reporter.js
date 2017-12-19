@@ -50,6 +50,7 @@ function MyReporter(runner) {
 
 	runner.on('fail', function(test, err) {
 		failures++;
+		console.log(err.message);
 		console.log('[  FAILED  ] %s.%s', test.parent.title, test.title);
 	});
 
