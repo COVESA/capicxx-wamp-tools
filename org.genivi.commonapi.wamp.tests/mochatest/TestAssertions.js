@@ -9,44 +9,13 @@
 var assert = require('assert');
 
 exports.methodCall = function(done, session, methodCall) {
-	session
-			.call(methodCall.name, methodCall.args)
-			.then(
-					function(res) {
-						if (Array.isArray(res.args)) {
-							assert.equal(Array.isArray(res.args), Array
-									.isArray(methodCall.expected),
-									'\nActual array type: ' + res.args
-											+ '\nExpected primitive type: '
-											+ methodCall.expected);
-							assert.equal(res.args.length,
-									methodCall.expected.length,
-									'Actual array length: ' + res.args.length
-											+ '\nExpected array length: '
-											+ methodCall.expected.length);
-
-							for (var i = 0; i < methodCall.expected.length; i++) {
-								var actual = res.args[i];
-								var expected = methodCall.expected[i];
-								assert.equal(actual, expected, 'Actual[' + i
-										+ ']: ' + actual + '\nExpected[' + i
-										+ ']: ' + expected);
-							}
-						} else {
-							assert
-									.equal(Array.isArray(res.args), Array
-											.isArray(methodCall.expected),
-											'Returned type is no array. Expected type is array.');
-
-							assert.equal(res, methodCall.expected, 'Actual: '
-									+ res + '\nExpected: '
-									+ methodCall.expected);
-						}
-						done();
-					},//
-					function(err) {
-						done(new Error(err.error));
-					});
+	session.call(methodCall.name, methodCall.args).then(function(res) {
+		assertResult(res, methodCall.expected);
+		done();
+	},//
+	function(err) {
+		done(new Error(err.error));
+	});
 }
 
 exports.broadcast = function(done, session, broadcast) {
@@ -54,13 +23,34 @@ exports.broadcast = function(done, session, broadcast) {
 		console
 				.log("received " + broadcast.name + ' arguments: '
 						+ args.length);
-		for (var i = 0; i < args.length; i++) {
-			console.log("Argument %i: %i", i, args[i]);
-		}
+		assertResult(res, broadcast.expected);
 		done();
 	});
 }
 
 exports.connectionState = function(connection) {
 	assert.equal(true, connection.isConnected, 'No connection to server!');
+}
+
+function assertResult(res, expected) {
+	if (Array.isArray(res.args)) {
+		assert.equal(Array.isArray(res.args), Array.isArray(expected),
+				'\nActual array type: ' + res.args
+						+ '\nExpected primitive type: ' + expected);
+		assert.equal(res.args.length, expected.length, 'Actual array length: '
+				+ res.args.length + '\nExpected array length: '
+				+ expected.length);
+
+		for (var i = 0; i < expected.length; i++) {
+			var actual = res.args[i];
+			assert.equal(actual, expected[i], 'Actual[' + i + ']: ' + actual
+					+ '\nExpected[' + i + ']: ' + expected[i]);
+		}
+	} else {
+		assert.equal(Array.isArray(res.args), Array.isArray(expected),
+				'Returned type is no array. Expected type is array.');
+
+		assert.equal(res, expected, 'Actual: ' + res + '\nExpected: '
+				+ expected);
+	}
 }
