@@ -55,13 +55,14 @@ class FTypeCollectionWampDeploymentGenerator {
         #if !defined (COMMONAPI_INTERNAL_COMPILATION)
         #define COMMONAPI_INTERNAL_COMPILATION
         #endif
-        #include <CommonAPI/Wamp/WampDeployment.hpp>
+        //#include <CommonAPI/Wamp/WampDeployment.hpp>
         #undef COMMONAPI_INTERNAL_COMPILATION
 
         «_tc.generateVersionNamespaceBegin»
         «_tc.model.generateNamespaceBeginDeclaration»
         «_tc.generateDeploymentNamespaceBegin»
 
+		«IF false /* TODO: is deployment needed? */»
         // typecollection-specific deployment types
         «FOR t: _tc.types»
             «val deploymentType = t.generateDeploymentType(0)»
@@ -73,6 +74,7 @@ class FTypeCollectionWampDeploymentGenerator {
         «FOR t: _tc.types»
             «t.generateDeploymentDeclaration(_tc, _accessor)»
         «ENDFOR»
+        «ENDIF»
 
         «_tc.generateDeploymentNamespaceEnd»
         «_tc.model.generateNamespaceEndDeclaration»
