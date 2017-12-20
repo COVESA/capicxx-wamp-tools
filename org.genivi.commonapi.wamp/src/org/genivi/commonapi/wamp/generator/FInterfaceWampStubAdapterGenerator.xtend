@@ -269,7 +269,7 @@ class FInterfaceWampStubAdapterGenerator {
 				stub_->«m.name»(
 					clientId«m.inArgs.map[', ' + wrappedName].join»
 					«IF !m.isFireAndForget»
-					, [&](«IF hasErr»«et» _error, «ENDIF»«m.outArgs.arglist2(_interface)») {
+					, [&](«IF hasErr»«et» _error«IF !m.outArgs.empty», «ENDIF»«ENDIF»«m.outArgs.arglist2(_interface)») {
 						«IF hasErr»err=_error;«ENDIF»
 						«m.outArgs.arglist3»
 					}
