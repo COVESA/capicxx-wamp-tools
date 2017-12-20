@@ -199,7 +199,7 @@ class FInterfaceWampStubAdapterGenerator {
 		CommonAPI::Wamp::WampGetAttributeStubDispatcher<
 			«_interface.stubFullClassName»,
 			CommonAPI::Version
-		> «_interface.wampStubAdapterClassNameInternal»::getExampleInterfaceInterfaceVersionStubDispatcher(&ExampleInterfaceStub::getInterfaceVersion, "uu");
+		> «_interface.wampStubAdapterClassNameInternal»::get«_interface.elementName»InterfaceVersionStubDispatcher(&«_interface.stubClassName»::getInterfaceVersion, "uu");
 
 
 		const «_interface.wampStubAdapterHelperClassName»::StubDispatcherTable& «_interface.wampStubAdapterClassNameInternal»::getStubDispatcherTable() {
