@@ -25,10 +25,7 @@
         <module>../org.genivi.commonapi.wamp.cli.feature</module>
         <module>../org.genivi.commonapi.wamp.cli.product</module>
         -->
-        
-        <!--
         <module>../org.genivi.commonapi.wamp.feature</module>
-        -->
         <module>../org.genivi.commonapi.wamp.ui</module>
         <!--
         <module>../org.genivi.commonapi.wamp.validator</module>

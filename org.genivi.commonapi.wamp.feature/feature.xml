@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.genivi.commonapi.wamp.feature"
+      label="%featureName"
+      version="0.7.0.qualifier"
+      provider-name="%providerName">
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+
+   <plugin
+         id="org.genivi.commonapi.wamp"
+         download-size="0"
+         install-size="0"
+         version="0.7.0.qualifier"
+         unpack="false"/>
+
+   <plugin
+         id="org.genivi.commonapi.wamp.ui"
+         download-size="0"
+         install-size="0"
+         version="0.7.0.qualifier"
+         unpack="false"/>
+
+</feature>
