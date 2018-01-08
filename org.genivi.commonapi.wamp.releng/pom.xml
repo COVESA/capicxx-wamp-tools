@@ -8,7 +8,7 @@
     <properties>
  		<eclipse-site>http://download.eclipse.org/releases/${platform-version-name}</eclipse-site>
 		<platform-version-name>luna</platform-version-name>
-        <tycho-version>0.22.0</tycho-version>
+        <tycho-version>1.0.0</tycho-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <forceContextQualifier>v${maven.build.timestamp}</forceContextQualifier>
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
@@ -30,8 +30,8 @@
         <!--
         <module>../org.genivi.commonapi.wamp.validator</module>
         <module>../org.genivi.commonapi.wamp.validator.feature</module>
-        <module>../org.genivi.commonapi.wamp.updatesite</module>
         -->
+        <module>../org.genivi.commonapi.wamp.updatesite</module>
     </modules>
 
 	<!--
