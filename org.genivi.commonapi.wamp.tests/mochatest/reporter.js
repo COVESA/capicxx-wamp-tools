@@ -50,6 +50,9 @@ function MyReporter(runner) {
 
 	runner.on('fail', function(test, err) {
 		failures++;
+		console.log('  Actual: ' + err.actual);
+		console.log('Expected: ' + err.expected);
+		console.log(err.stack);
 		console.log('[  FAILED  ] %s.%s', test.parent.title, test.title);
 	});
 

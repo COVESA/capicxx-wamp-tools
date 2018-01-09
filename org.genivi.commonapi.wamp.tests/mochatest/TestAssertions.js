@@ -9,53 +9,68 @@
 var assert = require('assert');
 
 exports.methodCall = function(done, session, methodCall) {
-	session
-			.call(methodCall.name, methodCall.args)
-			.then(
-					function(res) {
-						if (Array.isArray(res.args)) {
-							assert.equal(Array.isArray(res.args), Array
-									.isArray(methodCall.expected),
-									'\nActual array type: ' + res.args
-											+ '\nExpected primitive type: '
-											+ methodCall.expected);
-							assert.equal(res.args.length,
-									methodCall.expected.length,
-									'Actual array length: ' + res.args.length
-											+ '\nExpected array length: '
-											+ methodCall.expected.length);
-
-							for (var i = 0; i < methodCall.expected.length; i++) {
-								var actual = res.args[i];
-								var expected = methodCall.expected[i];
-								assert.equal(actual, expected, 'Actual[' + i
-										+ ']: ' + actual + '\nExpected[' + i
-										+ ']: ' + expected);
-							}
-						} else {
-							assert
-									.equal(Array.isArray(res.args), Array
-											.isArray(methodCall.expected),
-											'Returned type is no array. Expected type is array.');
-
-							assert.equal(res, methodCall.expected, 'Actual: '
-									+ res + '\nExpected: '
-									+ methodCall.expected);
-						}
-						done();
-					},//
-					function(err) {
-						done(new Error(err.error));
-					});
+	session.call(methodCall.name, methodCall.args).then(function(res) {
+		try {
+			var expected = methodCall.expected;
+			if (Array.isArray(expected)) {
+				assertArray(res.args, expected);
+			} else if (isPrimitive(expected)) {
+				assertPrimitive(res, expected);
+			}
+			done();
+		} catch (err) {
+			done(err);
+		}
+	},//
+	function(err) {
+		done(new Error(err.error));
+	});
 }
 
 exports.broadcast = function(done, session, broadcast) {
 	session.subscribe(broadcast.name, function(args) {
-		console.log("received " + broadcast.name + ': ' + args[0]);
-		done();
+		try {
+			var expected = broadcast.expected;
+			if (Array.isArray(expected)) {
+				assertArray(args, expected);
+			} else if (isPrimitive(expected)) {
+				assertPrimitive(args, expected);
+			} else {
+				assert.equal(args.toString(), expected.toString());
+			}
+			done();
+		} catch (err) {
+			done(err);
+		}
+	}).then(function(sub) {
+		broadcast.subscription = sub;
 	});
 }
 
 exports.connectionState = function(connection) {
-	assert.equal(true, connection.isConnected, 'No connection to server!');
+	assert.equal(true, connection.isConnected, 'no connection to server!');
 }
+
+function assertArray(actual, expected) {
+	if (!(Array.isArray(actual) && Array.isArray(expected))) {
+		assert.fail(actual, expected, new TypeError('expected array type'));
+	}
+
+	assert.equal(actual.length, expected.length, 'array length not matching');
+
+	for (var i = 0; i < expected.length; i++) {
+		assert.equal(actual[i], expected[i], 'values at index (' + i
+				+ ') do not match');
+	}
+}
+
+function assertPrimitive(actual, expected) {
+	if (!(isPrimitive(actual) && isPrimitive(expected))) {
+		assert.fail(actual, expected, new TypeError('expected primitive type'));
+	}
+	assert.equal(actual, expected, 'Primitive value not matching');
+}
+
+function isPrimitive(test) {
+	return (test !== Object(test));
+};
