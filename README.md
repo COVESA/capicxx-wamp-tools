@@ -3,7 +3,7 @@ Common API tooling with WAMP messaging.
 
 ## Roadmap
 
-This is work in progress, we plan to provide initial releases later this year (2017).
+This is work in progress, we plan to provide a 1.0 release during Q1 of 2018.
 
 The binding code generator from this project will create C++ code which needs a proper runtime library.
 One can find the runtime library in the companion project https://github.com/GENIVI/capicxx-wamp-runtime.
