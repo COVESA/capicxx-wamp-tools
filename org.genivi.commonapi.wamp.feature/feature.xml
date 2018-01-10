@@ -45,14 +45,14 @@
          id="org.genivi.commonapi.wamp"
          download-size="0"
          install-size="0"
-         version="0.7.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
    <plugin
          id="org.genivi.commonapi.wamp.ui"
          download-size="0"
          install-size="0"
-         version="0.7.0.qualifier"
+         version="0.0.0"
          unpack="false"/>
 
 </feature>
