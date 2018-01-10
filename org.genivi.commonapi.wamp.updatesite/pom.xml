@@ -20,10 +20,10 @@
 					<includeAllDependencies>false</includeAllDependencies>
 					<createArtifactRepository>true</createArtifactRepository>
 					<compress>true</compress>
-					<finalName>org.genivi.commonapi.wamp.updatesite_${unqualifiedVersion}.${buildQualifier}</finalName>
+					<finalName>${project.name}${unqualifiedVersion}.${buildQualifier}</finalName>
 				</configuration>
 			</plugin>
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
 				<artifactId>tycho-p2-extras-plugin</artifactId>
 				<version>${tycho-version}</version>
@@ -35,20 +35,37 @@
 						</goals>
 						<configuration>
 							<source>
-								<!-- source repository to mirror from as a URI -->
+								source repository
+								to mirror from as a URI
 								<repository>
 									<url>${project.baseUri}/target/repository</url>
 									<layout>p2</layout>
 								</repository>
 							</source>
-
-							<!-- Target repository file location -->
-							<!-- <destination>${project.build.Directory}/mergedRepository</destination> -->
+							Target repository file location
 							<destination>${project.basedir}/mergedRepository</destination>
-
-							<!-- whether to append to the target repository content -->
+							whether to append to the target repository content
 							<append>true</append>
 							<compress>true</compress>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> -->
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-p2-extras-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>publish-features-and-bundles</goal>
+						</goals>
+						<configuration>
+							<append>true</append>
+							<sourceLocation>${project.build.directory}/repository</sourceLocation>
+							<metadataRepositoryLocation>${project.basedir}/mergedRepository</metadataRepositoryLocation>
+							<artifactRepositoryLocation>${project.basedir}/mergedRepository</artifactRepositoryLocation>
 						</configuration>
 					</execution>
 				</executions>
