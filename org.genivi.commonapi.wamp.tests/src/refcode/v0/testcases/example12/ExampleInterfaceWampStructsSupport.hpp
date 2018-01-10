@@ -58,6 +58,31 @@ struct object_with_zone<::v0::testcases::example12::ExampleInterface::MyStruct1>
 	}
 };
 
+template<>
+struct convert<::v0::testcases::example12::ExampleInterface::MyStruct2> {
+	msgpack::object const& operator()(msgpack::object const& o, ::v0::testcases::example12::ExampleInterface::MyStruct2& v) const {
+		if (o.type != msgpack::type::ARRAY) throw msgpack::type_error();
+		if (o.via.array.size != 2) throw msgpack::type_error();
+		v = ::v0::testcases::example12::ExampleInterface::MyStruct2 (
+			o.via.array.ptr[0].as<::v0::testcases::example12::ExampleInterface::MyEnum>(),
+			o.via.array.ptr[1].as<::v0::testcases::example12::ExampleInterface::MyEnum>()
+        );
+		return o;
+	}
+};
+
+template<>
+struct object_with_zone<::v0::testcases::example12::ExampleInterface::MyStruct2> {
+	void operator()(msgpack::object::with_zone& o, ::v0::testcases::example12::ExampleInterface::MyStruct2 const& v) const {
+		o.type = type::ARRAY;
+		o.via.array.size = 2;
+		o.via.array.ptr = static_cast<msgpack::object*>(
+		o.zone.allocate_align(sizeof(msgpack::object) * o.via.array.size));
+		o.via.array.ptr[0] = msgpack::object(v.getElem1(), o.zone);
+		o.via.array.ptr[1] = msgpack::object(v.getElem2(), o.zone);
+	}
+};
+
 } // namespace adaptor
 } // MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS)
 } // namespace msgpack

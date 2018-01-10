@@ -94,6 +94,9 @@ void ExampleInterfaceWampStubAdapterInternal::provideRemoteMethods() {
 	CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<ExampleInterfaceWampStubAdapterInternal>
 		::provideRemoteMethod(*this,
 			"method7", &ExampleInterfaceWampStubAdapterInternal::wrap_method7);
+	CommonAPI::Wamp::WampMethodWithReplyStubDispatcher<ExampleInterfaceWampStubAdapterInternal>
+		::provideRemoteMethod(*this,
+			"method8", &ExampleInterfaceWampStubAdapterInternal::wrap_method8);
 }
 
 void ExampleInterfaceWampStubAdapterInternal::wrap_method1(autobahn::wamp_invocation invocation) {
@@ -206,6 +209,23 @@ void ExampleInterfaceWampStubAdapterInternal::wrap_method7(autobahn::wamp_invoca
 		}
 	);
 	invocation->result(std::make_tuple(ret1));
+}
+
+void ExampleInterfaceWampStubAdapterInternal::wrap_method8(autobahn::wamp_invocation invocation) {
+	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_method8 called" << std::endl;
+	auto clientNumber = invocation->argument<uint32_t>(0);
+	auto arg1 = invocation->argument<::v0::testcases::example12::ExampleInterface::MyStruct2>(1);
+	std::cerr << "Procedure " << getWampAddress().getRealm() << ".method8 invoked (clientNumber=" << clientNumber << ") " << std::endl;
+	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
+	::v0::testcases::example12::ExampleInterface::MyStruct2 ret1;
+	bool isEqual;
+	stub_->method8(
+		clientId, arg1
+		, [&](::v0::testcases::example12::ExampleInterface::MyStruct2 _ret1, bool _isEqual) {
+			ret1=_ret1; isEqual=_isEqual; 
+		}
+	);
+	invocation->result(std::make_tuple(ret1.values_, isEqual));
 }
 
 

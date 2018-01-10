@@ -104,6 +104,19 @@ void ExampleInterfaceStubImpl::method7(const std::shared_ptr<CommonAPI::ClientId
     _reply(ret1);
 }
 
+void ExampleInterfaceStubImpl::method8(const std::shared_ptr<CommonAPI::ClientId> _client, ExampleInterface::MyStruct2 _arg1, method8Reply_t _reply) {
+    ExampleInterface::MyStruct2 ret1;
+
+    ExampleInterface::MyEnum enum1 = _arg1.getElem1();
+    ExampleInterface::MyEnum enum2 = _arg1.getElem2();
+
+    // switch elem enumerators
+    ret1.setElem1(enum2);
+    ret1.setElem2(enum1);
+
+    _reply(ret1, enum1==enum2);
+}
+
 
 
 } // namespace example12
