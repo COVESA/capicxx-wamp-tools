@@ -31,13 +31,16 @@ public:
     virtual void method3(const std::shared_ptr<CommonAPI::ClientId> _client, ExampleInterface::MyEnum _arg1, method3Reply_t _reply);
 
     /// This is the method that will be called on remote calls on the method method4.
-    virtual void method4(const std::shared_ptr<CommonAPI::ClientId> _client, ExampleInterface::MyArray1 _arg1, method4Reply_t _reply);
+    virtual void method4(const std::shared_ptr<CommonAPI::ClientId> _client, ExampleInterface::MyStruct _arg1, method4Reply_t _reply);
 
     /// This is the method that will be called on remote calls on the method method5.
-    virtual void method5(const std::shared_ptr<CommonAPI::ClientId> _client, std::vector<uint64_t> _arg1, method5Reply_t _reply);
+     virtual void method5(const std::shared_ptr<CommonAPI::ClientId> _client, ExampleInterface::MyArray1 _arg1, method5Reply_t _reply);
 
-    /// This is the method that will be called on remote calls on the method method5.
-    virtual void method6(const std::shared_ptr<CommonAPI::ClientId> _client, std::vector< ExampleInterface::MyStruct > _arg1, method6Reply_t _reply);
+    /// This is the method that will be called on remote calls on the method method6.
+    virtual void method6(const std::shared_ptr<CommonAPI::ClientId> _client, std::vector<uint64_t> _arg1, method6Reply_t _reply);
+
+    /// This is the method that will be called on remote calls on the method method7.
+    virtual void method7(const std::shared_ptr<CommonAPI::ClientId> _client, std::vector< ExampleInterface::MyStruct > _arg1, method7Reply_t _reply);
 
 private:
 };

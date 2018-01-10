@@ -61,7 +61,15 @@ void ExampleInterfaceStubImpl::method3(
     _reply(ret1);
 }
 
-void ExampleInterfaceStubImpl::method4(const std::shared_ptr<CommonAPI::ClientId> _client, ExampleInterface::MyArray1 _arg1, method4Reply_t _reply) {
+void ExampleInterfaceStubImpl::method4(const std::shared_ptr<CommonAPI::ClientId> _client, ExampleInterface::MyStruct _arg1, method4Reply_t _reply) {
+    ExampleInterface::MyStruct ret1;
+
+    ret1.setElem1(_arg1.getElem1() * 2);
+    ret1.setElem2(! _arg1.getElem2());
+    _reply(ret1);
+}
+
+void ExampleInterfaceStubImpl::method5(const std::shared_ptr<CommonAPI::ClientId> _client, ExampleInterface::MyArray1 _arg1, method5Reply_t _reply) {
     ExampleInterface::MyArray1 ret1 = {};
 
     // add elements in reverse order
@@ -72,7 +80,7 @@ void ExampleInterfaceStubImpl::method4(const std::shared_ptr<CommonAPI::ClientId
     _reply(ret1);
 }
 
-void ExampleInterfaceStubImpl::method5(const std::shared_ptr<CommonAPI::ClientId> _client, std::vector<uint64_t> _arg1, method4Reply_t _reply) {
+void ExampleInterfaceStubImpl::method6(const std::shared_ptr<CommonAPI::ClientId> _client, std::vector<uint64_t> _arg1, method6Reply_t _reply) {
 	std::vector<uint64_t> ret1 = {};
 
     // add elements in reverse order and duplicate each element
@@ -84,7 +92,7 @@ void ExampleInterfaceStubImpl::method5(const std::shared_ptr<CommonAPI::ClientId
     _reply(ret1);
 }
 
-void ExampleInterfaceStubImpl::method6(const std::shared_ptr<CommonAPI::ClientId> _client, std::vector<ExampleInterface::MyStruct> _arg1, method6Reply_t _reply) {
+void ExampleInterfaceStubImpl::method7(const std::shared_ptr<CommonAPI::ClientId> _client, std::vector<ExampleInterface::MyStruct> _arg1, method7Reply_t _reply) {
 	std::vector<ExampleInterface::MyStruct> ret1 = {};
 
     // add elements in reverse order and duplicate each element
