@@ -84,6 +84,19 @@ void ExampleInterfaceStubImpl::method5(const std::shared_ptr<CommonAPI::ClientId
     _reply(ret1);
 }
 
+void ExampleInterfaceStubImpl::method6(const std::shared_ptr<CommonAPI::ClientId> _client, std::vector<ExampleInterface::MyStruct> _arg1, method6Reply_t _reply) {
+	std::vector<ExampleInterface::MyStruct> ret1 = {};
+
+    // add elements in reverse order and duplicate each element
+    for(int i=_arg1.size()-1; i>=0; i--) {
+    	ret1.push_back(_arg1[i]);
+    	ret1.push_back(_arg1[i]);
+    }
+
+    _reply(ret1);
+}
+
+
 
 } // namespace example12
 } // namespace testcases
