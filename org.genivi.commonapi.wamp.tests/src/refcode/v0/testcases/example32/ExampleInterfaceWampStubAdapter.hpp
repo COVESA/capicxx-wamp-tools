@@ -54,11 +54,13 @@ public:
 
 	void fireBroadcast1Event(const ::v0::testcases::example32::ExampleInterface::MyEnum& arg1);
 
-	void fireBroadcast2Event(const ::v0::testcases::example32::ExampleInterface::MyArray1& arg1);
+	void fireBroadcast2Event(const ::v0::testcases::example32::ExampleInterface::MyStruct1& arg1);
 
-	void fireBroadcast3Event(const std::vector< uint64_t >& arg1);
+	void fireBroadcast3Event(const ::v0::testcases::example32::ExampleInterface::MyArray1& arg1);
 
-	void fireBroadcast4Event(const std::vector< ::v0::testcases::example32::ExampleInterface::MyStruct >& arg1);
+	void fireBroadcast4Event(const std::vector< uint64_t >& arg1);
+
+	void fireBroadcast5Event(const std::vector< ::v0::testcases::example32::ExampleInterface::MyStruct1 >& arg1);
 
 
 	//////////////////////////////////////////////////////////////////////////////////////////
@@ -89,10 +91,10 @@ void ExampleInterfaceWampStubAdapterInternal::fireBroadcast1Event(const ::v0::te
     );
 }
 
-void ExampleInterfaceWampStubAdapterInternal::fireBroadcast2Event(const ::v0::testcases::example32::ExampleInterface::MyArray1& arg1) {
+void ExampleInterfaceWampStubAdapterInternal::fireBroadcast2Event(const ::v0::testcases::example32::ExampleInterface::MyStruct1& arg1) {
     //CommonAPI::Deployable< int64_t, CommonAPI::Wamp::IntegerDeployment<int64_t>> deployed_arg1(_arg1, static_cast< CommonAPI::Wamp::IntegerDeployment<int64_t>* >(nullptr));
 
-    std::cout << "ExampleInterfaceWampStubAdapterInternal::fireBroadcast2Event(" << "[<" << arg1.size() << ">]" << ")" << std::endl;
+    std::cout << "ExampleInterfaceWampStubAdapterInternal::fireBroadcast2Event(" << arg1 << ")" << std::endl;
     CommonAPI::Wamp::WampStubTopicHelper::publishTopic(
     		*this,
 			getWampAddress().getRealm() + ".broadcast2",
@@ -100,7 +102,7 @@ void ExampleInterfaceWampStubAdapterInternal::fireBroadcast2Event(const ::v0::te
     );
 }
 
-void ExampleInterfaceWampStubAdapterInternal::fireBroadcast3Event(const std::vector< uint64_t >& arg1) {
+void ExampleInterfaceWampStubAdapterInternal::fireBroadcast3Event(const ::v0::testcases::example32::ExampleInterface::MyArray1& arg1) {
     //CommonAPI::Deployable< int64_t, CommonAPI::Wamp::IntegerDeployment<int64_t>> deployed_arg1(_arg1, static_cast< CommonAPI::Wamp::IntegerDeployment<int64_t>* >(nullptr));
 
     std::cout << "ExampleInterfaceWampStubAdapterInternal::fireBroadcast3Event(" << "[<" << arg1.size() << ">]" << ")" << std::endl;
@@ -111,13 +113,24 @@ void ExampleInterfaceWampStubAdapterInternal::fireBroadcast3Event(const std::vec
     );
 }
 
-void ExampleInterfaceWampStubAdapterInternal::fireBroadcast4Event(const std::vector< ::v0::testcases::example32::ExampleInterface::MyStruct >& arg1) {
+void ExampleInterfaceWampStubAdapterInternal::fireBroadcast4Event(const std::vector< uint64_t >& arg1) {
     //CommonAPI::Deployable< int64_t, CommonAPI::Wamp::IntegerDeployment<int64_t>> deployed_arg1(_arg1, static_cast< CommonAPI::Wamp::IntegerDeployment<int64_t>* >(nullptr));
 
     std::cout << "ExampleInterfaceWampStubAdapterInternal::fireBroadcast4Event(" << "[<" << arg1.size() << ">]" << ")" << std::endl;
     CommonAPI::Wamp::WampStubTopicHelper::publishTopic(
     		*this,
 			getWampAddress().getRealm() + ".broadcast4",
+			std::make_tuple(arg1)
+    );
+}
+
+void ExampleInterfaceWampStubAdapterInternal::fireBroadcast5Event(const std::vector< ::v0::testcases::example32::ExampleInterface::MyStruct1 >& arg1) {
+    //CommonAPI::Deployable< int64_t, CommonAPI::Wamp::IntegerDeployment<int64_t>> deployed_arg1(_arg1, static_cast< CommonAPI::Wamp::IntegerDeployment<int64_t>* >(nullptr));
+
+    std::cout << "ExampleInterfaceWampStubAdapterInternal::fireBroadcast5Event(" << "[<" << arg1.size() << ">]" << ")" << std::endl;
+    CommonAPI::Wamp::WampStubTopicHelper::publishTopic(
+    		*this,
+			getWampAddress().getRealm() + ".broadcast5",
 			std::make_tuple(arg1)
     );
 }

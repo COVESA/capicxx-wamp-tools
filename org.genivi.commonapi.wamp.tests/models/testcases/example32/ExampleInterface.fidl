@@ -11,7 +11,7 @@ interface ExampleInterface {
 		ENUM4
 	}
 
-	struct MyStruct {
+	struct MyStruct1 {
 		UInt64 elem1
 		Boolean elem2
 	}
@@ -23,26 +23,33 @@ interface ExampleInterface {
 		}
 	}
 
+	// struct type argument
+	broadcast broadcast2 {
+		out {
+			MyStruct1 arg1
+		}
+	}
+
 	// named array type argument
 	array MyArray1 of UInt64
 
-	broadcast broadcast2 {
+	broadcast broadcast3 {
 		out {
 			MyArray1 arg1
 		}
 	}
 
 	// implicit array type argument with UInt64 elements
-	broadcast broadcast3 {
+	broadcast broadcast4 {
 		out {
 			UInt64[] arg1
 		}
 	}
 
-	// implicit array type argument with MyStruct elements
-	broadcast broadcast4 {
+	// implicit array type argument with MyStruct1 elements
+	broadcast broadcast5 {
 		out {
-			MyStruct[] arg1
+			MyStruct1[] arg1
 		}
 	}
 }

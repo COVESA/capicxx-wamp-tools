@@ -34,11 +34,11 @@ struct object_with_zone<::v0::testcases::example32::ExampleInterface::MyEnum> {
 };
 
 template<>
-struct convert<::v0::testcases::example32::ExampleInterface::MyStruct> {
-	msgpack::object const& operator()(msgpack::object const& o, ::v0::testcases::example32::ExampleInterface::MyStruct& v) const {
+struct convert<::v0::testcases::example32::ExampleInterface::MyStruct1> {
+	msgpack::object const& operator()(msgpack::object const& o, ::v0::testcases::example32::ExampleInterface::MyStruct1& v) const {
 		if (o.type != msgpack::type::ARRAY) throw msgpack::type_error();
 		if (o.via.array.size != 2) throw msgpack::type_error();
-		v = ::v0::testcases::example32::ExampleInterface::MyStruct (
+		v = ::v0::testcases::example32::ExampleInterface::MyStruct1 (
 			o.via.array.ptr[0].as<uint64_t>(),
 			o.via.array.ptr[1].as<bool>()
         );
@@ -47,8 +47,8 @@ struct convert<::v0::testcases::example32::ExampleInterface::MyStruct> {
 };
 
 template<>
-struct object_with_zone<::v0::testcases::example32::ExampleInterface::MyStruct> {
-	void operator()(msgpack::object::with_zone& o, ::v0::testcases::example32::ExampleInterface::MyStruct const& v) const {
+struct object_with_zone<::v0::testcases::example32::ExampleInterface::MyStruct1> {
+	void operator()(msgpack::object::with_zone& o, ::v0::testcases::example32::ExampleInterface::MyStruct1 const& v) const {
 		o.type = type::ARRAY;
 		o.via.array.size = 2;
 		o.via.array.ptr = static_cast<msgpack::object*>(
