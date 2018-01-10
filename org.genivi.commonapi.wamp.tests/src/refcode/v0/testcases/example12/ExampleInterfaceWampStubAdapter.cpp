@@ -147,13 +147,13 @@ void ExampleInterfaceWampStubAdapterInternal::wrap_method3(autobahn::wamp_invoca
 void ExampleInterfaceWampStubAdapterInternal::wrap_method4(autobahn::wamp_invocation invocation) {
 	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_method4 called" << std::endl;
 	auto clientNumber = invocation->argument<uint32_t>(0);
-	auto arg1 = invocation->argument<::v0::testcases::example12::ExampleInterface::MyStruct>(1);
+	auto arg1 = invocation->argument<::v0::testcases::example12::ExampleInterface::MyStruct1>(1);
 	std::cerr << "Procedure " << getWampAddress().getRealm() << ".method4 invoked (clientNumber=" << clientNumber << ") " << std::endl;
 	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
-	::v0::testcases::example12::ExampleInterface::MyStruct ret1;
+	::v0::testcases::example12::ExampleInterface::MyStruct1 ret1;
 	stub_->method4(
 		clientId, arg1
-		, [&](::v0::testcases::example12::ExampleInterface::MyStruct _ret1) {
+		, [&](::v0::testcases::example12::ExampleInterface::MyStruct1 _ret1) {
 			ret1=_ret1; 
 		}
 	);
@@ -195,13 +195,13 @@ void ExampleInterfaceWampStubAdapterInternal::wrap_method6(autobahn::wamp_invoca
 void ExampleInterfaceWampStubAdapterInternal::wrap_method7(autobahn::wamp_invocation invocation) {
 	std::cout << "ExampleInterfaceWampStubAdapterInternal::wrap_method7 called" << std::endl;
 	auto clientNumber = invocation->argument<uint32_t>(0);
-	auto arg1 = invocation->argument<std::vector< ::v0::testcases::example12::ExampleInterface::MyStruct >>(1);
+	auto arg1 = invocation->argument<std::vector< ::v0::testcases::example12::ExampleInterface::MyStruct1 >>(1);
 	std::cerr << "Procedure " << getWampAddress().getRealm() << ".method7 invoked (clientNumber=" << clientNumber << ") " << std::endl;
 	std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
-	std::vector< ::v0::testcases::example12::ExampleInterface::MyStruct > ret1;
+	std::vector< ::v0::testcases::example12::ExampleInterface::MyStruct1 > ret1;
 	stub_->method7(
 		clientId, arg1
-		, [&](std::vector< ::v0::testcases::example12::ExampleInterface::MyStruct > _ret1) {
+		, [&](std::vector< ::v0::testcases::example12::ExampleInterface::MyStruct1 > _ret1) {
 			ret1=_ret1; 
 		}
 	);

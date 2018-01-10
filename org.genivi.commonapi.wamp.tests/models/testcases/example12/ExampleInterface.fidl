@@ -39,7 +39,7 @@ interface ExampleInterface {
 		}
 	}
 
-	struct MyStruct {
+	struct MyStruct1 {
 		UInt32 elem1
 		Boolean elem2
 	}
@@ -47,10 +47,10 @@ interface ExampleInterface {
 	// struct type arguments
 	method method4 {
 		in {
-			MyStruct arg1
+			MyStruct1 arg1
 		}
 		out {
-			MyStruct ret1
+			MyStruct1 ret1
 		}
 	}
 
@@ -79,10 +79,10 @@ interface ExampleInterface {
 	// implicit array type arguments with struct element type
 	method method7 {
 		in {
-			MyStruct[] arg1
+			MyStruct1[] arg1
 		}
 		out {
-			MyStruct[] ret1
+			MyStruct1[] ret1
 		}
 	}
 }
