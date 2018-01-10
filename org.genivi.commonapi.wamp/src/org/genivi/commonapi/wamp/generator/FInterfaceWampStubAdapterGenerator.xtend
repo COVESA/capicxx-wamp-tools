@@ -252,7 +252,7 @@ class FInterfaceWampStubAdapterGenerator {
 				std::cout << "«_interface.wampStubAdapterClassNameInternal»::wrap_«m.name» called" << std::endl;
 				auto clientNumber = invocation->argument<uint32_t>(0);
 				«FOR arg : m.inArgs»
-					auto «arg.name» = invocation->argument<«arg.getTypenameOnWire(_interface)»>(«m.inArgs.indexOf(arg) + 1»);
+					auto «arg.name» = invocation->argument<«arg.getTypename(_interface)»>(«m.inArgs.indexOf(arg) + 1»);
 				«ENDFOR»
 				std::cerr << "Procedure " << getWampAddress().getRealm() << ".«m.name» invoked (clientNumber=" << clientNumber << ") "«m.inArgs.arglist1» << std::endl;
 				std::shared_ptr<CommonAPI::Wamp::WampClientId> clientId = std::make_shared<CommonAPI::Wamp::WampClientId>(clientNumber);
@@ -260,14 +260,10 @@ class FInterfaceWampStubAdapterGenerator {
 					«et» err;
 				«ENDIF»
 				«FOR arg : m.outArgs»
-					«arg.getTypenameOnWire(_interface)» «arg.name»;
-				«ENDFOR»
-				«FOR arg : m.inArgs.filter[type.isEnumeration]»
-					«_interface.name»::«arg.type.actualDerived.name» «arg.wrappedName»;
-					«arg.wrappedName».value_ = «arg.name»; 
+					«arg.getTypename(_interface)» «arg.name»;
 				«ENDFOR»
 				stub_->«m.name»(
-					clientId«m.inArgs.map[', ' + wrappedName].join»
+					clientId«m.inArgs.map[', ' + name].join»
 					«IF !m.isFireAndForget»
 					, [&](«IF hasErr»«et» _error«IF !m.outArgs.empty», «ENDIF»«ENDIF»«m.outArgs.arglist2(_interface)») {
 						«IF hasErr»err=_error;«ENDIF»
@@ -282,24 +278,16 @@ class FInterfaceWampStubAdapterGenerator {
 		'''
 	}
 	
-	def private wrappedName(FArgument arg) {
-		if (arg.type.isEnumeration)
-			"__" + arg.name
-		else
-			arg.name
-	}
-
-
 	def private arglist1(List<FArgument> args) {
 		args.filter[!type.isStruct].map[''' << "«IF args.indexOf(it)>0», «ENDIF»«name»=" << «debug»'''].join
 	}
 
 	def private arglist2(List<FArgument> args, FModelElement _container) {
-		args.map[getTypenameCode(_container) + " _" + name].join(", ")
+		args.map[getTypename(_container) + " _" + name].join(", ")
 	}
 
 	def private arglist3(List<FArgument> args) {
-		args.map[name + "=_" + name + (if (it.type.isEnumeration) ".value_" else "") + "; "].join
+		args.map[name + "=_" + name + "; "].join
 	}
 
 	def private arglist4(List<FArgument> args) '''«FOR it : args SEPARATOR ', '»«name»«IF isRealStruct».values_«ENDIF»«ENDFOR»'''

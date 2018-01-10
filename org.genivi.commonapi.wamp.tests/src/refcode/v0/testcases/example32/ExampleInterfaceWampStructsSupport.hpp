@@ -18,6 +18,22 @@ MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS) {
 namespace adaptor {
 
 template<>
+struct convert<::v0::testcases::example32::ExampleInterface::MyEnum> {
+	msgpack::object const& operator()(msgpack::object const& o, ::v0::testcases::example32::ExampleInterface::MyEnum& v) const {
+		if (o.type != msgpack::type::POSITIVE_INTEGER) throw msgpack::type_error();
+		v.value_ = o.as<uint32_t>();
+		return o;
+	}
+};
+
+template<>
+struct object_with_zone<::v0::testcases::example32::ExampleInterface::MyEnum> {
+	void operator()(msgpack::object::with_zone& o, ::v0::testcases::example32::ExampleInterface::MyEnum const& v) const {
+		msgpack::operator<<(o, v.value_);
+	}
+};
+
+template<>
 struct convert<::v0::testcases::example32::ExampleInterface::MyStruct> {
 	msgpack::object const& operator()(msgpack::object const& o, ::v0::testcases::example32::ExampleInterface::MyStruct& v) const {
 		if (o.type != msgpack::type::ARRAY) throw msgpack::type_error();

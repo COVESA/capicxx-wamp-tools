@@ -10,32 +10,12 @@ import static extension org.franca.core.framework.FrancaHelpers.*
 class FrancaWampTypeExtensions {
 	@Inject private extension FrancaGeneratorExtensions
 
-	val private ENUM_WIRE_TYPE = "uint32_t"
-		
-	def getTypenameOnWire(FTypedElement elem) {
-		elem.getTypename(null, true)
+	def getTypename(FTypedElement elem) {
+		elem.getTypeName(null, true)
 	}
 
-	def getTypenameOnWire(FTypedElement elem, FModelElement _container) {
-		elem.getTypename(_container, true)
-	}
-
-	def getTypenameCode(FTypedElement elem) {
-		elem.getTypename(null, false)
-	}
-
-	def getTypenameCode(FTypedElement elem, FModelElement _container) {
-		elem.getTypename(_container, false)
-	}
-
-	// TODO: merge this with FrancaGeneratorExtensions.getTypeName
-	def private getTypename(FTypedElement elem, FModelElement _container, boolean onWire) {
-		val typeref = elem.type
-		if (typeref.isEnumeration && onWire) {
-			ENUM_WIRE_TYPE
-		} else {
-			elem.getTypeName(_container, true)
-		}
+	def getTypename(FTypedElement elem, FModelElement _container) {
+		elem.getTypeName(_container, true)
 	}
 
 }

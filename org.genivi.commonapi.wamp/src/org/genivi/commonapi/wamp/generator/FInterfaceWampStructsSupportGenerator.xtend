@@ -11,6 +11,7 @@ import org.genivi.commonapi.core.generator.FrancaGeneratorExtensions
 import org.genivi.commonapi.wamp.deployment.PropertyAccessor
 import org.genivi.commonapi.wamp.preferences.FPreferencesWamp
 import org.genivi.commonapi.wamp.preferences.PreferenceConstantsWamp
+import org.franca.core.franca.FEnumerationType
 
 class FInterfaceWampStructsSupportGenerator {
     @Inject private extension FrancaGeneratorExtensions
@@ -43,6 +44,24 @@ class FInterfaceWampStructsSupportGenerator {
 		MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS) {
 		namespace adaptor {
 
+		«FOR etype : fInterface.types.filter(FEnumerationType)»
+		template<>
+		struct convert<«etype.fullyQualifiedCppName»> {
+			msgpack::object const& operator()(msgpack::object const& o, «etype.fullyQualifiedCppName»& v) const {
+				if (o.type != msgpack::type::POSITIVE_INTEGER) throw msgpack::type_error();
+				v.value_ = o.as<uint32_t>();
+				return o;
+			}
+		};
+		
+		template<>
+		struct object_with_zone<«etype.fullyQualifiedCppName»> {
+			void operator()(msgpack::object::with_zone& o, «etype.fullyQualifiedCppName» const& v) const {
+				msgpack::operator<<(o, v.value_);
+			}
+		};
+
+		«ENDFOR»
 		«FOR stype : fInterface.types.filter(FStructType)»
 		template<>
 		struct convert<«stype.fullyQualifiedCppName»> {
@@ -51,7 +70,7 @@ class FInterfaceWampStructsSupportGenerator {
 				if (o.via.array.size != «stype.elements.size») throw msgpack::type_error();
 				v = «stype.fullyQualifiedCppName» (
 					«FOR elem : stype.elements SEPARATOR ','»
-						o.via.array.ptr[«stype.elements.indexOf(elem)»].as<«elem.getTypenameCode(fInterface)»>()
+						o.via.array.ptr[«stype.elements.indexOf(elem)»].as<«elem.getTypename(fInterface)»>()
 					«ENDFOR»
 		        );
 				return o;
