@@ -41,7 +41,7 @@ describe(
 			}, {
 				name : address + '.' + 'method3',
 				args : [ 42, 100 ], // ENUM3
-				expected : 2  // ENUM4
+				expected : 3  // ENUM4
 			} ];
 
 			before(function(done) {
