@@ -1,18 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="CommonAPI WAMP Oxygen SR1" sequenceNumber="7">
+<?pde version="3.8"?><target name="CommonAPI WAMP Oxygen SR1" sequenceNumber="10">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.cdt.sdk.feature.group" version="9.3.2.201709131603"/>
 <repository location="http://download.eclipse.org/releases/oxygen"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.xtend.sdk.feature.group" version="2.7.3.v201411190455"/>
-<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.franca.core.sdk.feature.group" version="0.9.1.201412191134"/>
-<unit id="org.franca.ui.sdk.feature.group" version="0.9.1.201412191134"/>
-<repository location="http://franca.github.io/franca/update_site/releases"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipselabs.xtext.utils.unittesting.feature.feature.group" version="0.9.3.201204261440"/>
@@ -23,13 +14,22 @@
 <repository location="http://genivi.github.io/capicxx-core-tools/updatesite/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.equinox.sdk.feature.group" version="3.13.1.v20170928-1405"/>
-<unit id="org.eclipse.platform.sdk" version="4.7.1.M20171009-0410"/>
-<repository location="http://download.eclipse.org/eclipse/updates/4.7/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.inject.multibindings" version="3.0.0.v201605172100"/>
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20170919201930/repository/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.franca.core.feature.group" version="0.9.1.201412191134"/>
+<unit id="org.franca.ui.feature.group" version="0.9.1.201412191134"/>
+<repository location="http://franca.github.io/franca/update_site/releases/0.9.1"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.xtend.sdk.feature.group" version="2.7.3.v201411190455"/>
+<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/maintenance/R201411190455/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.equinox.sdk.feature.group" version="3.13.2.v20171108-1834"/>
+<unit id="org.eclipse.platform.sdk" version="4.7.2.M20171130-0510"/>
+<repository location="http://download.eclipse.org/eclipse/updates/4.7/"/>
 </location>
 </locations>
 </target>
