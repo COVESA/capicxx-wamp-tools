@@ -17,6 +17,8 @@ import org.genivi.commonapi.wamp.deployment.PropertyAccessor
 import org.genivi.commonapi.wamp.preferences.FPreferencesWamp
 import org.genivi.commonapi.wamp.preferences.PreferenceConstantsWamp
 
+import static extension org.franca.core.FrancaModelExtensions.*
+
 class FInterfaceWampStructsSupportGenerator {
     @Inject private extension FTypeGenerator
     @Inject private extension FrancaGeneratorExtensions
@@ -81,8 +83,9 @@ class FInterfaceWampStructsSupportGenerator {
 				if (o.type != msgpack::type::ARRAY) throw msgpack::type_error();
 				if (o.via.array.size != «stype.elements.size») throw msgpack::type_error();
 				v = «stype.fullyQualifiedCppName» (
-					«FOR elem : stype.elements SEPARATOR ','»
-						o.via.array.ptr[«stype.elements.indexOf(elem)»].as<«elem.getTypeName(fTypeCollection, true)»>()
+					«var i1 = 0»
+					«FOR elem : stype.allElements SEPARATOR ','»
+						o.via.array.ptr[«i1++»].as<«elem.getTypeName(fTypeCollection, true)»>()
 					«ENDFOR»
 		        );
 				return o;
@@ -96,8 +99,9 @@ class FInterfaceWampStructsSupportGenerator {
 				o.via.array.size = «stype.elements.size»;
 				o.via.array.ptr = static_cast<msgpack::object*>(
 				o.zone.allocate_align(sizeof(msgpack::object) * o.via.array.size));
-				«FOR elem : stype.elements»
-					o.via.array.ptr[«stype.elements.indexOf(elem)»] = msgpack::object(v.get«elem.name.toFirstUpper»(), o.zone);
+				«var i2 = 0»
+				«FOR elem : stype.allElements»
+					o.via.array.ptr[«i2++»] = msgpack::object(v.get«elem.name.toFirstUpper»(), o.zone);
 				«ENDFOR»
 			}
 		};
