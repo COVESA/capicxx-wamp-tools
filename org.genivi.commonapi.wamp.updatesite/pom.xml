@@ -47,6 +47,34 @@
 				</executions>
 			</plugin>
 			
+			 <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+                <!-- Rename the ZIP files -->
+                <execution>
+                    <id>update-zip-files</id>
+                    <phase>package</phase>
+                    <configuration>
+                        <target>
+                            <!-- Rename the products -->
+                            <move verbose="true" todir="${project.build.directory}">
+                                <mapper type="regexp" from="${project.name}-${unqualifiedVersion}-SNAPSHOT"
+                                    to="${project.name}-${unqualifiedVersion}.${buildQualifier}.zip" />
+
+                                <fileset dir="${project.build.directory}">
+                                    <include name="*.zip" />
+                                </fileset>
+                            </move>
+                        </target>
+                    </configuration>
+                    <goals>
+                        <goal>run</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+			
 			<!-- <plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
 				<artifactId>tycho-p2-extras-plugin</artifactId>
