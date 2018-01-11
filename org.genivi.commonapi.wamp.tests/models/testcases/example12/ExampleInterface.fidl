@@ -102,5 +102,21 @@ interface ExampleInterface {
 		}
 	}
 
+	union MyUnion1 {
+		UInt32 elem1
+		Boolean elem2
+		String elem3
+	}
+
+	// union type arguments
+	method method9 {
+		in {
+			MyUnion1 arg1
+		}
+		out {
+			MyUnion1 ret1
+		}
+	}
+
 
 }

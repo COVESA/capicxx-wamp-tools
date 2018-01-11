@@ -279,7 +279,7 @@ class FInterfaceWampStubAdapterGenerator {
 	}
 	
 	def private arglist1(List<FArgument> args) {
-		args.filter[!type.isStruct].map[''' << "«IF args.indexOf(it)>0», «ENDIF»«name»=" << «debug»'''].join
+		args.filter[!type.isCompound].map[''' << "«IF args.indexOf(it)>0», «ENDIF»«name»=" << «debug»'''].join
 	}
 
 	def private arglist2(List<FArgument> args, FModelElement _container) {

@@ -45,6 +45,9 @@ public:
     /// This is the method that will be called on remote calls on the method method8.
     virtual void method8(const std::shared_ptr<CommonAPI::ClientId> _client, ExampleInterface::MyStruct2 _arg1, method8Reply_t _reply);
 
+    /// This is the method that will be called on remote calls on the method method9.
+    virtual void method9(const std::shared_ptr<CommonAPI::ClientId> _client, ExampleInterface::MyUnion1 _arg1, method9Reply_t _reply);
+
 private:
 };
 

@@ -4,14 +4,15 @@ import com.google.inject.Inject
 import java.util.List
 import org.eclipse.core.resources.IResource
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.franca.core.franca.FEnumerationType
 import org.franca.core.franca.FInterface
 import org.franca.core.franca.FStructType
+import org.franca.core.franca.FUnionType
 import org.franca.deploymodel.dsl.fDeploy.FDProvider
 import org.genivi.commonapi.core.generator.FrancaGeneratorExtensions
 import org.genivi.commonapi.wamp.deployment.PropertyAccessor
 import org.genivi.commonapi.wamp.preferences.FPreferencesWamp
 import org.genivi.commonapi.wamp.preferences.PreferenceConstantsWamp
-import org.franca.core.franca.FEnumerationType
 
 class FInterfaceWampStructsSupportGenerator {
     @Inject private extension FrancaGeneratorExtensions
@@ -87,6 +88,23 @@ class FInterfaceWampStructsSupportGenerator {
 				«FOR elem : stype.elements»
 					o.via.array.ptr[«stype.elements.indexOf(elem)»] = msgpack::object(v.get«elem.name.toFirstUpper»(), o.zone);
 				«ENDFOR»
+			}
+		};
+		
+		«ENDFOR»
+		«FOR stype : fInterface.types.filter(FUnionType)»
+		template<>
+		struct convert<«stype.fullyQualifiedCppName»> {
+			msgpack::object const& operator()(msgpack::object const& o, «stype.fullyQualifiedCppName»& v) const {
+				std::cout << "TODO: adapter for unions not implemented yet (convert)" << std::endl;
+				return o;
+			}
+		};
+
+		template<>
+		struct object_with_zone<«stype.fullyQualifiedCppName»> {
+			void operator()(msgpack::object::with_zone& o, «stype.fullyQualifiedCppName» const& v) const {
+				std::cout << "TODO: adapter for unions not implemented yet (object_with_zone)" << std::endl;
 			}
 		};
 		

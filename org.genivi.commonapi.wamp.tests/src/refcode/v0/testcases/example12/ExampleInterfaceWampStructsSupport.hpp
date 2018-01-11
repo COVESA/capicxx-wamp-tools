@@ -83,6 +83,21 @@ struct object_with_zone<::v0::testcases::example12::ExampleInterface::MyStruct2>
 	}
 };
 
+template<>
+struct convert<::v0::testcases::example12::ExampleInterface::MyUnion1> {
+	msgpack::object const& operator()(msgpack::object const& o, ::v0::testcases::example12::ExampleInterface::MyUnion1& v) const {
+		std::cout << "TODO: adapter for unions not implemented yet (convert)" << std::endl;
+		return o;
+	}
+};
+
+template<>
+struct object_with_zone<::v0::testcases::example12::ExampleInterface::MyUnion1> {
+	void operator()(msgpack::object::with_zone& o, ::v0::testcases::example12::ExampleInterface::MyUnion1 const& v) const {
+		std::cout << "TODO: adapter for unions not implemented yet (object_with_zone)" << std::endl;
+	}
+};
+
 } // namespace adaptor
 } // MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS)
 } // namespace msgpack

@@ -117,6 +117,14 @@ void ExampleInterfaceStubImpl::method8(const std::shared_ptr<CommonAPI::ClientId
     _reply(ret1, enum1==enum2);
 }
 
+void ExampleInterfaceStubImpl::method9(const std::shared_ptr<CommonAPI::ClientId> _client, ExampleInterface::MyUnion1 _arg1, method9Reply_t _reply) {
+    (void)_client;
+    (void)_arg1;
+    ExampleInterface::MyUnion1 ret1 = {};
+    _reply(ret1);
+}
+
+
 
 
 } // namespace example12
