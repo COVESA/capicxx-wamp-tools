@@ -10,7 +10,9 @@
 #ifndef V0_TESTCASES_EXAMPLE30_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
 #define V0_TESTCASES_EXAMPLE30_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
 
+
 #include <v0/testcases/example30/ExampleInterface.hpp>
+
 #include <msgpack.hpp>
 
 namespace msgpack {

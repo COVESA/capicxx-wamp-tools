@@ -336,7 +336,9 @@ class FrancaWampGenerator implements IGenerator {
         var typeCollectionsToGenerate = _model.typeCollections.toSet
 
         typeCollectionsToGenerate.forEach [
-            it.generateTypeCollectionDeployment(_access, getAccessor(it), _res)
+        	val pa = getAccessor(it)
+            it.generateTypeCollectionDeployment(_access, pa, _res)
+            it.generateWampStructsSupport(_access, pa, _providers, _res)
         ]
 
         interfacesToGenerate.forEach [
