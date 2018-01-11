@@ -12,7 +12,7 @@
 	</parent>
 	<build>
 		<plugins>
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-repository-plugin</artifactId>
 				<version>${tycho-version}</version>
@@ -22,7 +22,31 @@
 					<compress>true</compress>
 					<finalName>${project.name}${unqualifiedVersion}.${buildQualifier}</finalName>
 				</configuration>
+			</plugin> -->
+
+			<!-- workaround https://bugs.eclipse.org/bugs/show_bug.cgi?id=453708 -->
+			<!-- Maven/Tycho doesn't support adding referenced thirdparty to update sites -->
+			<plugin>
+				<groupId>org.jboss.tools.tycho-plugins</groupId>
+				<artifactId>repository-utils</artifactId>
+				<version>1.0.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>generate-repository-facade</goal>
+						</goals>
+						<configuration>
+							<associateSites>
+								<associateSite>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/maintenance/R201411190455/</associateSite>
+								<associateSite>http://genivi.github.io/capicxx-core-tools/updatesite/</associateSite>
+								<associateSite>http://franca.github.io/franca/update_site/releases/</associateSite>
+							</associateSites>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
+			
 			<!-- <plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
 				<artifactId>tycho-p2-extras-plugin</artifactId>
@@ -35,41 +59,66 @@
 						</goals>
 						<configuration>
 							<source>
-								source repository
-								to mirror from as a URI
+								source repository to mirror from as a URI
 								<repository>
 									<url>${project.baseUri}/target/repository</url>
 									<layout>p2</layout>
 								</repository>
 							</source>
 							Target repository file location
-							<destination>${project.basedir}/mergedRepository</destination>
+							<destination>${project.basedir}/repository/latest</destination>
 							whether to append to the target repository content
-							<append>true</append>
+							<append>false</append>
 							<compress>true</compress>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin> -->
-			<plugin>
-				<groupId>org.eclipse.tycho.extras</groupId>
-				<artifactId>tycho-p2-extras-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>publish-features-and-bundles</goal>
-						</goals>
-						<configuration>
-							<append>true</append>
-							<sourceLocation>${project.build.directory}/repository</sourceLocation>
-							<metadataRepositoryLocation>${project.basedir}/mergedRepository</metadataRepositoryLocation>
-							<artifactRepositoryLocation>${project.basedir}/mergedRepository</artifactRepositoryLocation>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
+	
+	<!-- <profiles>
+		<profile>
+			<id>update-release-p2repo</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho.extras</groupId>
+						<artifactId>tycho-p2-extras-plugin</artifactId>
+						<version>${tycho-version}</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>mirror</goal>
+								</goals>
+								<configuration>
+									<source>
+										<repository>
+											<url>${project.baseUri}/target/repository</url>
+											<layout>p2</layout>
+										</repository>
+									</source>
+									<destination>${project.basedir}/repository/release/${unqualifiedVersion}</destination>
+									<append>false</append>
+									<compress>true</compress>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles> -->
+	
+	<repositories>
+		<repository>
+			<id>jboss</id>
+			<url>https://repository.jboss.org/</url>
+			<layout>m2</layout>
+		</repository>
+	</repositories>
 </project>

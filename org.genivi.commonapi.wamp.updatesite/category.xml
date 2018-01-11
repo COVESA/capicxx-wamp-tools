@@ -8,8 +8,8 @@
          The generator for CommonAPI-Wamp.
       </description>
    </category-def>
-   <repository-reference location="http://download.eclipse.org/eclipse/updates/4.7" enabled="true" />
-   <repository-reference location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases" enabled="true" />
+   <!-- This is currently ignored by Tycho, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=453708 -->
    <repository-reference location="http://genivi.github.io/capicxx-core-tools/updatesite" enabled="true" />
    <repository-reference location="http://franca.github.io/franca/update_site/releases" enabled="true" />
+   <repository-reference location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/maintenance/R201411190455/" enabled="true" />
 </site>
