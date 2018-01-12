@@ -1,50 +1,33 @@
-# encrypted token to access GitHub repo with HTTPS
-secure: "XvL0BHTJSWfBxmQqctmenR+kRe2thPD5oy9iCHF8Q/msHMecil6Ya64NijYT9BEUY1U6yTeYBlpoXC/iX1PZ/PpdXfQa6RyJWV6W2l10bOJw2ilJX9BFj0CwrIWuA0rTaqy+SyqPd9zZHG+QjK4UizwsW/wt6bpu3BSdyIO480TDsYouYT2nTPEbFY1Z7DvkcK+Q8TdEHWy0X8MaJz772limT3f6o3tFKNjQmw4Ol70h5WGsmklAvD60huO0/PjulZwqi0IRA6BUoqpqbZZsYj9cTR8h5VsRXBTbHAA3HKF8k/61tbUSW2WzIR7S3kvvLcb05kF75b1ZnMfq3ukaFaRAeeda22PHxwiUPKk1iaPxcKe7Y8PsJNbvRQda7PD+X3fUrmbf6uDj4pNPez02MyBSVmgUQYAUVYyUMy3EDD0aOXwypb4VLSoZ/dalqp3IaGO223ziTMooXrcQ4E7I6tbBMQf6Q1s7HuV82E6UpqeeGiM+SHtvXYRGYvo5jG/esPZ96YsPaSwiC5Yu2XyWYqsMyobCCtpuSGMe8cMXwTa5Q21OeRZ4mt0BoxKk77PGcj+bx9mNnXIvoiYkTRq8fYPZE/hAbJBYFBlc02Lke5GY7JaarnQFwohcyYfXLjGb4kKZQMGfrBkqja/iYOD3z1HgbPPqwvOyo+msQQBcFVI="
-
-# use new travis infrastructure (container-based)
 sudo: false
-
-# currently we use Java 8
 language: java
 jdk: oraclejdk8
-
-# activate caching to speed up build
 cache:
   directories:
-  - $HOME/.m2
-
-# this stuff is needed for allowing UI tests
-
-env: DISPLAY=:99.0
-
+  - "$HOME/.m2"
+env:
+  matrix:
+  - DISPLAY=:99.0
+  global:
+    secure: qLBEh4pQBAjKTsrPNSrlXvBUWpnuAeATM2mFP2qZ1exbmWC218dQN/F9OAEXBCdkd1yoWi/3edllMkyVHCdutKie1i134vkrQnEjKf49kzhY+KoLWVc+/1rUaWoQHjGWR1LVIezuW4KwLOGv5K4evR5JUMlT7p6iVfbgyvxgtBmAL78zmbHZfPooueZnZre2RVW9D0TdVTxPgpvHLobnsWLU5lAkBDxEWV5nAHm7hP/yGKvx+HJp/0eV+pUQgqk7J6iJ6e4YzhIl49KdH5bC+Qs3J4Jh/RAOCVHb71yaivOhR4+sncNk3XEVTKMSpLKgGtCgH+CjDvvzYE2EGNStqLykVRW3zGqUEpgBIfe8chFe//DBPV8QIovzeCErtrESJ3cd1prHynNAQiVLenFvZ4StVloTIN/tRKCBlheEuLm0tuGw12Fc/QqPDUDMC/IGah9Px1qlMxVvp4oZbHWE2yZgCO9aDFLCiK43eFaWPe2BYQupywt1ykqVOlu/jLqaLSMPcp9RfxVp8OjY6eNLAF9e1lvsEoRI8NRVDub1L3cctzDLsCaayF/RhIaQmZyx+sZZh6X76tBv+eCJC7NsPyM2HzshJUsdQBqy2TCcpIG455Uh8UpnH0p1TeqzkXUaHard6rT/oFBYPCT8IrnPHXtKFDUP3iiwCaRIepv4zfQ=
 install: true
-
 addons:
   apt:
     packages:
     - metacity
-
 before_script:
 - sh -e /etc/init.d/xvfb start
 - metacity --sm-disable --replace 2> metacity.err &
-
-
-# run actual build
 script:
 - export
 - cd org.genivi.commonapi.wamp.releng && mvn clean install && cd ../..
-
-# select branches per whitelist
 branches:
   only:
   - master
   - develop
-
 deploy:
-  # deploy p2 updatesite from latest build
   provider: pages
   skip-cleanup: true
-  github-token: $GH_TOKEN
+  github-token: "$GH_TOKEN"
   keep-history: true
   local-dir: org.genivi.commonapi.wamp.updatesite/target/gh-pages
   target-branch: gh-pages
