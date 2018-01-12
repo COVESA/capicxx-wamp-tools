@@ -25,7 +25,8 @@
 			</plugin> -->
 
 			<!-- workaround https://bugs.eclipse.org/bugs/show_bug.cgi?id=453708 -->
-			<!-- Maven/Tycho doesn't support adding referenced thirdparty to update sites -->
+			<!-- Maven/Tycho doesn't support adding referenced thirdparty to update 
+				sites -->
 			<plugin>
 				<groupId>org.jboss.tools.tycho-plugins</groupId>
 				<artifactId>repository-utils</artifactId>
@@ -46,36 +47,37 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-			 <plugin>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.6</version>
-            <executions>
-                <!-- Rename the ZIP files -->
-                <execution>
-                    <id>update-zip-files</id>
-                    <phase>package</phase>
-                    <configuration>
-                        <target>
-                            <!-- Rename the products -->
-                            <move verbose="true" todir="${project.build.directory}">
-                                <mapper type="regexp" from="${project.name}-${unqualifiedVersion}-SNAPSHOT"
-                                    to="${project.name}-${unqualifiedVersion}.${buildQualifier}.zip" />
 
-                                <fileset dir="${project.build.directory}">
-                                    <include name="*.zip" />
-                                </fileset>
-                            </move>
-                        </target>
-                    </configuration>
-                    <goals>
-                        <goal>run</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
-			
-			<!-- <plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<!-- Rename the ZIP files -->
+					<execution>
+						<id>update-zip-files</id>
+						<phase>package</phase>
+						<configuration>
+							<target>
+								<!-- Rename the products -->
+								<move verbose="true" todir="${project.build.directory}">
+									<mapper type="regexp"
+										from="${project.name}-${unqualifiedVersion}-SNAPSHOT"
+										to="${project.name}-${unqualifiedVersion}.${buildQualifier}.zip" />
+
+									<fileset dir="${project.build.directory}">
+										<include name="*.zip" />
+									</fileset>
+								</move>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
 				<artifactId>tycho-p2-extras-plugin</artifactId>
 				<version>${tycho-version}</version>
@@ -87,61 +89,24 @@
 						</goals>
 						<configuration>
 							<source>
-								source repository to mirror from as a URI
+								<!-- source repository to mirror from as a URI -->
 								<repository>
 									<url>${project.baseUri}/target/repository</url>
 									<layout>p2</layout>
 								</repository>
 							</source>
-							Target repository file location
-							<destination>${project.basedir}/repository/latest</destination>
-							whether to append to the target repository content
+							<!-- Target repository file location -->
+							<destination>${project.basedir}/target/gh-pages/updatesite/integration</destination>
+							<!-- whether to append to the target repository content -->
 							<append>false</append>
 							<compress>true</compress>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin> -->
+			</plugin>
 		</plugins>
 	</build>
-	
-	<!-- <profiles>
-		<profile>
-			<id>update-release-p2repo</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho.extras</groupId>
-						<artifactId>tycho-p2-extras-plugin</artifactId>
-						<version>${tycho-version}</version>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>mirror</goal>
-								</goals>
-								<configuration>
-									<source>
-										<repository>
-											<url>${project.baseUri}/target/repository</url>
-											<layout>p2</layout>
-										</repository>
-									</source>
-									<destination>${project.basedir}/repository/release/${unqualifiedVersion}</destination>
-									<append>false</append>
-									<compress>true</compress>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles> -->
-	
+
 	<repositories>
 		<repository>
 			<id>jboss</id>
