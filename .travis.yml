@@ -43,8 +43,8 @@ branches:
 deploy:
   # deploy p2 updatesite from latest build
   provider: pages
-  skip_cleanup: true
-  github_token: $GH_TOKEN
+  skip-cleanup: true
+  github-token: $GH_TOKEN
   keep-history: true
   local-dir: org.genivi.commonapi.wamp.updatesite/target/gh-pages
   target-branch: gh-pages
