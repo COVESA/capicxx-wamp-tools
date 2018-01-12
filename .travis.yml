@@ -29,7 +29,7 @@ deploy:
   skip-cleanup: true
   github-token: "$GH_TOKEN"
   keep-history: true
-  local-dir: org.genivi.commonapi.wamp.updatesite/target/gh-pages
+  local-dir: capicxx-wamp-tools/org.genivi.commonapi.wamp.updatesite/target/gh-pages
   target-branch: gh-pages
   on:
     branch: master
