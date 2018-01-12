@@ -96,7 +96,7 @@
 								</repository>
 							</source>
 							<!-- Target repository file location -->
-							<destination>${project.basedir}/target/updatesite/integration</destination>
+							<destination>${project.basedir}/target/gh-pages/updatesite/integration</destination>
 							<!-- whether to append to the target repository content -->
 							<append>false</append>
 							<compress>true</compress>
