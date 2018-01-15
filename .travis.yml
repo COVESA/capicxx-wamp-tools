@@ -1,38 +1,35 @@
-# use new travis infrastructure (container-based)
 sudo: false
-
-# currently we use Java 8
 language: java
 jdk: oraclejdk8
-
-# activate caching to speed up build
 cache:
   directories:
-  - $HOME/.m2
-
-# this stuff is needed for allowing UI tests
-
-env: DISPLAY=:99.0
-
+  - "$HOME/.m2"
+env:
+  matrix:
+  - DISPLAY=:99.0
+  global:
+    secure: qLBEh4pQBAjKTsrPNSrlXvBUWpnuAeATM2mFP2qZ1exbmWC218dQN/F9OAEXBCdkd1yoWi/3edllMkyVHCdutKie1i134vkrQnEjKf49kzhY+KoLWVc+/1rUaWoQHjGWR1LVIezuW4KwLOGv5K4evR5JUMlT7p6iVfbgyvxgtBmAL78zmbHZfPooueZnZre2RVW9D0TdVTxPgpvHLobnsWLU5lAkBDxEWV5nAHm7hP/yGKvx+HJp/0eV+pUQgqk7J6iJ6e4YzhIl49KdH5bC+Qs3J4Jh/RAOCVHb71yaivOhR4+sncNk3XEVTKMSpLKgGtCgH+CjDvvzYE2EGNStqLykVRW3zGqUEpgBIfe8chFe//DBPV8QIovzeCErtrESJ3cd1prHynNAQiVLenFvZ4StVloTIN/tRKCBlheEuLm0tuGw12Fc/QqPDUDMC/IGah9Px1qlMxVvp4oZbHWE2yZgCO9aDFLCiK43eFaWPe2BYQupywt1ykqVOlu/jLqaLSMPcp9RfxVp8OjY6eNLAF9e1lvsEoRI8NRVDub1L3cctzDLsCaayF/RhIaQmZyx+sZZh6X76tBv+eCJC7NsPyM2HzshJUsdQBqy2TCcpIG455Uh8UpnH0p1TeqzkXUaHard6rT/oFBYPCT8IrnPHXtKFDUP3iiwCaRIepv4zfQ=
 install: true
-
 addons:
   apt:
     packages:
     - metacity
-
 before_script:
 - sh -e /etc/init.d/xvfb start
 - metacity --sm-disable --replace 2> metacity.err &
-
-
-# run actual build
 script:
 - export
 - cd org.genivi.commonapi.wamp.releng && mvn clean install && cd ../..
-
-# select branches per whitelist
 branches:
   only:
   - master
   - develop
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: "$GH_TOKEN"
+  keep-history: true
+  local-dir: capicxx-wamp-tools/org.genivi.commonapi.wamp.updatesite/target/gh-pages
+  target-branch: gh-pages
+  on:
+    branch: master
