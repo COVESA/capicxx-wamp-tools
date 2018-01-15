@@ -84,7 +84,14 @@ function assertArray(actual, expected) {
 		if (Array.isArray(expected[i])) {
 			assertArray(actual[i], expected[i]);
 		} else {
-			assert.equal(actual[i], expected[i], 'values at index (' + i + ') do not match');
+			if (isPrimitive(expected[i])) {
+				assert.equal(actual[i], expected[i], 'values at index (' + i + ') do not match');
+			} else {
+				// compare string-wise, should probably be replaced by object-deep-compare later
+				//console.log("actual  : " + JSON.stringify(actual[i]));
+				//console.log("expected: " + JSON.stringify(expected[i]));
+				assert.equal(actual[i].toString(), expected[i].toString(), 'complex values at index (' + i + ') do not match');
+			}
 		}
 	}
 }

@@ -69,9 +69,16 @@ int main(int argc, const char * const argv[]) {
 					v0::testcases::example32::ExampleInterface::MyUnion1 v = (uint32_t)(100+n);
 					myService->fireBroadcast6Event(v);
 				}
+				case 2: {
+					std::cout << "Firing broadcast7 event #" << n << std::endl;
+					v0::testcases::example32::ExampleInterface::MyMap1 v;
+					v["foo"] = n;
+					v["bar"] = n*2;
+					myService->fireBroadcast7Event(v);
+				}
 				}
 
-				action = action == 1 ? 0 : action + 1;
+				action = action == 2 ? 0 : action + 1;
 				n++;
 			}
 			sleep(1);

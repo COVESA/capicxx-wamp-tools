@@ -36,6 +36,10 @@ describe(
 				name : address + '.' + 'broadcast6',
 				expected : [ [ 4, 102 ] ], // 4 is uint32_t (first element of four in the union)
 				subscription : null
+			}, {
+				name : address + '.' + 'broadcast7',
+				expected : [ { "bar" : 6, "foo" : 3 } ],
+				subscription : null
 			} ];
 
 			before(function(done) {
@@ -88,6 +92,10 @@ describe(
 
 			it('TestMethodCall_broadcast6', function(done) {
 				assertBroadcast(done, broadcasts[2]);
+			});
+
+			it('TestMethodCall_broadcast7', function(done) {
+				assertBroadcast(done, broadcasts[3]);
 			});
 		});
 

@@ -67,4 +67,12 @@ interface ExampleInterface {
 		}
 	}
 	
+	map MyMap1 { String to UInt32 }
+	
+	// map type argument
+	broadcast broadcast7 {
+		out {
+			MyMap1 arg1
+		}
+	}
 }
