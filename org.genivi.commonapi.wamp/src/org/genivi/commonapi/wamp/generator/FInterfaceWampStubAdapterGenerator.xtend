@@ -103,7 +103,15 @@ class FInterfaceWampStubAdapterGenerator {
 
 			«FOR broadcast: _interface.broadcasts»
 				«FTypeGenerator::generateComments(broadcast, false)»
-				void «broadcast.stubAdapterClassFireEventMethodName»(«broadcast.generateArgs(_interface)»);
+				«IF broadcast.selective»
+					void «broadcast.stubAdapterClassFireSelectiveMethodName»(«generateFireSelectiveSignatur(broadcast, _interface)»);
+					void «broadcast.stubAdapterClassSendSelectiveMethodName»(«generateSendSelectiveSignatur(broadcast, _interface, true)»);
+					void «broadcast.subscribeSelectiveMethodName»(const std::shared_ptr<CommonAPI::ClientId> clientId, bool& success);
+					void «broadcast.unsubscribeSelectiveMethodName»(const std::shared_ptr<CommonAPI::ClientId> clientId);
+					std::shared_ptr<CommonAPI::ClientIdList> const «broadcast.stubAdapterClassSubscribersMethodName»();
+                «ELSE»
+					void «broadcast.stubAdapterClassFireEventMethodName»(«broadcast.generateArgs(_interface)»);
+                «ENDIF»
 
 			«ENDFOR»
 
@@ -122,20 +130,47 @@ class FInterfaceWampStubAdapterGenerator {
 		private:
 			«_interface.wampStubAdapterHelperClassName»::StubDispatcherTable stubDispatcherTable_;
 			CommonAPI::Wamp::StubAttributeTable stubAttributeTable_;
+			«FOR broadcast: _interface.broadcasts.filter[selective]»
+				std::mutex «broadcast.className»Mutex_;
+				//bool «broadcast.className»Handler(CommonAPI::Wamp::client_id_t _client, bool subscribe);
+    	    «ENDFOR»
 		};
 
-		«FOR broadcast: _interface.broadcasts»
-		void «_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassFireEventMethodName»(«broadcast.generateArgs(_interface)») {
-		    //CommonAPI::Deployable< int64_t, CommonAPI::Wamp::IntegerDeployment<int64_t>> deployed_arg1(_arg1, static_cast< CommonAPI::Wamp::IntegerDeployment<int64_t>* >(nullptr));
-		
-		    std::cout << "«_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassFireEventMethodName»(" << «broadcast.outArgs.map[debug].join(' << ", " << ')» << ")" << std::endl;
-		    CommonAPI::Wamp::WampStubTopicHelper::publishTopic(
-		    		*this,
-					getWampAddress().getRealm() + ".«broadcast.name»",
-					std::make_tuple(«FOR it : broadcast.outArgs SEPARATOR ', '»«elementName»«IF type.isEnumeration».value_«ENDIF»«ENDFOR»)
-		    );
-		}
-
+		«FOR broadcast : _interface.broadcasts»
+			«IF broadcast.selective»
+				void «_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassFireSelectiveMethodName»(«generateFireSelectiveSignatur(broadcast, _interface)») {
+					// TODO
+				}
+				
+				void «_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassSendSelectiveMethodName»(«generateSendSelectiveSignatur(broadcast, _interface, false)») {
+					// TODO
+				}
+				
+				void «_interface.wampStubAdapterClassNameInternal»::«broadcast.subscribeSelectiveMethodName»(const std::shared_ptr<CommonAPI::ClientId> clientId, bool& success) {
+					// TODO
+				}
+				
+				void «_interface.wampStubAdapterClassNameInternal»::«broadcast.unsubscribeSelectiveMethodName»(const std::shared_ptr<CommonAPI::ClientId> clientId) {
+					// TODO
+				}
+				
+				std::shared_ptr<CommonAPI::ClientIdList> const «_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassSubscribersMethodName»() {
+					std::lock_guard<std::mutex> itsLock(«broadcast.className»Mutex_);
+					return std::make_shared<CommonAPI::ClientIdList>(*«broadcast.stubAdapterClassSubscriberListPropertyName»);
+				}
+			«ELSE»
+				void «_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassFireEventMethodName»(«broadcast.generateArgs(_interface)») {
+				    //CommonAPI::Deployable< int64_t, CommonAPI::Wamp::IntegerDeployment<int64_t>> deployed_arg1(_arg1, static_cast< CommonAPI::Wamp::IntegerDeployment<int64_t>* >(nullptr));
+				
+				    std::cout << "«_interface.wampStubAdapterClassNameInternal»::«broadcast.stubAdapterClassFireEventMethodName»(" << «broadcast.outArgs.map[debug].join(' << ", " << ')» << ")" << std::endl;
+				    CommonAPI::Wamp::WampStubTopicHelper::publishTopic(
+				    		*this,
+							getWampAddress().getRealm() + ".«broadcast.name»",
+							std::make_tuple(«FOR it : broadcast.outArgs SEPARATOR ', '»«elementName»«IF type.isEnumeration».value_«ENDIF»«ENDFOR»)
+				    );
+				}
+			«ENDIF»
+			
 		«ENDFOR»
 
 		class «_interface.wampStubAdapterClassName»
@@ -188,6 +223,9 @@ class FInterfaceWampStubAdapterGenerator {
 		}
 
 		«_interface.wampStubAdapterClassNameInternal»::~«_interface.wampStubAdapterClassNameInternal»() {
+			«FOR broadcast : _interface.broadcasts.filter[selective]»
+				//CommonAPI::Wamp::WampStubAdapter::connection_->unregisterSubscriptionHandler(CommonAPI::Wamp::WampStubAdapter::getWampAddress());
+			«ENDFOR»
 			deactivateManagedInstances();
 			«_interface.wampStubAdapterHelperClassName»::deinit();
 		}
