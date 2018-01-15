@@ -118,14 +118,30 @@ void ExampleInterfaceStubImpl::method8(const std::shared_ptr<CommonAPI::ClientId
 }
 
 void ExampleInterfaceStubImpl::method9(const std::shared_ptr<CommonAPI::ClientId> _client, ExampleInterface::MyUnion1 _arg1, method9Reply_t _reply) {
-    (void)_client;
-    (void)_arg1;
-    ExampleInterface::MyUnion1 ret1 = {};
+    ExampleInterface::MyUnion1 ret1;
+	if (_arg1.isType<std::string>()) {
+		std::string data = _arg1.get<std::string>();
+		std::cout << "method9 string " << data << std::endl;
+		ret1 = (uint32_t)data.length(); // return string length
+	} else if (_arg1.isType<uint32_t>()) {
+		auto data = _arg1.get<uint32_t>();
+		std::cout << "method9 uint32_t " << data << std::endl;
+		ret1 = std::string("X") + std::to_string(data) + "X"; // return string
+	} else if (_arg1.isType<bool>()) {
+		auto data = _arg1.get<bool>();
+		std::cout << "method9 bool " << data << std::endl;
+		auto s = ExampleInterface::MyStruct1();
+		s.setElem1(data ? 222 : 111);
+		s.setElem2(data);
+		ret1 = s; // return MyStruct1
+	} else if (_arg1.isType<ExampleInterface::MyStruct1>()) {
+		auto data = _arg1.get<ExampleInterface::MyStruct1>();
+		std::cout << "method9 struct " << data.getElem1() << std::endl;
+		ret1 = data.getElem1() > 150; // return bool
+	}
+
     _reply(ret1);
 }
-
-
-
 
 } // namespace example12
 } // namespace testcases

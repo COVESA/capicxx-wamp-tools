@@ -111,7 +111,16 @@ class FInterfaceWampStructsSupportGenerator {
 		template<>
 		struct convert<«stype.fullyQualifiedCppName»> {
 			msgpack::object const& operator()(msgpack::object const& o, «stype.fullyQualifiedCppName»& v) const {
-				std::cout << "TODO: adapter for unions not implemented yet (convert)" << std::endl;
+				if (o.type != msgpack::type::ARRAY) throw msgpack::type_error();
+				if (o.via.array.size != 2) throw msgpack::type_error();
+				auto tag = o.via.array.ptr[0].as<uint32_t>();
+				auto data = o.via.array.ptr[1];
+				switch (tag) {
+					«var i3 = 1»
+					«FOR elem : stype.allElements.reverseView»
+						case «i3++»: v = data.as<«elem.getTypeName(fTypeCollection, true)»>(); break;
+					«ENDFOR»
+				}
 				return o;
 			}
 		};
@@ -119,7 +128,19 @@ class FInterfaceWampStructsSupportGenerator {
 		template<>
 		struct object_with_zone<«stype.fullyQualifiedCppName»> {
 			void operator()(msgpack::object::with_zone& o, «stype.fullyQualifiedCppName» const& v) const {
-				std::cout << "TODO: adapter for unions not implemented yet (object_with_zone)" << std::endl;
+				auto t = static_cast<int>(v.getValueType());
+				o.type = type::ARRAY;
+				o.via.array.size = 2;
+				o.via.array.ptr = static_cast<msgpack::object*>(
+						o.zone.allocate_align(sizeof(msgpack::object) * o.via.array.size)
+				);
+				o.via.array.ptr[0] = msgpack::object(v.getValueType(), o.zone);
+				«FOR elem : stype.allElements SEPARATOR " else "»
+					«val t = elem.getTypeName(fTypeCollection, true)»
+					if (v.isType<«t»>()) {
+						o.via.array.ptr[1] = msgpack::object(v.get<«t»>(), o.zone);
+					}
+				«ENDFOR»
 			}
 		};
 		

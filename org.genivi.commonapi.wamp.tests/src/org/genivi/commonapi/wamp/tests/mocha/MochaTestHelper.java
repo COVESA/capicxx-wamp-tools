@@ -30,8 +30,8 @@ public class MochaTestHelper {
 
 	private static final String BUILD_FOLDER_NAME = "build";
 	private static final String SRC_GEN_FOLDER_NAME = "src-gen";
-	private static final Path CROSSBAR_IO_PATH = Paths.get("crossbar");
-	private static final int CROSSBAR_IO_STARTUPTIME = 2000;
+	private static final Path CROSSBAR_IO_PATH = Paths.get("/opt/crossbar/bin/crossbar");
+	private static final int CROSSBAR_IO_STARTUPTIME = 4000;
 	private static final int SERVICE_STARTUP_TIME = 1000;
 
 	private final Object owner;
