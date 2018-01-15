@@ -52,37 +52,40 @@ int main(int argc, const char * const argv[]) {
 
 	while (true) {
 		std::cout << "Waiting for calls... (Abort with CTRL+C)" << std::endl;
-		if (signalReceived) {
-			signalReceived = false;
-			switch (action) {
-			case 0: {
-				std::cout << "Firing broadcast1 event #" << n << std::endl;
-				myService->fireBroadcast1Event(n);
-				break;
-			}
-			case 1: {
-				std::cout << "Firing broadcast2 event #" << n << std::endl;
-				myService->fireBroadcast2Event(n, 10000 + n);
-				break;
-			}
-			case 2: {
-				std::cout << "Firing broadcast3 event #" << n << std::endl;
-				std::string p = "Number";
-				myService->fireBroadcast3Event(p + std::to_string(n));
-				break;
-			}
-			case 3: {
-				std::cout << "Firing broadcast4 event #" << n << std::endl;
-				myService->fireBroadcast4Event(!toggle);
-				toggle = !toggle;
-				break;
-			}
-			}
+		for(int i=0; i<60; i++) {
+			// check for signal every second
+			if (signalReceived) {
+				signalReceived = false;
+				switch (action) {
+				case 0: {
+					std::cout << "Firing broadcast1 event #" << n << std::endl;
+					myService->fireBroadcast1Event(n);
+					break;
+				}
+				case 1: {
+					std::cout << "Firing broadcast2 event #" << n << std::endl;
+					myService->fireBroadcast2Event(n, 10000 + n);
+					break;
+				}
+				case 2: {
+					std::cout << "Firing broadcast3 event #" << n << std::endl;
+					std::string p = "Number";
+					myService->fireBroadcast3Event(p + std::to_string(n));
+					break;
+				}
+				case 3: {
+					std::cout << "Firing broadcast4 event #" << n << std::endl;
+					myService->fireBroadcast4Event(!toggle);
+					toggle = !toggle;
+					break;
+				}
+				}
 
-			action = action == 3 ? 0 : action + 1;
-			n++;
+				action = action == 3 ? 0 : action + 1;
+				n++;
+			}
+			sleep(1);
 		}
-		sleep(60);
 	}
 
 	return EXIT_SUCCESS;
