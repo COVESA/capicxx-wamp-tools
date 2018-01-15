@@ -33,7 +33,7 @@ class FrancaWampGenerator implements IGenerator {
     @Inject private extension FrancaWampGeneratorExtensions
     @Inject private extension FInterfaceWampProxyGenerator
     @Inject private extension FInterfaceWampStubAdapterGenerator
-    @Inject private extension FInterfaceWampStructsSupportGenerator
+    @Inject private extension FInterfaceWampTypesSupportGenerator
     @Inject private extension FInterfaceWampDeploymentGenerator
 
     @Inject private FrancaPersistenceManager francaPersistenceManager
@@ -338,7 +338,7 @@ class FrancaWampGenerator implements IGenerator {
         typeCollectionsToGenerate.forEach [
         	val pa = getAccessor(it)
             it.generateTypeCollectionDeployment(_access, pa, _res)
-            it.generateWampStructsSupport(_access, pa, _providers, _res)
+            it.generateWampTypesSupport(_access, pa, _providers, _res)
         ]
 
         interfacesToGenerate.forEach [
@@ -359,7 +359,7 @@ class FrancaWampGenerator implements IGenerator {
             if (FPreferencesWamp::instance.getPreference(PreferenceConstantsWamp::P_GENERATE_STUB_WAMP, "true").
                 equals("true")) {
                 it.generateWampStubAdapter(_access, deploymentAccessor, _providers, _res)
-                it.generateWampStructsSupport(_access, deploymentAccessor, _providers, _res)
+                it.generateWampTypesSupport(_access, deploymentAccessor, _providers, _res)
             }
 
             if (FPreferencesWamp::instance.getPreference(PreferenceConstantsWamp::P_GENERATE_COMMON_WAMP, "true").
@@ -383,7 +383,7 @@ class FrancaWampGenerator implements IGenerator {
                 if (FPreferencesWamp::instance.getPreference(PreferenceConstantsWamp::P_GENERATE_STUB_WAMP, "true").
                     equals("true")) {
                     it.generateWampStubAdapter(_access, managedDeploymentAccessor, _providers, _res)
-                    it.generateWampStructsSupport(_access, managedDeploymentAccessor, _providers, _res)
+                    it.generateWampTypesSupport(_access, managedDeploymentAccessor, _providers, _res)
                 }
             ]
         ]

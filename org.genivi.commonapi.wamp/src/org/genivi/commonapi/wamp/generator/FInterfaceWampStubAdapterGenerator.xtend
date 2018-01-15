@@ -24,7 +24,7 @@ class FInterfaceWampStubAdapterGenerator {
 	@Inject private extension FrancaWampGeneratorExtensions
 	@Inject private extension FrancaWampTypeExtensions
 	//@Inject private extension FrancaWampDeploymentAccessorHelper
-	@Inject private extension FInterfaceWampStructsSupportGenerator
+	@Inject private extension FInterfaceWampTypesSupportGenerator
 
 	def generateWampStubAdapter(FInterface _interface, IFileSystemAccess fileSystemAccess, PropertyAccessor deploymentAccessor,  List<FDProvider> providers, IResource modelid) {
 
@@ -166,7 +166,7 @@ class FInterfaceWampStubAdapterGenerator {
 
 		#include "«_interface.headerPath»"
 		#include "«_interface.wampStubAdapterHeaderPath»"
-		#include "«_interface.wampStructsSupportHeaderPath»"
+		#include "«_interface.wampTypesSupportHeaderPath»"
 
 		#include <functional>
 		

@@ -7,8 +7,8 @@
 * If a copy of the MPL was not distributed with this file, You can obtain one at
 * http://mozilla.org/MPL/2.0/.
 */
-#ifndef V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
-#define V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
+#ifndef V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_TYPES_SUPPORT_HPP_
+#define V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_TYPES_SUPPORT_HPP_
 
 
 #include <v0/testcases/example12/ExampleInterface.hpp>
@@ -131,5 +131,5 @@ struct object_with_zone<::v0::testcases::example12::ExampleInterface::MyUnion1> 
 } // MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS)
 } // namespace msgpack
 
-#endif // V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
+#endif // V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_TYPES_SUPPORT_HPP_
 
