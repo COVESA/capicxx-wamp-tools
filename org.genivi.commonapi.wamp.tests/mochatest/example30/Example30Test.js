@@ -78,21 +78,21 @@ describe(
 			// Actually the JUnit wrapper parses the 'it' tests to create the
 			// JUnit test descriptor. So iterating the methodCalls array here is
 			// not possible.
-			it('TestMethodCall_broadcast1', function(done) {
+			it('TestBroadcastCall_broadcast1', function(done) {
 				assertBroadcast(done, broadcasts[0]);
 			});
 
-			it('TestMethodCall_broadcast2', function(done) {
+			it('TestBroadcastCall_broadcast2', function(done) {
 				assertBroadcast(done, broadcasts[1]);
 			});
 
-			it('TestMethodCall_broadcast3', function(done) {
+			it('TestBroadcastCall_broadcast3', function(done) {
 				assertBroadcast(done, broadcasts[2]);
 			});
 
-			 it('TestMethodCall_broadcast4', function(done) {
-				 assertBroadcast(done, broadcasts[3]);
-			 });
+			it('TestBroadcastCall_broadcast4', function(done) {
+				assertBroadcast(done, broadcasts[3]);
+			});
 		});
 
 function assertBroadcast(done, broadcast) {
