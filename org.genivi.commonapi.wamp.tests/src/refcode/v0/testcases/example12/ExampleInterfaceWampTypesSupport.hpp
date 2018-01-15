@@ -105,7 +105,6 @@ struct convert<::v0::testcases::example12::ExampleInterface::MyUnion1> {
 template<>
 struct object_with_zone<::v0::testcases::example12::ExampleInterface::MyUnion1> {
 	void operator()(msgpack::object::with_zone& o, ::v0::testcases::example12::ExampleInterface::MyUnion1 const& v) const {
-		auto t = static_cast<int>(v.getValueType());
 		o.type = type::ARRAY;
 		o.via.array.size = 2;
 		o.via.array.ptr = static_cast<msgpack::object*>(

@@ -295,6 +295,8 @@ class FInterfaceWampStubAdapterGenerator {
 	def private getDebug(FArgument arg) {
 		if (arg.type.isArray || arg.isArray || arg.type.isMap)
 			'''"[<" << «arg.elementName».size() << ">]"'''
+		else if (arg.type.isCompound)
+			'''"[<«arg.type.actualDerived.name»>]"'''
 		else
 			'''«arg.elementName»'''
 	}
