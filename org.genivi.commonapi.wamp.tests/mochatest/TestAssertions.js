@@ -10,12 +10,27 @@ var assert = require('assert');
 
 exports.methodCall = function(done, session, methodCall) {
 	session.call(methodCall.name, methodCall.args).then(function(res) {
+		/*
+		console.log("result method: " + JSON.stringify(res) +
+			" isPrimitive=" + isPrimitive(res) +
+			" isArray=" + Array.isArray(res) +
+			" isMultiArg=" + isMultiArg(res));
+		*/
 		try {
 			var expected = methodCall.expected;
-			if (Array.isArray(expected)) {
+
+			// expected always have to be an array, in order to distinguish
+			// multi-argument cases and single argument of array/struct type
+			if (! Array.isArray(expected)) {
+				assert.fail(expected, new TypeError('expected must be array type'));
+			}
+			
+			if (isMultiArg(res)) {
 				assertArray(res.args, expected);
-			} else if (isPrimitive(expected)) {
-				assertPrimitive(res, expected);
+			} else {
+				// pack actual result into 1-element array in case autobahn returns a primitive
+				var resArray = [ res ];
+				assertArray(resArray, expected);
 			}
 			done();
 		} catch (err) {
@@ -29,15 +44,22 @@ exports.methodCall = function(done, session, methodCall) {
 
 exports.broadcast = function(done, session, broadcast) {
 	session.subscribe(broadcast.name, function(args) {
+		/*
+		console.log("result broadcast: " + JSON.stringify(args) +
+			" isPrimitive=" + isPrimitive(args) +
+			" isArray=" + Array.isArray(args) +
+			" isMultiArg=" + isMultiArg(args));
+		*/
 		try {
 			var expected = broadcast.expected;
-			if (Array.isArray(expected)) {
-				assertArray(args, expected);
-			} else if (isPrimitive(expected)) {
-				assertPrimitive(args, expected);
-			} else {
-				assert.equal(args.toString(), expected.toString());
+
+			// expected always have to be an array, in order to distinguish
+			// multi-argument cases and single argument of array/struct type
+			if (! Array.isArray(expected)) {
+				assert.fail(expected, new TypeError('expected must be array type'));
 			}
+			
+			assertArray(args, expected);
 			done();
 		} catch (err) {
 			done(err);
@@ -59,18 +81,20 @@ function assertArray(actual, expected) {
 	assert.equal(actual.length, expected.length, 'array length not matching');
 
 	for (var i = 0; i < expected.length; i++) {
-		assert.equal(actual[i], expected[i], 'values at index (' + i
-				+ ') do not match');
+		if (Array.isArray(expected[i])) {
+			assertArray(actual[i], expected[i]);
+		} else {
+			assert.equal(actual[i], expected[i], 'values at index (' + i + ') do not match');
+		}
 	}
-}
-
-function assertPrimitive(actual, expected) {
-	if (!(isPrimitive(actual) && isPrimitive(expected))) {
-		assert.fail(actual, expected, new TypeError('expected primitive type'));
-	}
-	assert.equal(actual, expected, 'Primitive value not matching');
 }
 
 function isPrimitive(test) {
 	return (test !== Object(test));
+};
+
+function isMultiArg(test) {
+	if (isPrimitive(test)) { return false; }
+	if (Array.isArray(test)) { return false; }
+	return test.hasOwnProperty('args');
 };

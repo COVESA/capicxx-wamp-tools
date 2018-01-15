@@ -34,11 +34,11 @@ describe(
 				subscription : null
 			}, {
 				name : address + '.' + 'broadcast3',
-				expected : Object("Number3"),
+				expected : [ "Number3" ],
 				subscription : null
 			}, {
 				name : address + '.' + 'broadcast4',
-				expected : Object(true),
+				expected : [ true ],
 				subscription : null
 			} ];
 

@@ -28,7 +28,7 @@ describe(
 			var methodCalls = [ {
 				name : address + '.' + 'method1',
 				args : [ 42, 20 ],
-				expected : 40
+				expected : [ 40 ]
 			}, {
 				name : address + '.' + 'methodWithError1',
 				args : [ 42, 20 ],
