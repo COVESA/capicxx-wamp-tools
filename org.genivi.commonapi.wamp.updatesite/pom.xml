@@ -10,6 +10,14 @@
 		<version>0.7.0-SNAPSHOT</version>
 		<relativePath>../org.genivi.commonapi.wamp.releng</relativePath>
 	</parent>
+	
+	<!-- <properties>
+		<update.site.name>GENIVI CommonAPI Wamp Tools</update.site.name>
+		<update.site.description>Latest Build</update.site.description>
+		<update.site.version>${unqualifiedVersion}.${BUILD_ALIAS}</update.site.version>
+		<target.eclipse.version>4.7 (Oxygen)</target.eclipse.version>
+	</properties> -->
+	
 	<build>
 		<plugins>
 			<!-- <plugin>
@@ -38,6 +46,19 @@
 							<goal>generate-repository-facade</goal>
 						</goals>
 						<configuration>
+							<!-- configuration options for the generated HTML page -->
+							<!-- <symbols>
+								
+								If you set a siteTemplateFolder value, ensure that the folder 
+								exists as site/siteTemplateFolder/ and that it contains site/siteTemplateFolder/index.html 
+								file (and optionally, a site/siteTemplateFolder/web/site.css file, too).
+							 	
+								<siteTemplateFolder>siteTemplateFolder/</siteTemplateFolder>
+								<update.site.name>${update.site.name}</update.site.name>
+								<update.site.description>${update.site.description}</update.site.description>
+								<update.site.version>${update.site.version}</update.site.version>
+								<target.eclipse.version>${target.eclipse.version}</target.eclipse.version>
+							</symbols> -->
 							<associateSites>
 								<associateSite>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/maintenance/R201411190455/</associateSite>
 								<associateSite>http://genivi.github.io/capicxx-core-tools/updatesite/</associateSite>
