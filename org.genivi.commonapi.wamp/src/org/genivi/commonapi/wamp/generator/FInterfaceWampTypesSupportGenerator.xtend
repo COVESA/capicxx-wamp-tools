@@ -19,29 +19,29 @@ import org.genivi.commonapi.wamp.preferences.PreferenceConstantsWamp
 
 import static extension org.franca.core.FrancaModelExtensions.*
 
-class FInterfaceWampStructsSupportGenerator {
+class FInterfaceWampTypesSupportGenerator {
     @Inject private extension FTypeGenerator
     @Inject private extension FrancaGeneratorExtensions
     @Inject private extension FrancaWampGeneratorExtensions
 
-    def generateWampStructsSupport(FTypeCollection fTypeCollection, IFileSystemAccess fileSystemAccess,
+    def generateWampTypesSupport(FTypeCollection fTypeCollection, IFileSystemAccess fileSystemAccess,
         PropertyAccessor deploymentAccessor, List<FDProvider> providers, IResource modelid) {
 
         if(FPreferencesWamp::getInstance.getPreference(PreferenceConstantsWamp::P_GENERATE_CODE_WAMP, "true").equals("true")) {
-            fileSystemAccess.generateFile(fTypeCollection.wampStructsSupportHeaderPath, PreferenceConstantsWamp.P_OUTPUT_PROXIES_WAMP,
+            fileSystemAccess.generateFile(fTypeCollection.wampTypesSupportHeaderPath, PreferenceConstantsWamp.P_OUTPUT_PROXIES_WAMP,
                 fTypeCollection.generateHeader(deploymentAccessor, modelid))
         }
         else {
             // feature: suppress code generation
-            fileSystemAccess.generateFile(fTypeCollection.wampStructsSupportHeaderPath, PreferenceConstantsWamp.P_OUTPUT_PROXIES_WAMP, PreferenceConstantsWamp::NO_CODE)
+            fileSystemAccess.generateFile(fTypeCollection.wampTypesSupportHeaderPath, PreferenceConstantsWamp.P_OUTPUT_PROXIES_WAMP, PreferenceConstantsWamp::NO_CODE)
         }
     }
 
     def private generateHeader(FTypeCollection fTypeCollection, PropertyAccessor deploymentAccessor,
         IResource modelid) '''
 		«generateCommonApiWampLicenseHeader()»
-		#ifndef «fTypeCollection.defineName»_WAMP_STRUCTS_SUPPORT_HPP_
-		#define «fTypeCollection.defineName»_WAMP_STRUCTS_SUPPORT_HPP_
+		#ifndef «fTypeCollection.defineName»_WAMP_TYPES_SUPPORT_HPP_
+		#define «fTypeCollection.defineName»_WAMP_TYPES_SUPPORT_HPP_
 
 		«val libraryHeaders = new HashSet<String>»
 		«val generatedHeaders = new HashSet<String>»
@@ -111,7 +111,16 @@ class FInterfaceWampStructsSupportGenerator {
 		template<>
 		struct convert<«stype.fullyQualifiedCppName»> {
 			msgpack::object const& operator()(msgpack::object const& o, «stype.fullyQualifiedCppName»& v) const {
-				std::cout << "TODO: adapter for unions not implemented yet (convert)" << std::endl;
+				if (o.type != msgpack::type::ARRAY) throw msgpack::type_error();
+				if (o.via.array.size != 2) throw msgpack::type_error();
+				auto tag = o.via.array.ptr[0].as<uint32_t>();
+				auto data = o.via.array.ptr[1];
+				switch (tag) {
+					«var i3 = 1»
+					«FOR elem : stype.allElements.reverseView»
+						case «i3++»: v = data.as<«elem.getTypeName(fTypeCollection, true)»>(); break;
+					«ENDFOR»
+				}
 				return o;
 			}
 		};
@@ -119,7 +128,18 @@ class FInterfaceWampStructsSupportGenerator {
 		template<>
 		struct object_with_zone<«stype.fullyQualifiedCppName»> {
 			void operator()(msgpack::object::with_zone& o, «stype.fullyQualifiedCppName» const& v) const {
-				std::cout << "TODO: adapter for unions not implemented yet (object_with_zone)" << std::endl;
+				o.type = type::ARRAY;
+				o.via.array.size = 2;
+				o.via.array.ptr = static_cast<msgpack::object*>(
+						o.zone.allocate_align(sizeof(msgpack::object) * o.via.array.size)
+				);
+				o.via.array.ptr[0] = msgpack::object(v.getValueType(), o.zone);
+				«FOR elem : stype.allElements SEPARATOR " else "»
+					«val t = elem.getTypeName(fTypeCollection, true)»
+					if (v.isType<«t»>()) {
+						o.via.array.ptr[1] = msgpack::object(v.get<«t»>(), o.zone);
+					}
+				«ENDFOR»
 			}
 		};
 		
@@ -128,16 +148,16 @@ class FInterfaceWampStructsSupportGenerator {
 		} // MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS)
 		} // namespace msgpack
 
-		#endif // «fTypeCollection.defineName»_WAMP_STRUCTS_SUPPORT_HPP_
+		#endif // «fTypeCollection.defineName»_WAMP_TYPES_SUPPORT_HPP_
 
     '''
 
-    def private wampStructsSupportHeaderFile(FTypeCollection fTypeCollection) {
-        fTypeCollection.elementName + "WampStructsSupport.hpp"
+    def private wampTypesSupportHeaderFile(FTypeCollection fTypeCollection) {
+        fTypeCollection.elementName + "WampTypesSupport.hpp"
     }
 
-    def public wampStructsSupportHeaderPath(FTypeCollection fTypeCollection) {
-        fTypeCollection.versionPathPrefix + fTypeCollection.model.directoryPath + '/' + fTypeCollection.wampStructsSupportHeaderFile
+    def public wampTypesSupportHeaderPath(FTypeCollection fTypeCollection) {
+        fTypeCollection.versionPathPrefix + fTypeCollection.model.directoryPath + '/' + fTypeCollection.wampTypesSupportHeaderFile
     }
 
     def private void getRequiredHeaderFiles(FTypeCollection fTypeCollection, Collection<String> generatedHeaders, Collection<String> libraryHeaders) {

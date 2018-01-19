@@ -7,8 +7,8 @@
 * If a copy of the MPL was not distributed with this file, You can obtain one at
 * http://mozilla.org/MPL/2.0/.
 */
-#ifndef V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
-#define V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
+#ifndef V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_TYPES_SUPPORT_HPP_
+#define V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_TYPES_SUPPORT_HPP_
 
 
 #include <v0/testcases/example12/ExampleInterface.hpp>
@@ -88,7 +88,16 @@ struct object_with_zone<::v0::testcases::example12::ExampleInterface::MyStruct2>
 template<>
 struct convert<::v0::testcases::example12::ExampleInterface::MyUnion1> {
 	msgpack::object const& operator()(msgpack::object const& o, ::v0::testcases::example12::ExampleInterface::MyUnion1& v) const {
-		std::cout << "TODO: adapter for unions not implemented yet (convert)" << std::endl;
+		if (o.type != msgpack::type::ARRAY) throw msgpack::type_error();
+		if (o.via.array.size != 2) throw msgpack::type_error();
+		auto tag = o.via.array.ptr[0].as<uint32_t>();
+		auto data = o.via.array.ptr[1];
+		switch (tag) {
+			case 1: v = data.as<::v0::testcases::example12::ExampleInterface::MyStruct1>(); break;
+			case 2: v = data.as<std::string>(); break;
+			case 3: v = data.as<bool>(); break;
+			case 4: v = data.as<uint32_t>(); break;
+		}
 		return o;
 	}
 };
@@ -96,7 +105,24 @@ struct convert<::v0::testcases::example12::ExampleInterface::MyUnion1> {
 template<>
 struct object_with_zone<::v0::testcases::example12::ExampleInterface::MyUnion1> {
 	void operator()(msgpack::object::with_zone& o, ::v0::testcases::example12::ExampleInterface::MyUnion1 const& v) const {
-		std::cout << "TODO: adapter for unions not implemented yet (object_with_zone)" << std::endl;
+		o.type = type::ARRAY;
+		o.via.array.size = 2;
+		o.via.array.ptr = static_cast<msgpack::object*>(
+				o.zone.allocate_align(sizeof(msgpack::object) * o.via.array.size)
+		);
+		o.via.array.ptr[0] = msgpack::object(v.getValueType(), o.zone);
+		if (v.isType<uint32_t>()) {
+			o.via.array.ptr[1] = msgpack::object(v.get<uint32_t>(), o.zone);
+		} else 
+		if (v.isType<bool>()) {
+			o.via.array.ptr[1] = msgpack::object(v.get<bool>(), o.zone);
+		} else 
+		if (v.isType<std::string>()) {
+			o.via.array.ptr[1] = msgpack::object(v.get<std::string>(), o.zone);
+		} else 
+		if (v.isType<::v0::testcases::example12::ExampleInterface::MyStruct1>()) {
+			o.via.array.ptr[1] = msgpack::object(v.get<::v0::testcases::example12::ExampleInterface::MyStruct1>(), o.zone);
+		}
 	}
 };
 
@@ -104,5 +130,5 @@ struct object_with_zone<::v0::testcases::example12::ExampleInterface::MyUnion1> 
 } // MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS)
 } // namespace msgpack
 
-#endif // V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_STRUCTS_SUPPORT_HPP_
+#endif // V0_TESTCASES_EXAMPLE12_Example_Interface_WAMP_TYPES_SUPPORT_HPP_
 

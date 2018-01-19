@@ -52,4 +52,27 @@ interface ExampleInterface {
 			MyStruct1[] arg1
 		}
 	}
+	
+	union MyUnion1 {
+		UInt32 elem1
+		Boolean elem2
+		String elem3
+		MyStruct1 elem4
+	}
+
+	// union type argument
+	broadcast broadcast6 {
+		out {
+			MyUnion1 arg1
+		}
+	}
+	
+	map MyMap1 { String to UInt32 }
+	
+	// map type argument
+	broadcast broadcast7 {
+		out {
+			MyMap1 arg1
+		}
+	}
 }

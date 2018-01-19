@@ -27,19 +27,19 @@ void registerSignalHandler(int signalNumber) {
 
 int main(int argc, const char * const argv[]) {
 
-	//CommonAPI::Runtime::setProperty("LogContext", "E30CC");
-	//CommonAPI::Runtime::setProperty("LogApplication", "E30CC");
-	CommonAPI::Runtime::setProperty("LibraryBase", "Example30");
+	//CommonAPI::Runtime::setProperty("LogContext", "E32CC");
+	//CommonAPI::Runtime::setProperty("LogApplication", "E32CC");
+	CommonAPI::Runtime::setProperty("LibraryBase", "Example32");
 
 	std::shared_ptr < CommonAPI::Runtime > runtime = CommonAPI::Runtime::get();
 
 	std::string domain = "local";
-	std::string instance = "testcases.example30.ExampleInterface";
+	std::string instance = "testcases.example32.ExampleInterface";
 	std::string connection = "service-sample";
 
 	// create service and register it at runtime
-	std::shared_ptr<v0::testcases::example30::ExampleInterfaceStubImpl> myService =
-			std::make_shared<v0::testcases::example30::ExampleInterfaceStubImpl>();
+	std::shared_ptr<v0::testcases::example32::ExampleInterfaceStubImpl> myService =
+			std::make_shared<v0::testcases::example32::ExampleInterfaceStubImpl>();
 	runtime->registerService(domain, instance, myService);
 
 	//Register signal handler
@@ -48,7 +48,6 @@ int main(int argc, const char * const argv[]) {
 
 	int action = 0;
 	int n = 1;
-	bool toggle = false;
 
 	while (true) {
 		std::cout << "Waiting for calls... (Abort with CTRL+C)" << std::endl;
@@ -59,29 +58,27 @@ int main(int argc, const char * const argv[]) {
 				switch (action) {
 				case 0: {
 					std::cout << "Firing broadcast1 event #" << n << std::endl;
-					myService->fireBroadcast1Event(n);
+					if (n%2 == 1)
+						myService->fireBroadcast1Event(v0::testcases::example32::ExampleInterface::MyEnum::ENUM2);
+					else
+						myService->fireBroadcast1Event(v0::testcases::example32::ExampleInterface::MyEnum::ENUM3);
 					break;
 				}
 				case 1: {
-					std::cout << "Firing broadcast2 event #" << n << std::endl;
-					myService->fireBroadcast2Event(n, 10000 + n);
-					break;
+					std::cout << "Firing broadcast6 event #" << n << std::endl;
+					v0::testcases::example32::ExampleInterface::MyUnion1 v = (uint32_t)(100+n);
+					myService->fireBroadcast6Event(v);
 				}
 				case 2: {
-					std::cout << "Firing broadcast3 event #" << n << std::endl;
-					std::string p = "Number";
-					myService->fireBroadcast3Event(p + std::to_string(n));
-					break;
-				}
-				case 3: {
-					std::cout << "Firing broadcast4 event #" << n << std::endl;
-					myService->fireBroadcast4Event(!toggle);
-					toggle = !toggle;
-					break;
+					std::cout << "Firing broadcast7 event #" << n << std::endl;
+					v0::testcases::example32::ExampleInterface::MyMap1 v;
+					v["foo"] = n;
+					v["bar"] = n*2;
+					myService->fireBroadcast7Event(v);
 				}
 				}
 
-				action = action == 3 ? 0 : action + 1;
+				action = action == 2 ? 0 : action + 1;
 				n++;
 			}
 			sleep(1);

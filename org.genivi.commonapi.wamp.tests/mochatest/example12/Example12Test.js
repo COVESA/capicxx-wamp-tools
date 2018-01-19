@@ -25,23 +25,31 @@ describe(
 			var methodCalls = [ {
 				name : address + '.' + 'method1',
 				args : [ 42, "TestString" ],
-				expected : "Hello TestString!"
+				expected : [ "Hello TestString!" ]
 			}, {
 				name : address + '.' + 'method2',
 				args : [ 42, true ],
-				expected : false
+				expected : [ false ]
 			}, {
 				name : address + '.' + 'method2',
 				args : [ 42, false ],
-				expected : true
+				expected : [ true ]
 			}, {
 				name : address + '.' + 'method3',
 				args : [ 42, 0 ], // ENUM1
-				expected : 1  // ENUM2
+				expected : [ 1 ]  // ENUM2
 			}, {
 				name : address + '.' + 'method3',
 				args : [ 42, 100 ], // ENUM3
-				expected : 3  // ENUM4
+				expected : [ 3 ] // ENUM4
+			}, {
+				name : address + '.' + 'method9',
+				args : [ 42, [ 4, 100 ] ], // 4 is uint32_t (first element of four)
+				expected : [ [ 2, "X100X" ] ]  // 2 is std::string (third element of four)
+			}, {
+				name : address + '.' + 'method9',
+				args : [ 42, [ 3, true ] ], // 3 is bool (second element of four)
+				expected : [ [ 1, [ 222, true ] ] ]  // 1 is MyStruct1 (fourth element of four)
 			} ];
 
 			before(function(done) {
@@ -91,5 +99,15 @@ describe(
 			it('TestMethodCall_method3_ENUM100', function(done) {
 				assert.connectionState(connection);
 				assert.methodCall(done, connection.session, methodCalls[4]);
+			});
+
+			it('TestMethodCall_method9_100', function(done) {
+				assert.connectionState(connection);
+				assert.methodCall(done, connection.session, methodCalls[5]);
+			});
+
+			it('TestMethodCall_method9_true', function(done) {
+				assert.connectionState(connection);
+				assert.methodCall(done, connection.session, methodCalls[6]);
 			});
 		});

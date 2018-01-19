@@ -106,6 +106,7 @@ interface ExampleInterface {
 		UInt32 elem1
 		Boolean elem2
 		String elem3
+		MyStruct1 elem4
 	}
 
 	// union type arguments

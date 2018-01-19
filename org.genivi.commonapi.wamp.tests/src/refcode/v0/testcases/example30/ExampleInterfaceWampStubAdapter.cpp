@@ -10,7 +10,7 @@
 
 #include "v0/testcases/example30/ExampleInterface.hpp"
 #include "v0/testcases/example30/ExampleInterfaceWampStubAdapter.hpp"
-#include "v0/testcases/example30/ExampleInterfaceWampStructsSupport.hpp"
+#include "v0/testcases/example30/ExampleInterfaceWampTypesSupport.hpp"
 
 #include <functional>
 

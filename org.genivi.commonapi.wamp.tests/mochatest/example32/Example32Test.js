@@ -19,26 +19,26 @@ var connection = new autobahn.Connection({
 // 'describe' equals a test suite, group or package. It is used to group tests.
 // 'it' equals a single test.
 describe(
-		'Example30Tests',
+		'Example32Tests',
 		function() {
 
-			var address = 'local:testcases.example30.ExampleInterface:v0_7:testcases.example30.ExampleInterface';
+			var address = 'local:testcases.example32.ExampleInterface:v0_7:testcases.example32.ExampleInterface';
 
 			var broadcasts = [ {
 				name : address + '.' + 'broadcast1',
-				expected : [ 1 ],
+				expected : [ 1 ], // first trigger of broadcast1
 				subscription : null
 			}, {
-				name : address + '.' + 'broadcast2',
-				expected : [ 2, 10002 ],
+				name : address + '.' + 'broadcast1',
+				expected : [ 100 ], // second trigger of broadcast1
 				subscription : null
 			}, {
-				name : address + '.' + 'broadcast3',
-				expected : [ "Number3" ],
+				name : address + '.' + 'broadcast6',
+				expected : [ [ 4, 102 ] ], // 4 is uint32_t (first element of four in the union)
 				subscription : null
 			}, {
-				name : address + '.' + 'broadcast4',
-				expected : [ true ],
+				name : address + '.' + 'broadcast7',
+				expected : [ { "bar" : 6, "foo" : 3 } ],
 				subscription : null
 			} ];
 
@@ -78,19 +78,23 @@ describe(
 			// Actually the JUnit wrapper parses the 'it' tests to create the
 			// JUnit test descriptor. So iterating the methodCalls array here is
 			// not possible.
-			it('TestBroadcastCall_broadcast1', function(done) {
+			it('TestBroadcast_broadcast1_first', function(done) {
 				assertBroadcast(done, broadcasts[0]);
 			});
 
-			it('TestBroadcastCall_broadcast2', function(done) {
+			/*
+			// TODO: it doesn't work currently to test the same broadcast twice because the testcases are not synchronized
+			// (we will receive the second update from the first testcase)
+			it('TestBroadcast_broadcast1_second', function(done) {
 				assertBroadcast(done, broadcasts[1]);
 			});
+			*/
 
-			it('TestBroadcastCall_broadcast3', function(done) {
+			it('TestMethodCall_broadcast6', function(done) {
 				assertBroadcast(done, broadcasts[2]);
 			});
 
-			it('TestBroadcastCall_broadcast4', function(done) {
+			it('TestMethodCall_broadcast7', function(done) {
 				assertBroadcast(done, broadcasts[3]);
 			});
 		});
@@ -98,5 +102,5 @@ describe(
 function assertBroadcast(done, broadcast) {
 	assert.connectionState(connection);
 	assert.broadcast(done, connection.session, broadcast);
-	os.sendSignal('SIGUSR1', 'Example30Service');
+	os.sendSignal('SIGUSR1', 'Example32Service');
 }
