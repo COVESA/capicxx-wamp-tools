@@ -182,11 +182,11 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.6</version>
+				<version>1.8</version>
 				<executions>
-					<!-- Rename the ZIP files -->
+					<!-- Rename the exported JAR file -->
 					<execution>
-						<id>update-zip-files</id>
+						<id>rename-jar-file</id>
 						<phase>package</phase>
 						<configuration>
 							<target>
