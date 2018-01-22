@@ -191,7 +191,7 @@
 						<configuration>
 							<target>
 								<!-- Rename the products -->
-								<move verbose="true" todir="${project.build.directory}">
+								<copy verbose="true" todir="${project.build.directory}">
 									<mapper type="regexp"
 										from="${project.name}-${unqualifiedVersion}-SNAPSHOT-standalone"
 										to="${project.name}-${unqualifiedVersion}.${buildQualifier}-standalone.jar" />
@@ -199,7 +199,7 @@
 									<fileset dir="${project.build.directory}">
 										<include name="*.jar" />
 									</fileset>
-								</move>
+								</copy>
 							</target>
 						</configuration>
 						<goals>
