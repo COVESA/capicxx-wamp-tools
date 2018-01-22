@@ -17,6 +17,9 @@ addons:
 before_script:
 - sh -e /etc/init.d/xvfb start
 - metacity --sm-disable --replace 2> metacity.err &
+before_install:
+- sudo apt update
+- sudo apt install tree
 script:
 - export
 - cd org.genivi.commonapi.wamp.releng && mvn clean install && cd ../..
