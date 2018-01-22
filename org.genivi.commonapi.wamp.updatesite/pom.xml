@@ -93,7 +93,8 @@
 						</goals>
 						<configuration>
 							<target name="copy standalone jar executable to gh-pages folder">
-								<copy todir="${project.build.directory}/gh-pages/standalone/integration">
+								<copy
+									todir="${project.build.directory}/gh-pages/standalone/integration">
 									<mapper type="regexp"
 										from="${wamp.generator.prjname}-${unqualifiedVersion}.${buildQualifier}-standalone"
 										to="${wamp.generator.prjname}-${unqualifiedVersion}.${buildQualifier}-standalone.jar" />
@@ -107,7 +108,24 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<id>create-file-index</id>
+						<phase>package</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<workingDirectory>${basedir}/scripts/</workingDirectory>
+					<executable>./create_file_index.sh</executable>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
 				<artifactId>tycho-p2-extras-plugin</artifactId>

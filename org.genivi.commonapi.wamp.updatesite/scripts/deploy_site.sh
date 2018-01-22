@@ -9,7 +9,7 @@
   cd $HOME
   git config --global user.email "deploy@travis-ci.org"
   git config --global user.name "travis-ci"
-  git clone --quiet --branch=gh-pages https://${GH_TOKEN}@$GH_URL gh-pages > /dev/null
+  git clone --quiet --branch=gh-pages https://${GH_TOKEN}@${GH_URL} gh-pages > /dev/null
   cd gh-pages
   git rm -rf ./$REPO_DEST_DIR
   cp -Rf $HOME/$REPO_DEST_DIR ./$REPO_DEST_DIR
