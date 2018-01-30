@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
 import org.eclipse.xtext.generator.OutputConfiguration;
-import org.eclipse.xtext.generator.OutputConfigurationProvider;
 import org.franca.core.franca.FModel;
 import org.genivi.commonapi.wamp.WampGeneratorFrancaStandaloneSetup;
 
