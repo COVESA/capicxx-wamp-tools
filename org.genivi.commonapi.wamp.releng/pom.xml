@@ -20,8 +20,8 @@
 
         <module>../org.genivi.commonapi.wamp</module>
         
-        <!--
         <module>../org.genivi.commonapi.wamp.cli</module>
+        <!--
         <module>../org.genivi.commonapi.wamp.cli.feature</module>
         <module>../org.genivi.commonapi.wamp.cli.product</module>
         -->

@@ -16,7 +16,7 @@
 		<!-- <update.site.description>Latest Build</update.site.description> -->
 		<!-- <update.site.version>${unqualifiedVersion}.${BUILD_ALIAS}</update.site.version> -->
 		<!-- <target.eclipse.version>4.7 (Oxygen)</target.eclipse.version> -->
-		<wamp.generator.prjname>org.genivi.commonapi.wamp</wamp.generator.prjname>
+		<wamp.cli.prjname>org.genivi.commonapi.wamp.cli</wamp.cli.prjname>
 	</properties>
 
 	<build>
@@ -96,10 +96,10 @@
 								<copy
 									todir="${project.build.directory}/gh-pages/standalone/integration">
 									<mapper type="regexp"
-										from="${wamp.generator.prjname}-${unqualifiedVersion}.${buildQualifier}-standalone"
-										to="${wamp.generator.prjname}-${unqualifiedVersion}.${buildQualifier}-standalone.jar" />
+										from="${wamp.cli.prjname}-${unqualifiedVersion}.${buildQualifier}-standalone"
+										to="${wamp.cli.prjname}-${unqualifiedVersion}.${buildQualifier}-standalone.jar" />
 									<fileset
-										dir="${project.build.directory}/../../${wamp.generator.prjname}/target">
+										dir="${project.build.directory}/../../${wamp.cli.prjname}/target">
 										<include name="*.jar" />
 									</fileset>
 								</copy>
