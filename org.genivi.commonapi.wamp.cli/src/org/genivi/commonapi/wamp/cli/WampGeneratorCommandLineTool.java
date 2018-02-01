@@ -3,8 +3,6 @@ package org.genivi.commonapi.wamp.cli;
 import java.io.File;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.log4j.Logger;
 import org.eclipse.xtext.generator.IGenerator;
@@ -22,21 +20,10 @@ import com.google.inject.Inject;
  * @author Klaus Birken (itemis), Markus Mühlbrandt (itemis)
  */
 @SuppressWarnings("deprecation")
-public class WampGeneratorCommandLineTool extends AbstractCommandLineTool {
+public class WampGeneratorCommandLineTool extends AbstractCommandLineTool implements WampGeneratorOptions {
 	
-	private static final String TOOL_VERSION = "0.7.0";
-
-	// specific option values
-	private static final String FIDLFILE = "f";
-	private static final String OPT_RECURSIVE_VALIDATION = "r";
-	private static final String OPT_RECURSIVE_VALIDATION_LONG = "recursive-validation";
-	private static final String OPT_LOG_LEVEL = "ll";
-	private static final String OPT_LOG_LEVEL_LONG = "loglevel";
-	private static final String OPT_OUTDIR = "d";
-	private static final String OPT_OUTDIR_LONG = "dest";
-
-	// prepare class for logging....
 	private static final Logger logger = Logger.getLogger(WampGeneratorCommandLineTool.class);
+	private static final String TOOL_VERSION = "0.7.0";
 	private boolean logInfo = true;
 	private boolean logError = true;
 
@@ -60,19 +47,17 @@ public class WampGeneratorCommandLineTool extends AbstractCommandLineTool {
 
 	@Override
 	protected int run(CommandLine line) {
-		// print version string
-		// System.out.println(TOOL_VERSION);
 
 		if (line.hasOption(OPT_LOG_LEVEL)) {
 			setLogLevel(line.getOptionValue(OPT_LOG_LEVEL));
 		}
-		
+
 		if (line.hasOption(CommonOptions.VERBOSE)) {
 			setLogLevel(PreferenceConstantsWamp.LOGLEVEL_VERBOSE);
 		}
 
 		// load Franca IDL file
-		String fidlFile = line.getOptionValue(FIDLFILE);
+		String fidlFile = line.getOptionValue(OPT_FIDL_FILE);
 		FModel fmodel = persistenceManager.loadModel(fidlFile);
 		if (fmodel == null) {
 			logError("Couldn't load Franca IDL file '" + fidlFile + "'.");
@@ -86,17 +71,16 @@ public class WampGeneratorCommandLineTool extends AbstractCommandLineTool {
 			return -1;
 		}
 
-		FPreferencesWamp preferences = FPreferencesWamp.getInstance();
 		if (line.hasOption(OPT_OUTDIR)) {
 			setDefaultDirectory(line.getOptionValue(OPT_OUTDIR));
 		}
-
+		
 		// call generator and save files
 		JavaIoFileSystemAccess fsa = injector.getInstance(JavaIoFileSystemAccess.class);
-		fsa.setOutputConfigurations(preferences.getOutputpathConfiguration());
-		logInfo(String.format("Generating \"%s\".", fidlFile));
+		fsa.setOutputConfigurations(getPreferences().getOutputpathConfiguration());
+		logInfo("Generating '%s'.", fidlFile);
 		generator.doGenerate(fmodel.eResource(), fsa);
-		logInfo(String.format("\"%s\" generation finished.", fidlFile));
+		logInfo("'%s' generation finished.", fidlFile);
 		return 0;
 	}
 
@@ -113,50 +97,15 @@ public class WampGeneratorCommandLineTool extends AbstractCommandLineTool {
 		options.addOption(createRecursiveValidationOption());
 	}
 
-	@SuppressWarnings("static-access")
-	private Option createRecursiveValidationOption() {
-		return OptionBuilder//
-				.withArgName("recval")//
-				.withDescription("Recursive validation")//
-				.hasArg(false)//
-				.isRequired(false)//
-				.withLongOpt(OPT_RECURSIVE_VALIDATION_LONG) //
-				.create(OPT_RECURSIVE_VALIDATION);
-	}
-
-	@SuppressWarnings("static-access")
-	private Option createLogLevelOption() {
-		return OptionBuilder//
-				.withArgName("arg") //
-				.withDescription("The log level (quiet or verbose)") //
-				.hasArg() //
-				.withValueSeparator(' ') //
-				.withLongOpt(OPT_LOG_LEVEL_LONG) //
-				.create(OPT_LOG_LEVEL);
-	}
-
-	@SuppressWarnings("static-access")
-	private Option createFileOption() {
-		return OptionBuilder.withArgName("Franca IDL file").withDescription("Input file in Franca IDL (fidl) format.")
-				.hasArg().isRequired().withValueSeparator(' ').create(FIDLFILE);
-	}
-
-	@SuppressWarnings("static-access")
-	private Option createOutputDirOption() {
-		return OptionBuilder//
-				.withArgName("directory") //
-				.withDescription("Set output directory") //
-				.hasArg() //
-				.withValueSeparator(' ') //
-				.withLongOpt(OPT_OUTDIR_LONG) //
-				.create(OPT_OUTDIR);
-	}
-
 	@Override
 	protected void logError(String message) {
 		if (logError) {
 			logger.error(message);
 		}
+	}
+
+	protected void logError(String message, Object... args) {
+		logError(String.format(message, args));
 	}
 
 	@Override
@@ -166,20 +115,36 @@ public class WampGeneratorCommandLineTool extends AbstractCommandLineTool {
 		}
 	}
 
+	protected void logInfo(String message, Object... args) {
+		logInfo(String.format(message, args));
+	}
+
 	@Override
 	protected boolean checkCommandLineValues(CommandLine line) {
-		if (line.hasOption(FIDLFILE)) {
-			String fidlFile = line.getOptionValue(FIDLFILE);
+		if (line.hasOption(OPT_FIDL_FILE)) {
+			String fidlFile = line.getOptionValue(OPT_FIDL_FILE);
 			File fidl = new File(fidlFile);
-			if (fidl.exists()) {
-				return true;
-			} else {
-				logError("Cannot open Franca IDL file '" + fidlFile + "'.");
+			if (!fidl.exists()) {
+				logError("Cannot open Franca IDL file '%s'.", fidlFile);
+				return false;
 			}
 		}
-		// TODO: Add validation for outdir
-		// TODO: Validation for loglevel -> check -verbose & -ll quiet (illegal arguments) 
-		return false;
+
+		if (line.hasOption(OPT_LOG_LEVEL)) {
+			String logLevel = line.getOptionValue(OPT_LOG_LEVEL);
+
+			if (!LOG_LEVEL_VALUE_QUIET.equalsIgnoreCase(logLevel)
+					&& !LOG_LEVEL_VALUE_VERBOSE.equalsIgnoreCase(logLevel)) {
+				logError("Invalid argument '%s' for option '-ll'.", logLevel);
+				return false;
+			}
+
+			if (line.hasOption(CommonOptions.VERBOSE) && LOG_LEVEL_VALUE_QUIET.equalsIgnoreCase(logLevel)) {
+				logError("Option '-ll quiet' in combination with option '-v' is invalid.");
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private FPreferencesWamp getPreferences() {
