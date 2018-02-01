@@ -36,57 +36,54 @@ public class FPreferencesWamp {
 	}
 
 	private void initPreferences() {
-		// -dc,--dest-common <arg> "The directory for the common code"
 		if (!preferences.containsKey(PreferenceConstantsWamp.P_OUTPUT_COMMON_WAMP)) {
 			preferences.put(PreferenceConstantsWamp.P_OUTPUT_COMMON_WAMP, PreferenceConstantsWamp.DEFAULT_OUTPUT);
 		}
-		// -dp,--dest-proxy <arg> "The directory for proxy code"
+
 		if (!preferences.containsKey(PreferenceConstantsWamp.P_OUTPUT_PROXIES_WAMP)) {
 			preferences.put(PreferenceConstantsWamp.P_OUTPUT_PROXIES_WAMP, PreferenceConstantsWamp.DEFAULT_OUTPUT);
 		}
-		// -ds,--dest-stub <arg> "The directory for stub code"
+
 		if (!preferences.containsKey(PreferenceConstantsWamp.P_OUTPUT_STUBS_WAMP)) {
 			preferences.put(PreferenceConstantsWamp.P_OUTPUT_STUBS_WAMP, PreferenceConstantsWamp.DEFAULT_OUTPUT);
 		}
-		// -d,--dest <arg> "The default output directory"
+
 		if (!preferences.containsKey(PreferenceConstantsWamp.P_OUTPUT_DEFAULT_WAMP)) {
 			preferences.put(PreferenceConstantsWamp.P_OUTPUT_DEFAULT_WAMP, PreferenceConstants.DEFAULT_OUTPUT);
 		}
-		// -dsub,--dest-subdirs "Use subdir per interface"
+
 		if (!preferences.containsKey(PreferenceConstantsWamp.P_OUTPUT_SUBDIRS_WAMP)) {
 			preferences.put(PreferenceConstantsWamp.P_OUTPUT_SUBDIRS_WAMP, "false");
 		}
-		// -l,--license <arg> "The file path to the license text that will be added to
-		// each generated file"
+
 		if (!preferences.containsKey(PreferenceConstantsWamp.P_LICENSE_WAMP)) {
 			preferences.put(PreferenceConstantsWamp.P_LICENSE_WAMP, PreferenceConstantsWamp.DEFAULT_LICENSE);
 		}
-		// -nc,--no-common "Switch off generation of common code"
+
 		if (!preferences.containsKey(PreferenceConstantsWamp.P_GENERATE_COMMON_WAMP)) {
 			preferences.put(PreferenceConstantsWamp.P_GENERATE_COMMON_WAMP, "true");
 		}
-		// -ns,--no-stub "Switch off generation of stub code"
+
 		if (!preferences.containsKey(PreferenceConstantsWamp.P_GENERATE_STUB_WAMP)) {
 			preferences.put(PreferenceConstantsWamp.P_GENERATE_STUB_WAMP, "true");
 		}
-		// -np,--no-proxy "Switch off generation of proxy code"
+
 		if (!preferences.containsKey(PreferenceConstantsWamp.P_GENERATE_PROXY_WAMP)) {
 			preferences.put(PreferenceConstantsWamp.P_GENERATE_PROXY_WAMP, "true");
 		}
-		// Franca: -v / CommonAPI: -ll,--loglevel <arg> "The log level (quiet or
-		// verbose)"
+
 		if (!preferences.containsKey(PreferenceConstantsWamp.P_LOGOUTPUT_WAMP)) {
 			preferences.put(PreferenceConstantsWamp.P_LOGOUTPUT_WAMP, "true");
 		}
-		// -ng,--no-gen "Switch off code generation"
+
 		if (!preferences.containsKey(PreferenceConstantsWamp.P_GENERATE_CODE_WAMP)) {
 			preferences.put(PreferenceConstantsWamp.P_GENERATE_CODE_WAMP, "true");
 		}
-		// -wod,--without-dependencies "Switch off code generation of dependencies"
+
 		if (!preferences.containsKey(PreferenceConstantsWamp.P_GENERATE_DEPENDENCIES_WAMP)) {
 			preferences.put(PreferenceConstantsWamp.P_GENERATE_DEPENDENCIES_WAMP, "true");
 		}
-		// -nsc,--no-sync-calls "Switch off code generation of synchronous methods"
+
 		if (!preferences.containsKey(PreferenceConstantsWamp.P_GENERATE_SYNC_CALLS_WAMP)) {
 			preferences.put(PreferenceConstantsWamp.P_GENERATE_SYNC_CALLS_WAMP, "true");
 		}

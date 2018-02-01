@@ -25,16 +25,16 @@ public interface WampGeneratorOptions {
 	public static final String OPT_OUTDIR_SUB_LONG = "dest-subdirs";
 	public static final String OPT_LICENSE = "l";
 	public static final String OPT_LICENSE_LONG = "license";
-	public static final String OPT_GENERATE_COMMON = "nc";
-	public static final String OPT_GENERATE_COMMON_LONG = "no-common";
-	public static final String OPT_GENERATE_STUB = "ns";
-	public static final String OPT_GENERATE_STUB_LONG = "no-stub";
-	public static final String OPT_GENERATE_PROXY = "np";
-	public static final String OPT_GENERATE_PROXY_LONG = "no-proxy";
-	public static final String OPT_GENERATE_CODE = "ng";
-	public static final String OPT_GENERATE_CODE_LONG = "no-gen";
-	public static final String OPT_GENERATE_SYNC_CALLS = "nsc";
-	public static final String OPT_GENERATE_SYNC_CALLS_LONG = "no-sync-calls";
+	public static final String OPT_NO_COMMON = "nc";
+	public static final String OPT_NO_COMMON_LONG = "no-common";
+	public static final String OPT_NO_STUB = "ns";
+	public static final String OPT_NO_STUB_LONG = "no-stub";
+	public static final String OPT_NO_PROXY = "np";
+	public static final String OPT_NO_PROXY_LONG = "no-proxy";
+	public static final String OPT_NO_CODE = "ng";
+	public static final String OPT_NO_CODE_LONG = "no-gen";
+	public static final String OPT_NO_SYNC_CALLS = "nsc";
+	public static final String OPT_NO_SYNC_CALLS_LONG = "no-sync-calls";
 
 	@SuppressWarnings("static-access")
 	default public Option createFileOption() {
@@ -69,7 +69,7 @@ public interface WampGeneratorOptions {
 	}
 
 	@SuppressWarnings("static-access")
-	default public Option createOutputDirOption() {
+	default public Option createOutDirOption() {
 		return OptionBuilder//
 				.withArgName("dir") //
 				.withDescription("Set output directory") //
@@ -80,7 +80,7 @@ public interface WampGeneratorOptions {
 	}
 
 	@SuppressWarnings("static-access")
-	default public Option createOutputCommonDirOption() {
+	default public Option createOutDirCommonOption() {
 		return OptionBuilder//
 				.withArgName("dir") //
 				.withDescription("The directory for the common code") //
@@ -91,7 +91,7 @@ public interface WampGeneratorOptions {
 	}
 
 	@SuppressWarnings("static-access")
-	default public Option createOutputProxyDirOption() {
+	default public Option createOutDirProxyOption() {
 		return OptionBuilder//
 				.withArgName("dir") //
 				.withDescription("The directory for proxy code") //
@@ -102,7 +102,7 @@ public interface WampGeneratorOptions {
 	}
 
 	@SuppressWarnings("static-access")
-	default public Option createOutputStubDirOption() {
+	default public Option createOutDirStubOption() {
 		return OptionBuilder//
 				.withArgName("dir") //
 				.withDescription("The directory for stub code") //
@@ -123,6 +123,7 @@ public interface WampGeneratorOptions {
 				.create(OPT_OUTDIR_SUB);
 	}
 
+	// TODO: Add license option
 	@SuppressWarnings("static-access")
 	default public Option createLicenseOption() {
 		return OptionBuilder//
@@ -133,50 +134,50 @@ public interface WampGeneratorOptions {
 				.withLongOpt(OPT_LICENSE_LONG) //
 				.create(OPT_LICENSE);
 	}
-
+	
 	@SuppressWarnings("static-access")
-	default public Option createGenerateCommonOption() {
+	default public Option createNoCommonOption() {
 		return OptionBuilder//
 				.withDescription("Switch off generation of common code") //
 				.withValueSeparator(' ') //
-				.withLongOpt(OPT_GENERATE_COMMON_LONG) //
-				.create(OPT_GENERATE_COMMON);
+				.withLongOpt(OPT_NO_COMMON_LONG) //
+				.create(OPT_NO_COMMON);
 	}
-
+	
 	@SuppressWarnings("static-access")
-	default public Option createGenerateStubOption() {
+	default public Option createNoStubOption() {
 		return OptionBuilder//
 				.withDescription("Switch off generation of stub code") //
 				.withValueSeparator(' ') //
-				.withLongOpt(OPT_GENERATE_STUB_LONG) //
-				.create(OPT_GENERATE_STUB);
+				.withLongOpt(OPT_NO_STUB_LONG) //
+				.create(OPT_NO_STUB);
 	}
 
 	@SuppressWarnings("static-access")
-	default public Option createGenerateProxyOption() {
+	default public Option createNoProxyOption() {
 		return OptionBuilder//
 				.withDescription("Switch off generation of proxy code") //
 				.withValueSeparator(' ') //
-				.withLongOpt(OPT_GENERATE_PROXY_LONG) //
-				.create(OPT_GENERATE_PROXY);
+				.withLongOpt(OPT_NO_PROXY_LONG) //
+				.create(OPT_NO_PROXY);
 	}
-
+	
 	@SuppressWarnings("static-access")
-	default public Option createGenerateCodeOption() {
+	default public Option createNoCodeOption() {
 		return OptionBuilder//
 				.withDescription("Switch off code generation") //
 				.withValueSeparator(' ') //
-				.withLongOpt(OPT_GENERATE_CODE_LONG) //
-				.create(OPT_GENERATE_CODE);
+				.withLongOpt(OPT_NO_CODE_LONG) //
+				.create(OPT_NO_CODE);
 	}
-
+	
 	@SuppressWarnings("static-access")
-	default public Option createGenerateSyncCallsOption() {
+	default public Option createNoSyncCallsOption() {
 		return OptionBuilder//
 				.withDescription("Switch off code generation") //
 				.withValueSeparator(' ') //
-				.withLongOpt(OPT_GENERATE_SYNC_CALLS_LONG) //
-				.create(OPT_GENERATE_SYNC_CALLS);
+				.withLongOpt(OPT_NO_SYNC_CALLS_LONG) //
+				.create(OPT_NO_SYNC_CALLS);
 	}
 
 }
