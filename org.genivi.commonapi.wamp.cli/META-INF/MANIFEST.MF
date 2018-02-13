@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GENIVI Common API Wamp C++ Generator Commandline Interface
+Bundle-SymbolicName: org.genivi.commonapi.wamp.cli
+Bundle-Version: 0.7.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: itemis AG
+Require-Bundle: org.genivi.commonapi.wamp;bundle-version="0.7.0",
+ org.apache.log4j
