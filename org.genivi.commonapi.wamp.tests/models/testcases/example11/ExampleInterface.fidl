@@ -1,0 +1,58 @@
+package testcases.example11
+
+// this tests simple methods (with fixed size integer arguments only)
+interface ExampleInterface {
+	version { major 0 minor 7 }
+
+	method method1 {
+		in {
+			Int8 arg1
+		}
+		out {
+			UInt8 ret1
+		}
+	}
+	
+	method method2 {
+		in {
+			Int16 arg1
+		}
+		out {
+			UInt16 ret1
+		}
+	}
+	
+	method method3 {
+		in {
+			Int32 arg1
+		}
+		out {
+			UInt32 ret1
+		}
+	}
+	
+	method method4 {
+		in {
+			Int64 arg1
+		}
+		out {
+			UInt64 ret1
+		}
+	}
+	
+	method method5 {
+		in {
+			Int8 arg1
+			Int16 arg2
+			Int32 arg3
+			Int64 arg4
+		}
+		out {
+			UInt8 ret1
+			UInt16 ret2
+			UInt32 ret3
+			UInt64 ret4
+		}
+	}
+}
+
