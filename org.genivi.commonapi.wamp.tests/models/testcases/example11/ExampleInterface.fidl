@@ -9,43 +9,94 @@ interface ExampleInterface {
 			Int8 arg1
 		}
 		out {
-			UInt8 ret1
+			Int8 ret1
 		}
 	}
 	
 	method method2 {
 		in {
+			UInt8 arg1
+		}
+		out {
+			UInt8 ret1
+		}
+	}
+	
+	method method3 {
+		in {
 			Int16 arg1
+		}
+		out {
+			Int16 ret1
+		}
+	}
+	
+	method method4 {
+		in {
+			UInt16 arg1
 		}
 		out {
 			UInt16 ret1
 		}
 	}
 	
-	method method3 {
+	method method5 {
 		in {
 			Int32 arg1
+		}
+		out {
+			Int32 ret1
+		}
+	}
+	
+	method method6 {
+		in {
+			UInt32 arg1
 		}
 		out {
 			UInt32 ret1
 		}
 	}
 	
-	method method4 {
+	method method7 {
 		in {
 			Int64 arg1
+		}
+		out {
+			Int64 ret1
+		}
+	}
+	
+	method method8 {
+		in {
+			UInt64 arg1
 		}
 		out {
 			UInt64 ret1
 		}
 	}
 	
-	method method5 {
+	method method9 {
 		in {
 			Int8 arg1
 			Int16 arg2
 			Int32 arg3
 			Int64 arg4
+		}
+		out {
+			Int8 ret1
+			Int16 ret2
+			Int32 ret3
+			Int64 ret4
+		}
+	}
+	
+	method method10 {
+		in {
+			UInt8 arg1
+			UInt16 arg2
+			UInt32 arg3
+			UInt64 arg4
 		}
 		out {
 			UInt8 ret1
