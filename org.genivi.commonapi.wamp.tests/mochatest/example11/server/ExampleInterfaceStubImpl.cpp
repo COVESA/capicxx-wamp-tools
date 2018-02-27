@@ -32,7 +32,9 @@ const CommonAPI::Version& ExampleInterfaceStubImpl::getInterfaceVersion(
 void ExampleInterfaceStubImpl::method1(
 		const std::shared_ptr<CommonAPI::ClientId> _client, int8_t _arg1,
 		method1Reply_t _reply) {
-	std::cout << "ExampleInterfaceStubImpl::method1 called" << std::endl;
+	std::cout << "ExampleInterfaceStubImpl::method1 called with arg1='" << _arg1
+			<< "'" << std::endl;
+
 	_reply(2 * _arg1);
 }
 
@@ -75,14 +77,15 @@ void ExampleInterfaceStubImpl::method7(
 		const std::shared_ptr<CommonAPI::ClientId> _client, int64_t _arg1,
 		method7Reply_t _reply) {
 	std::cout << "ExampleInterfaceStubImpl::method7 called" << std::endl;
-	_reply(2 * _arg1);
+	_reply(-1 * _arg1);
 }
 
 void ExampleInterfaceStubImpl::method8(
 		const std::shared_ptr<CommonAPI::ClientId> _client, uint64_t _arg1,
 		method8Reply_t _reply) {
-	std::cout << "ExampleInterfaceStubImpl::method8 called" << std::endl;
-	_reply(2 * _arg1 + 1);
+	std::cout << "ExampleInterfaceStubImpl::method8 called with arg1='" << _arg1
+			<< "'" << std::endl;
+	_reply(-1 * _arg1);
 }
 
 void ExampleInterfaceStubImpl::method9(

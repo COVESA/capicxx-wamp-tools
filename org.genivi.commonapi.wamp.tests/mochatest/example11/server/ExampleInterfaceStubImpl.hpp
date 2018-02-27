@@ -26,38 +26,47 @@ public:
 	/// This is the method that will be called on remote calls on the method method1.
 	virtual void method1(const std::shared_ptr<CommonAPI::ClientId> _client,
 			int8_t _arg1, method1Reply_t _reply);
+
 	/// This is the method that will be called on remote calls on the method method2.
 	virtual void method2(const std::shared_ptr<CommonAPI::ClientId> _client,
 			uint8_t _arg1, method2Reply_t _reply);
+
 	/// This is the method that will be called on remote calls on the method method3.
 	virtual void method3(const std::shared_ptr<CommonAPI::ClientId> _client,
 			int16_t _arg1, method3Reply_t _reply);
+
 	/// This is the method that will be called on remote calls on the method method4.
 	virtual void method4(const std::shared_ptr<CommonAPI::ClientId> _client,
 			uint16_t _arg1, method4Reply_t _reply);
+
 	/// This is the method that will be called on remote calls on the method method5.
 	virtual void method5(const std::shared_ptr<CommonAPI::ClientId> _client,
 			int32_t _arg1, method5Reply_t _reply);
+
 	/// This is the method that will be called on remote calls on the method method6.
 	virtual void method6(const std::shared_ptr<CommonAPI::ClientId> _client,
 			uint32_t _arg1, method6Reply_t _reply);
+
 	/// This is the method that will be called on remote calls on the method method7.
 	virtual void method7(const std::shared_ptr<CommonAPI::ClientId> _client,
 			int64_t _arg1, method7Reply_t _reply);
+
 	/// This is the method that will be called on remote calls on the method method8.
 	virtual void method8(const std::shared_ptr<CommonAPI::ClientId> _client,
 			uint64_t _arg1, method8Reply_t _reply);
+
 	/// This is the method that will be called on remote calls on the method method9.
 	virtual void method9(const std::shared_ptr<CommonAPI::ClientId> _client,
 			int8_t _arg1, int16_t _arg2, int32_t _arg3, int64_t _arg4,
 			method9Reply_t _reply);
+
 	/// This is the method that will be called on remote calls on the method method10.
 	virtual void method10(const std::shared_ptr<CommonAPI::ClientId> _client,
 			uint8_t _arg1, uint16_t _arg2, uint32_t _arg3, uint64_t _arg4,
 			method10Reply_t _reply);
 };
 
-} // namespace example10
+} // namespace example11
 } // namespace testcases
 } // namespace v0
 

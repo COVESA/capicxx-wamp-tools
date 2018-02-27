@@ -27,20 +27,36 @@ describe(
 
 			var methodCalls = [ {
 				name : address + '.' + 'method1',
-				args : [ -64 ],
+				args : [ 42, -64 ],
 				expected : [ -128 ]
 			}, {
 				name : address + '.' + 'method2',
-				args : [ 127 ],
+				args : [ 42, 127 ],
 				expected : [ 255 ]
 			}, {
 				name : address + '.' + 'method3',
-				args : [ -16384 ],
+				args : [ 42, -16384 ],
 				expected : [ -32768 ]
 			}, {
 				name : address + '.' + 'method4',
 				args : [ 32767 ],
 				expected : [ 65535 ]
+			}, {
+				name : address + '.' + 'method5',
+				args : [ -1073741824 ],
+				expected : [ -2147483648 ]
+			}, {
+				name : address + '.' + 'method6',
+				args : [ 42, 2147483647 ],
+				expected : [ 4294967295 ]
+			}, {
+				name : address + '.' + 'method7',
+				args : [ 9007199254740991 ],
+				expected : [ -9007199254740991 ]
+			}, {
+				name : address + '.' + 'method8',
+				args : [ 9007199254740991 ],
+				expected : [ -9007199254740991 ]
 			} ];
 
 			before(function(done) {
@@ -82,5 +98,10 @@ describe(
 				assert.connectionState(connection);
 				assert.methodCall(done, connection.session, methodCalls[2]);
 
+			});
+			
+			it('TestMethodCall_method6', function(done) {
+				assert.connectionState(connection);
+				assert.methodCall(done, connection.session, methodCalls[5]);
 			});
 		});
