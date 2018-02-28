@@ -39,11 +39,11 @@ describe(
 				expected : [ -32768 ]
 			}, {
 				name : address + '.' + 'method4',
-				args : [ 32767 ],
+				args : [ 42, 32767 ],
 				expected : [ 65535 ]
 			}, {
 				name : address + '.' + 'method5',
-				args : [ -1073741824 ],
+				args : [ 42, -1073741824 ],
 				expected : [ -2147483648 ]
 			}, {
 				name : address + '.' + 'method6',
@@ -51,12 +51,12 @@ describe(
 				expected : [ 4294967295 ]
 			}, {
 				name : address + '.' + 'method7',
-				args : [ 9007199254740991 ],
-				expected : [ -9007199254740991 ]
+				args : [ 42, Number.MAX_SAFE_INTEGER ],
+				expected : [ -Number.MAX_SAFE_INTEGER ]
 			}, {
 				name : address + '.' + 'method8',
-				args : [ 9007199254740991 ],
-				expected : [ -9007199254740991 ]
+				args : [ 42, Number.MAX_SAFE_INTEGER ],
+				expected : [ 2 * Number.MAX_SAFE_INTEGER ]
 			} ];
 
 			before(function(done) {
@@ -100,8 +100,28 @@ describe(
 
 			});
 			
+			it('TestMethodCall_method4', function(done) {
+				assert.connectionState(connection);
+				assert.methodCall(done, connection.session, methodCalls[3]);
+			});
+			
+			it('TestMethodCall_method5', function(done) {
+				assert.connectionState(connection);
+				assert.methodCall(done, connection.session, methodCalls[4]);
+			});
+			
 			it('TestMethodCall_method6', function(done) {
 				assert.connectionState(connection);
 				assert.methodCall(done, connection.session, methodCalls[5]);
+			});
+			
+			it('TestMethodCall_method7', function(done) {
+				assert.connectionState(connection);
+				assert.methodCall(done, connection.session, methodCalls[6]);
+			});
+			
+			it('TestMethodCall_method8', function(done) {
+				assert.connectionState(connection);
+				assert.methodCall(done, connection.session, methodCalls[7]);
 			});
 		});

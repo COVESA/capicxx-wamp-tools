@@ -85,7 +85,7 @@ void ExampleInterfaceStubImpl::method8(
 		method8Reply_t _reply) {
 	std::cout << "ExampleInterfaceStubImpl::method8 called with arg1='" << _arg1
 			<< "'" << std::endl;
-	_reply(-1 * _arg1);
+	_reply(2 * _arg1);
 }
 
 void ExampleInterfaceStubImpl::method9(
