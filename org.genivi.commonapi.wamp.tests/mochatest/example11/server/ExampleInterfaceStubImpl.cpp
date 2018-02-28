@@ -100,7 +100,7 @@ void ExampleInterfaceStubImpl::method10(
 		uint16_t _arg2, uint32_t _arg3, uint64_t _arg4,
 		method10Reply_t _reply) {
 	std::cout << "ExampleInterfaceStubImpl::method10 called" << std::endl;
-	_reply(2 * _arg1 + 1, 2 * _arg2 + 1, 2 * _arg3 + 1, 2 * _arg4 + 1);
+	_reply(2 * _arg1 + 1, 2 * _arg2 + 1, 2 * _arg3 + 1, 2 * _arg4);
 
 }
 

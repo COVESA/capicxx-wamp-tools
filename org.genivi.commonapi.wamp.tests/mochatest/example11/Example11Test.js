@@ -25,39 +25,61 @@ describe(
 
 			var address = 'local:testcases.example11.ExampleInterface:v0_7:testcases.example11.ExampleInterface';
 
-			var methodCalls = [ {
-				name : address + '.' + 'method1',
-				args : [ 42, -64 ],
-				expected : [ -128 ]
-			}, {
-				name : address + '.' + 'method2',
-				args : [ 42, 127 ],
-				expected : [ 255 ]
-			}, {
-				name : address + '.' + 'method3',
-				args : [ 42, -16384 ],
-				expected : [ -32768 ]
-			}, {
-				name : address + '.' + 'method4',
-				args : [ 42, 32767 ],
-				expected : [ 65535 ]
-			}, {
-				name : address + '.' + 'method5',
-				args : [ 42, -1073741824 ],
-				expected : [ -2147483648 ]
-			}, {
-				name : address + '.' + 'method6',
-				args : [ 42, 2147483647 ],
-				expected : [ 4294967295 ]
-			}, {
-				name : address + '.' + 'method7',
-				args : [ 42, Number.MAX_SAFE_INTEGER ],
-				expected : [ -Number.MAX_SAFE_INTEGER ]
-			}, {
-				name : address + '.' + 'method8',
-				args : [ 42, Number.MAX_SAFE_INTEGER ],
-				expected : [ 2 * Number.MAX_SAFE_INTEGER ]
-			} ];
+			var methodCalls = [
+					{
+						name : address + '.' + 'method1',
+						args : [ 42, -64 ],
+						expected : [ -128 ]
+					},
+					{
+						name : address + '.' + 'method2',
+						args : [ 42, 127 ],
+						expected : [ 255 ]
+					},
+					{
+						name : address + '.' + 'method3',
+						args : [ 42, -16384 ],
+						expected : [ -32768 ]
+					},
+					{
+						name : address + '.' + 'method4',
+						args : [ 42, 32767 ],
+						expected : [ 65535 ]
+					},
+					{
+						name : address + '.' + 'method5',
+						args : [ 42, -1073741824 ],
+						expected : [ -2147483648 ]
+					},
+					{
+						name : address + '.' + 'method6',
+						args : [ 42, 2147483647 ],
+						expected : [ 4294967295 ]
+					},
+					{
+						name : address + '.' + 'method7',
+						args : [ 42, -Number.MAX_SAFE_INTEGER ],
+						expected : [ Number.MAX_SAFE_INTEGER ]
+					},
+					{
+						name : address + '.' + 'method8',
+						args : [ 42, Number.MAX_SAFE_INTEGER ],
+						expected : [ 2 * Number.MAX_SAFE_INTEGER ]
+					},
+					{
+						name : address + '.' + 'method9',
+						args : [ 42, -64, -16384, -1073741824,
+								-Number.MAX_SAFE_INTEGER ],
+						expected : [ -128, -32768, -2147483648,
+								-(2 * Number.MAX_SAFE_INTEGER) ]
+					},
+					{
+						name : address + '.' + 'method10',
+						args : [ 42, 127, 32767, 2147483647,
+								Number.MAX_SAFE_INTEGER ],
+						expected : [ 255, 65535, 4294967295,
+								2 * Number.MAX_SAFE_INTEGER ]
+					} ];
 
 			before(function(done) {
 				connection.onopen = function(session, details) {
@@ -99,29 +121,39 @@ describe(
 				assert.methodCall(done, connection.session, methodCalls[2]);
 
 			});
-			
+
 			it('TestMethodCall_method4', function(done) {
 				assert.connectionState(connection);
 				assert.methodCall(done, connection.session, methodCalls[3]);
 			});
-			
+
 			it('TestMethodCall_method5', function(done) {
 				assert.connectionState(connection);
 				assert.methodCall(done, connection.session, methodCalls[4]);
 			});
-			
+
 			it('TestMethodCall_method6', function(done) {
 				assert.connectionState(connection);
 				assert.methodCall(done, connection.session, methodCalls[5]);
 			});
-			
+
 			it('TestMethodCall_method7', function(done) {
 				assert.connectionState(connection);
 				assert.methodCall(done, connection.session, methodCalls[6]);
 			});
-			
+
 			it('TestMethodCall_method8', function(done) {
 				assert.connectionState(connection);
 				assert.methodCall(done, connection.session, methodCalls[7]);
+			});
+
+			it('TestMethodCall_method9', function(done) {
+				assert.connectionState(connection);
+				assert.methodCall(done, connection.session, methodCalls[8]);
+			});
+			
+			it('TestMethodCall_method10', function(done) {
+				assert.connectionState(connection);
+				assert.methodCall(done, connection.session, methodCalls[9]);
 			});
 		});
