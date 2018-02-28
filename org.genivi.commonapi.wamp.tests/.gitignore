@@ -3,3 +3,5 @@
 /target
 /src-gen/
 /build/
+/key.pub
+/key.priv
