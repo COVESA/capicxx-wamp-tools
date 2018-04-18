@@ -2,7 +2,7 @@
 <?pde version="3.8"?><target name="CommonAPI WAMP Oxygen SR1" sequenceNumber="10">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.cdt.sdk.feature.group" version="9.3.2.201709131603"/>
+<unit id="org.eclipse.cdt.sdk.feature.group" version="9.4.0.201712051550"/>
 <repository location="http://download.eclipse.org/releases/oxygen"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
