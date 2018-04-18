@@ -9,12 +9,12 @@ import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipselabs.xtext.utils.unittesting.XtextRunner2
 import org.franca.core.dsl.FrancaPersistenceManager
+import org.genivi.commonapi.wamp.tests.utils.TestFileSystemAccess
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.assertTrue
-import org.genivi.commonapi.wamp.tests.utils.TestFileSystemAccess
 
 //@SuppressWarnings("unused") 
 @RunWith(typeof(XtextRunner2))
@@ -22,75 +22,81 @@ import org.genivi.commonapi.wamp.tests.utils.TestFileSystemAccess
 public class WampGeneratorTests extends GeneratorTestBase {
 
 	/** 
-     * Generated code is written to files. This flag can be used, if the code generator
-     * has changed and new test data has to be generated. In any case, it has to be ensured
-     * that the newly generated code is correct. That is a manual step. 
-     */
-	val private static boolean OVERRIDE = false
+	 * Generated code is written to files. This flag can be used, if the code generator
+	 * has changed and new test data has to be generated. In any case, it has to be ensured
+	 * that the newly generated code is correct. That is a manual step. 
+	 */
+	val private static boolean OVERWRITE = false
 
-	val private static String[] ignoredOutputFiles = #{ }
+	val private static String[] ignoredOutputFiles = #{}
 
 	val private static TEST_MODEL_FOLDER = "models/"
 	val private static EXAMPLE_SUBFOLDER = "testcases"
-	val private static REFCODE_FOLDER    = "src/refcode/"
+	val private static REFCODE_FOLDER = "src/refcode/"
 	val private static VERSION_TAG = "v0"
-	
+
 	@Inject FrancaPersistenceManager loader
 	@Inject IGenerator generator
 
 	@Test
 	def void test10() {
-		doGeneratorTest(EXAMPLE_SUBFOLDER + SEP + "example10", "ExampleInterface"); //$NON-NLS-1$ 
+		doGeneratorTest(EXAMPLE_SUBFOLDER + SEP + "example10", "ExampleInterface", OVERWRITE); // $NON-NLS-1$ 
+	}
+
+	@Test
+	def void test11() {
+		doGeneratorTest(EXAMPLE_SUBFOLDER + SEP + "example11", "ExampleInterface", OVERWRITE); // $NON-NLS-1$ 
 	}
 
 	@Test
 	def void test12() {
-		doGeneratorTest(EXAMPLE_SUBFOLDER + SEP + "example12", "ExampleInterface"); //$NON-NLS-1$ 
+		doGeneratorTest(EXAMPLE_SUBFOLDER + SEP + "example12", "ExampleInterface", OVERWRITE); // $NON-NLS-1$ 
 	}
 
 	@Test
 	def void test30() {
-		doGeneratorTest(EXAMPLE_SUBFOLDER + SEP + "example30", "ExampleInterface"); //$NON-NLS-1$ 
+		doGeneratorTest(EXAMPLE_SUBFOLDER + SEP + "example30", "ExampleInterface", OVERWRITE); // $NON-NLS-1$ 
 	}
 
 	@Test
 	def void test32() {
-		doGeneratorTest(EXAMPLE_SUBFOLDER + SEP + "example32", "ExampleInterface"); //$NON-NLS-1$ 
+		doGeneratorTest(EXAMPLE_SUBFOLDER + SEP + "example32", "ExampleInterface", OVERWRITE); // $NON-NLS-1$ 
 	}
 
 	@Test
 	def void test36() {
-		doGeneratorTest(EXAMPLE_SUBFOLDER + SEP + "example36", "ExampleInterface"); //$NON-NLS-1$ 
+		doGeneratorTest(EXAMPLE_SUBFOLDER + SEP + "example36", "ExampleInterface", OVERWRITE); // $NON-NLS-1$ 
 	}
 
 	@Test
 	def void test77() {
-		doGeneratorTest(EXAMPLE_SUBFOLDER + SEP + "example77", "ExampleInterface"); //$NON-NLS-1$ 
+		doGeneratorTest(EXAMPLE_SUBFOLDER + SEP + "example77", "ExampleInterface", OVERWRITE); // $NON-NLS-1$ 
 	}
 
 	// helper method 
-	def private void doGeneratorTest(String path, String fileBasename) {
-		doGeneratorTest(path, fileBasename, SRC_GEN_DIR)
+	def private void doGeneratorTest(String path, String fileBasename, boolean overwrite) {
+		doGeneratorTest(path, fileBasename, SRC_GEN_DIR, overwrite)
 	}
 
 	// helper method 
 	def private void doGeneratorTest(
 		String path,
 		String fileBasename,
-		String expectedSrcGenDir
-	) { 
+		String expectedSrcGenDir,
+		boolean overwrite
+	) {
 		// load example Franca IDL interface
 		val inputfile = TEST_MODEL_FOLDER + path + SEP + fileBasename + ".fidl"
 		System.out.println("Loading Franca file " + inputfile + " ...")
 		val fmodel = loader.loadModel(inputfile)
 		assertNotNull(fmodel)
-		
+
 		// prepare generator output
 		val fsa = new TestFileSystemAccess
 		fsa.setTextFileEnconding("UTF-8")
-		
+
 		// run generator
-		//generator.init(new DefaultGeneratorConsole(), projectName, null); 
+		// generator.init(new DefaultGeneratorConsole(), projectName, null); 
 		generator.doGenerate(fmodel.eResource, fsa)
 
 		// check if all reference files have been generated
@@ -98,15 +104,15 @@ public class WampGeneratorTests extends GeneratorTestBase {
 		val refFolderPath = REFCODE_FOLDER + SEP + expectedPath
 		val refFolder = new File(refFolderPath)
 		assertTrue("Missing folder for reference files '" + refFolderPath + "'", refFolder.exists())
-		val refFiles = refFolder.listFiles 
-		for(refFile : refFiles) {
+		val refFiles = refFolder.listFiles
+		for (refFile : refFiles) {
 			val expecting = refFile.name
 			val foundGen = fsa.textFiles.keySet.findFirst[it.endsWith(expecting)]
 			assertNotNull("Missing generated file for reference file '" + expecting + "'", foundGen)
 		}
 
 		// check output files against expected reference files
-		for(key : fsa.textFiles.keySet) {
+		for (key : fsa.textFiles.keySet) {
 			// remove configuration from file name
 			val outpathRaw = TestFileSystemAccess.extractFileName(key)
 			assertNotNull(outpathRaw)
@@ -116,30 +122,29 @@ public class WampGeneratorTests extends GeneratorTestBase {
 				// match in ignore list => ignore this file
 				println("Ignoring generated file '" + outpath + "'")
 			} else {
-				//System.out.println("Checking generated file '" + outpath + "'") 
-				val output = fsa.getTextFiles().get(key) 
-				
+				// System.out.println("Checking generated file '" + outpath + "'") 
+				val output = fsa.getTextFiles().get(key)
+
 				// check that outpath starts with correct path
 				val expectedPathSep = expectedPath + SEP
 				assertTrue(outpath.startsWith(expectedPathSep))
-				
-				val outfile = outpath.substring(expectedPathSep.length)
+
 				val referenceFile = REFCODE_FOLDER + SEP + outpath
-				if (OVERRIDE) { 
-					overrideFile(referenceFile, output.toString) 
+				if (overwrite) {
+					overrideFile(referenceFile, output.toString)
 				}
-				
+
 				// read reference file and compare with generated file
 				val expected = readFile(referenceFile)
 				assertNotNull("Cannot read reference file '" + referenceFile + "'", expected)
 				val ok = isEqual(expected, output.toString)
 				if (!ok) {
 					System.out.println(output)
-				}				
-				assertTrue("Generated file '" + outpath + "' does not match reference file '" + referenceFile + "'", ok)				
+				}
+				assertTrue("Generated file '" + outpath + "' does not match reference file '" + referenceFile + "'", ok)
 			}
 		}
-	} 
+	}
 
 //        def private void doGeneratorTestAndSearchOutput(String testcase, boolean generateReturn, String... expected) { 
 //                final ByteArrayOutputStream output = new ByteArrayOutputStream(); 
@@ -151,5 +156,4 @@ public class WampGeneratorTests extends GeneratorTestBase {
 //                        assertTrue(output.toString().contains(e)); 
 //                } 
 //        } 
-
 }
