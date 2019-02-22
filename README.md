@@ -1,9 +1,7 @@
 # capicxx-wamp-tools [![Build Status](https://travis-ci.org/GENIVI/capicxx-wamp-tools.svg?branch=master)](https://travis-ci.org/GENIVI/capicxx-wamp-tools)
 Common API tooling with WAMP messaging.
 
-## Roadmap
-
-This is work in progress, we plan to provide a 1.0 release during first half of 2018.
+## Runtime library
 
 The binding code generator from this project will create C++ code which needs a proper runtime library.
 One can find the runtime library in the companion project https://github.com/GENIVI/capicxx-wamp-runtime.
