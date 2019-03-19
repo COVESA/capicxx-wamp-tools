@@ -7,22 +7,28 @@ The binding code generator from this project will create C++ code which needs a 
 One can find the runtime library in the companion project https://github.com/GENIVI/capicxx-wamp-runtime.
 Please ensure that the runtime library version matches the code generator version.
 
-## Command-line code generator
+## Build Instructions for Linux/Windows
 
-A jar-file with a portable command-line code generator from the latest successful master build can be downloaded
-[from here](https://genivi.github.io/capicxx-wamp-tools/standalone/).
+# Command line
 
-It can be started by running `java -jar org.genivi.commonapi.wamp.cli-0.7.0.v201804182032-standalone.jar`. Please update the actual filename according to the version you have downloaded. With additional arguments, it will dump a list of command line options. Here is a snapshot of this list.
+You can build all code generators by calling maven from the command-line. Open a console and change in the directory org.genivi.commonapi.wamp.releng of your CommonAPI-Tools directory. Then call:
+
+```bash
+mvn -DCOREPATH=<path to your CommonAPI-Tools dir> -Dtarget.id=commonapi_wamp-oxygen clean verify
+```
+_COREPATH_ is the directory, that contains the target definition folder: `commonapi_wamp-oxygen`.
+
+After the successful build you will find the command-line generators archived in `org.genivi.commonapi.wamp.cli.product/target/products/commonapi_wamp_generator.zip` and the update-sites in `org.genivi.commonapi.wamp.updatesite/target`.
+
 
 ```
-Usage: java -jar org.genivi.commonapi.wamp.cli-0.7.0.v201804182032-standalone.jar [OPTIONS]
+Different command line options :
  -d,--dest <dir>                  Set output directory
  -dc,--dest-common <dir>          The directory for the common code
  -dp,--dest-proxy <dir>           The directory for proxy code
  -ds,--dest-stub <dir>            The directory for stub code
  -dsub,--dest-subdirs <dir>       Use subdir per interface
- -f,--fidl <Franca IDL file>      Input file in Franca IDL (fidl) format
- -h                               Print usage information
+ -sp,--fidl <Franca IDL file>     Input file in Franca IDL (fidl) format
  -l,--license <filepath>          The file path to the license text that
                                   will be added to each generated file
  -ll,--loglevel <quiet|verbose>   The log level
@@ -30,10 +36,16 @@ Usage: java -jar org.genivi.commonapi.wamp.cli-0.7.0.v201804182032-standalone.ja
  -ng,--no-gen                     Switch off code generation
  -np,--no-proxy                   Switch off generation of proxy code
  -ns,--no-stub                    Switch off generation of stub code
- -nsc,--no-sync-calls             Switch off code generation
- -r,--recursive-validation        Recursive validation
- -v                               Activate verbose mode
+ -nsc,--no-sync-calls             Switch off code generation of synchronous methods
+ -nv,--no-val					  Switch off validation of the fidl file
+ -pf,--printfiles				  Print out generated files
+ -ve,--val-warnings-as-errors	  Treat validation warnings as errors
+ -wod,--without-dependencies	  Switch off code generation of dependencies
 ```
+
+# Eclipse
+
+Make sure that you have installed the _m2e - Maven Integration for Eclipse_ plug-in. Then create a _Run Configuration_ in Eclipse. Open the _Run configuration_ settings. On the left side of you should find a launch configuration category _Maven Build_. Create a new launch configuration and add the parameters +target.id+ with the value +commonapi_wamp-oxygen+ and +COREPATH+ with the value +<path to your CommonAPI-Tools dir>+. Set the goals to clean verify.
 
 ## Code generator for JS client
 
